@@ -81,8 +81,11 @@ public abstract class ReusablePool<T>
                     cycleIndex++;
                     //if (cycleIndex % 6 == 0)
                     if (doLog)
-                        Log.warning(poolName + ": Try get in " + FannounceDelaySec + " secs: " + tryGet + ", setFree: " + settedFree + ", created: " + created + ", clean: " +
+                    {
+                        if (created > 500)
+                            Log.warning(poolName + ": Try get in " + FannounceDelaySec + " secs: " + tryGet + ", setFree: " + settedFree + ", created: " + created + ", clean: " +
                                 clean.size() + ", dirty: " + dirty.size());
+                    }
 
 
                     if (clean.size() > maxLimit)

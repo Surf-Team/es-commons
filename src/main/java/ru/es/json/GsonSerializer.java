@@ -29,7 +29,6 @@ public class GsonSerializer<T>
                 Log.warning("Cant load settings. First launch (1)?");
                 return c.newInstance();
             }
-            Log.warning("Ret is not null");
             return ret;
         }
         catch (Exception e)

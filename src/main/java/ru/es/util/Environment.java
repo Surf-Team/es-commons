@@ -59,4 +59,9 @@ public class Environment
     {
         return detectedOS == OSType.Unix;
     }
+
+    public static String getOSFullName()
+    {
+        return System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+    }
 }

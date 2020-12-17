@@ -1,5 +1,7 @@
 package ru.es.util;
 
+import ru.es.log.Log;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.Base64;
@@ -58,6 +60,12 @@ public class IOUtils
 
     public static void addLibDir(String dir) throws IOException
     {
+        if (true)
+        {
+            Log.warning("addLibDir временно отключено. Библиотеки в лаунчере");
+            System.setProperty("java.library.path", System.getProperty("java.library.path") + File.pathSeparator + dir);
+            return;
+        }
         try {
             // This enables the java.library.path to be modified at runtime
             // From a Sun engineer at http://forums.sun.com/thread.jspa?threadID=707176
@@ -74,7 +82,6 @@ public class IOUtils
             System.arraycopy(paths,0,tmp,0,paths.length);
             tmp[paths.length] = dir;
             field.set(null,tmp);
-            System.setProperty("java.library.path", System.getProperty("java.library.path") + File.pathSeparator + dir);
         } catch (IllegalAccessException e) {
             throw new IOException("Failed to get permissions to set library path");
         } catch (NoSuchFieldException e) {

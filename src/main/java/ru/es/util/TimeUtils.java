@@ -26,6 +26,7 @@ public class TimeUtils
             String[] splitTimeOfDay = timeOfDay.split(":");
             calendar = Calendar.getInstance();
 
+            calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(splitTimeOfDay[0]));
             calendar.set(Calendar.MINUTE, Integer.parseInt(splitTimeOfDay[1]));
 
@@ -74,7 +75,6 @@ public class TimeUtils
             if (!s.trim().isEmpty())
                 times.add(s);
         }
-        Log.warning("times size: "+times.size());
 
         if (times.size() == 0)
             throw new Exception("getSmallestMillsFromPeriods: Wrong input string for time. String: "+fromString);
@@ -98,6 +98,21 @@ public class TimeUtils
             return ""+days+" days, "+hours+" hours, "+minutes+" minutes, "+seconds+" seconds.";
         else
             return ""+days+" дней, "+hours+" часов, "+minutes+" минут, "+seconds+" секунд.";
+    }
+
+    public static String daysConverterRu(int days)
+    {
+        days %= 100;
+        if (days == 1 || days > 20 && days % 10 == 1)
+            return "день";
+        if (days == 2 || days > 20 && days % 10 == 2)
+            return "дня";
+        if (days == 3 || days > 20 && days % 10 == 3)
+            return "дня";
+        if (days == 4 || days > 20 && days % 10 == 4)
+            return "дня";
+
+        return "дней";
     }
 
     public static String getSecsMillis(double seconds, int maxNumsAfterDotForMs)
@@ -166,13 +181,11 @@ public class TimeUtils
         }
     }
 
+    public static SimpleDateFormat currentTimeFormat = new SimpleDateFormat("HH:mm:ss");
+
     public static String getCurrentTimeString()
     {
-        Date d = new Date();
-        SimpleDateFormat format1;
-        format1 = new SimpleDateFormat("HH:mm:ss");
-
-        return format1.format(d);
+        return currentTimeFormat.format(new Date());
     }
 
     public static String getCurrentYear()
@@ -360,5 +373,45 @@ public class TimeUtils
         int dow = newCal.get(Calendar.MINUTE);
 
         return dow;
+    }
+
+    // example:
+    // timeOpen[][][] = {{{14,00}, {15,30}}, {{17,55}, {19,30}}, {{22,50}, {0,20}}};
+    public static boolean getBoolean(int[][][] openCloseTime, int hour, int minute)
+    {
+        //int hour = TimeUtils.getHourOfDay();
+        //int minute = TimeUtils.getMinutesOfHour();
+
+        for (int[][] period : openCloseTime)
+        {
+            int[] openTime = period[0];
+            int[] closeTime = period[1];
+
+            int openH = openTime[0];
+            int openM = openTime[1];
+            int closeH = closeTime[0];
+            int closeM = closeTime[1];
+
+            if (openH > closeH) // example: start on 23:00, end on 1:00
+            {
+                if (hour >= openH)
+                {
+                    closeH = 24;
+                    closeM = 60;
+                }
+                else if (hour <= closeH)
+                {
+                    openH = 0;
+                    openM = 0;
+                }
+            }
+
+            if ((hour > openH || hour == openH && minute >= openM) &&
+                    (hour < closeH || (hour == closeH && minute < closeM)))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

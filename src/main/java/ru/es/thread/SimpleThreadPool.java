@@ -13,13 +13,26 @@ public class SimpleThreadPool
     public SimpleThreadPool()
     {
         int cores = Runtime.getRuntime().availableProcessors();
-        cores = ESMath.max(2, cores-1);
+        cores = ESMath.max(4, cores-1);
         schedudledExecutor = new ScheduledThreadPoolExecutor(cores, new PriorityThreadFactory("schedudledExecutor", Thread.NORM_PRIORITY, false));
         executor = new ThreadPoolExecutor(cores, cores, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new PriorityThreadFactory("executor", Thread.NORM_PRIORITY, false));
         Log.warning("SimpleThreadPool: cores: "+cores);
     }
 
+    public SimpleThreadPool(String poolName, int threads)
+    {
+        threads = ESMath.max(1, threads);
+        schedudledExecutor = new ScheduledThreadPoolExecutor(threads, new PriorityThreadFactory("schedudled"+poolName, Thread.NORM_PRIORITY, false));
+        executor = new ThreadPoolExecutor(threads, threads, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new PriorityThreadFactory(poolName, Thread.NORM_PRIORITY, false));
+        Log.warning(poolName+": cores: "+threads);
+    }
+
     public void executeTask(RunnableImpl r)
+    {
+        executor.execute(r);
+    }
+
+    public void execute(Runnable r)
     {
         executor.execute(r);
     }

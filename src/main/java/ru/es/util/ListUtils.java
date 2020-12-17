@@ -3,8 +3,6 @@ package ru.es.util;
 import ru.es.log.Log;
 import ru.es.math.ESMath;
 import ru.es.math.Rnd;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javolution.util.FastTable;
 import javolution.util.FastSet;
 
@@ -164,6 +162,21 @@ public class ListUtils
     {
         int index = 0;
         for (T s : list)
+        {
+            if (index < array.length) // иначе может быть ошибка при быстрой модификации списка
+            {
+                array[index] = s;
+                index++;
+            }
+        }
+        return array;
+    }
+
+    public static int[] listToArrayInt(Collection<Integer> list)
+    {
+        int[] array = new int[list.size()];
+        int index = 0;
+        for (int s : list)
         {
             if (index < array.length) // иначе может быть ошибка при быстрой модификации списка
             {
@@ -475,6 +488,8 @@ public class ListUtils
         return list;
     }
 
+
+
     public static<T> List<T> create(T... items)
     {
         List<T> list = new ArrayList<>();
@@ -500,16 +515,6 @@ public class ListUtils
     {
         List<T> list = new FastTable<>();
         list.addAll(items);
-        return list;
-    }
-
-    public static<T> ObservableList<T> createObservableList(T... items)
-    {
-        ObservableList<T> list = FXCollections.observableList(new FastTable<T>());
-        for (T t : items)
-        {
-            list.add(t);
-        }
         return list;
     }
 
@@ -778,6 +783,29 @@ public class ListUtils
             to.add(t);
     }
 
+    public static<T> ListChanges<T> getChanges(Collection<T> presentList, Collection<T> oldList)
+    {
+        ListChanges<T> ret = new ListChanges<>();
+
+        for (T dp : presentList)
+        {
+            if (!oldList.contains(dp))
+                ret.added.add(dp);
+        }
+        for (T dp : oldList)
+        {
+            if (!presentList.contains(dp))
+                ret.removed.add(dp);
+        }
+
+        return ret;
+    }
+
+    public static class ListChanges<T>
+    {
+        public final List<T> added = new ArrayList<>();
+        public final List<T> removed = new ArrayList<>();
+    }
 }
 
 

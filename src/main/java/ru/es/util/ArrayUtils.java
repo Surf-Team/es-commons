@@ -50,6 +50,16 @@ public class ArrayUtils
         }
         return t;
     }
+    
+    public static List<Integer> toIntList(int[] array)
+    {
+        List<Integer> t = new FastTable<>();
+        for (int ta : array)
+        {
+            t.add(ta);
+        }
+        return t;
+    }
 
     public static int indexOf(byte[] sequence, byte[] fullText)
     {
@@ -158,4 +168,27 @@ public class ArrayUtils
         return checksum.getValue();
     }
 
+    public static String intToString(int[] notes, String delim)
+    {
+        StringBuilder ret = new StringBuilder();
+        for (int val : notes)
+        {
+            ret.append(val);
+            ret.append(delim);
+        }
+        return ret.toString();
+    }
+
+    public static int[] stringToIntArray(String input, String delim)
+    {
+        String[] spl = input.split(delim);
+        int[] ret = new int[spl.length];
+        int i = 0;
+        for (String s : spl)
+        {
+            ret[i] = Integer.parseInt(s);
+            i++;
+        }
+        return ret;
+    }
 }

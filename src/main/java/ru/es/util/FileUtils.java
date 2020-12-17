@@ -4,6 +4,7 @@ package ru.es.util;
 import javolution.util.FastTable;
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -246,20 +247,12 @@ public class FileUtils
         return null;
     }
 
-    public static Element getXmlDocument(File file)
+    public static Element getXmlDocument(File file) throws IOException, JDOMException
     {
-        try
-        {
-            SAXBuilder parser = new SAXBuilder();
-            FileReader fr = new FileReader(file);
-            Document ret = parser.build(fr);
-            return ret.getRootElement();
-        }
-        catch (Exception e)
-        {
-            Log.warning("Error getXmlDocument: "+file);
-        }
-        return null;
+        SAXBuilder parser = new SAXBuilder();
+        FileReader fr = new FileReader(file);
+        Document ret = parser.build(fr);
+        return ret.getRootElement();
     }
 
     public static void renameFIle(File file, File newName)

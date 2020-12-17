@@ -16,16 +16,18 @@ public class CountTimeLimiter
         this.countLimit = countLimit;
     }
 
+    private static final Function<String, List<Long>> createMap = new Function<String, List<Long>>() {
+        @Override
+        public List<Long> apply(String s)
+        {
+            return new LinkedList<>();
+        }
+    };
+
     // repeated
     public synchronized boolean allow(String ip)
     {
-        List<Long> lastWrongLogins = map.computeIfAbsent(ip, new Function<String, List<Long>>() {
-            @Override
-            public List<Long> apply(String s)
-            {
-                return new LinkedList<>();
-            }
-        });
+        List<Long> lastWrongLogins = map.computeIfAbsent(ip, createMap);
 
         long curTime = System.currentTimeMillis();
 
@@ -40,6 +42,24 @@ public class CountTimeLimiter
         }
 
         return count <= countLimit;
+    }
+
+    // лояльный вариант, который не добавляет новые элементы, когда лимит привышен
+    public synchronized boolean allowAndAdd(String ip)
+    {
+        if (allow(ip))
+        {
+            add(ip);
+            return true;
+        }
+        return false;
+    }
+
+    // более строгий вариант, учитывающий попытки даже тогда, когда лимит превышен
+    public synchronized boolean addAndAllow(String ip)
+    {
+        add(ip);
+        return allow(ip);
     }
 
     public synchronized boolean allowUnique(String ip)
@@ -64,13 +84,7 @@ public class CountTimeLimiter
 
     public synchronized void add(String ip)
     {
-        List<Long> lastWrongLogins = map.computeIfAbsent(ip, new Function<String, List<Long>>() {
-            @Override
-            public List<Long> apply(String s)
-            {
-                return new LinkedList<>();
-            }
-        });
+        List<Long> lastWrongLogins = map.computeIfAbsent(ip, createMap);
 
         lastWrongLogins.add(System.currentTimeMillis());
     }

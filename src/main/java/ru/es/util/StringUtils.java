@@ -4,6 +4,7 @@ import ru.es.lang.Nameable;
 import javolution.util.FastTable;
 import javolution.util.FastSet;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -59,6 +60,28 @@ public class StringUtils
     {
         StringBuilder ret = new StringBuilder();
         for (byte bt : b)
+        {
+            ret.append(bt);
+            ret.append(delim);
+        }
+        return ret.toString();
+    }
+
+    public static String byteToString(byte[] b, String delim, int start, int lim)
+    {
+        StringBuilder ret = new StringBuilder();
+        for (int i = start; i < lim; i++)
+        {
+            ret.append(b[i]);
+            ret.append(delim);
+        }
+        return ret.toString();
+    }
+
+    public static String collectionToString(Collection b, String delim)
+    {
+        StringBuilder ret = new StringBuilder();
+        for (Object bt : b)
         {
             ret.append(bt + delim);
         }
@@ -133,31 +156,19 @@ public class StringUtils
 
     public static String numberWithZeros(int number, int size) // 0001 - 4 size
     {
-        String ret = "";
-        String numberString = ""+number;
+        StringBuilder ret = new StringBuilder();
+        ret.append(number);
 
-        for (int i = 0; i < 32; i++)
-        {
-            String currentNumber = "0";
-            if (numberString.length() > i)
-            {
-                currentNumber = numberString.substring(i, i+1);
-            }
+        while (ret.length() < size)
+            ret.insert(0, "0");
 
-            ret = currentNumber + ret;
-            i++;
-        }
-
-        return ret.substring(ret.length()-size);
+        return ret.toString();
     }
-                                       // 1.0
-    public static String doubleToPercent(double d)
+
+    public static String doubleToPercent(double d, int zeros)
     {
-        int percentMod = ((int) (d * 100)) - 100;
-        String perc = percentMod+"%";
-        if (percentMod > 0)
-            perc = "+"+perc;
-        return perc;
+        String num = getNumberWithFixedSizeAfterDot(d*100.0, zeros) + "%";
+        return num;
     }
 
     // возвращаем строку из числа double с фиксированным количеством знаков после запятой
@@ -272,5 +283,32 @@ public class StringUtils
         return prefix;
     }
 
+    public static String getNewNameWords(List<? extends Nameable> existedNameables)
+    {
+        int id = 0;
+        while (true)
+        {
+            String name = Words.getWord(id % Words.words.length);
+            if (existedNameables.isEmpty())
+                return name;
 
+            if (id > Words.words.length)
+                name = Words.getWord((id / Words.words.length) % Words.words.length) + name;
+
+            boolean contains = false;
+            for (Nameable n : existedNameables)
+                if (n.getName().equals(name))
+                {
+                    contains = true;
+                    break;
+                }
+
+            if (!contains)
+            {
+                return name;
+            }
+
+            id++;
+        }
+    }
 }

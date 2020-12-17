@@ -1,7 +1,7 @@
 package ru.es.net;
 
 import ru.es.log.Log;
-import ru.es.thread.ESThreadPoolManager;
+import ru.es.thread.SimpleThreadPool;
 import ru.es.thread.UnloadableThreadPoolManager;
 import ru.es.thread.RunnableImpl;
 
@@ -26,6 +26,7 @@ public abstract class TCPServer
     int port;
     ClientsCatchingThread catchThread;
     ServerSocket serverSocket;
+    SimpleThreadPool threadPool = new SimpleThreadPool("SimpleThreadPool", 2);
 
     public TCPServer(String serverAddr, int serverPort)
     {
@@ -112,7 +113,7 @@ public abstract class TCPServer
 
     public void broadcastMessage(String message)
     {
-        ESThreadPoolManager.getInstance().executeTask(new RunnableImpl() {
+        threadPool.executeTask(new RunnableImpl() {
             @Override
             public void runImpl() throws Exception
             {

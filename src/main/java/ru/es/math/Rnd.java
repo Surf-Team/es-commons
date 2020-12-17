@@ -1,5 +1,6 @@
 package ru.es.math;
 
+
 import java.util.*;
 
 /**
@@ -91,7 +92,7 @@ public class Rnd
         return ret;
     }
 
-    public static <T> List<T> getRndFromList(List<T> list, int count)
+    public static <T> List<T> getRndFromList(Collection<T> list, int count)
     {
         List<T> ret = new LinkedList<>();
         if (list.size() < count)
@@ -120,12 +121,12 @@ public class Rnd
 
     private static MTRandom _rnd = new MTRandom();
 
-    public static final float get() // get random number from 0 to 1
+    public static float get() // get random number from 0 to 1
     {
         return _rnd.nextFloat();
     }
 
-    public static final float get(float min, float max) // get random number from 0 to 1
+    public static float get(float min, float max) // get random number from 0 to 1
     {
         return ESMath.constrain(min, min + _rnd.nextFloat() * (max-min), max);
     }
@@ -136,42 +137,42 @@ public class Rnd
      * @param n The superior limit (exclusive)
      * @return A number from 0 to n-1
      */
-    public static final int get(int n)
+    public static int get(int n)
     {
         return (int) Math.floor(_rnd.nextDouble() * n);
     }
 
-    public static final int get(int min, int max) // get random number from min to max (not max-1 !)
+    public static int get(int min, int max) // get random number from min to max (not max-1 !)
     {
         return min + (int) Math.floor(_rnd.nextDouble() * (max - min + 1));
     }
 
-    public static final int nextInt(int n)
+    public static int nextInt(int n)
     {
         return (int) Math.floor(_rnd.nextDouble() * n);
     }
 
-    public static final int nextInt()
+    public static int nextInt()
     {
         return _rnd.nextInt();
     }
 
-    public static final double nextDouble()
+    public static double nextDouble()
     {
         return _rnd.nextDouble();
     }
 
-    public static final double nextGaussian()
+    public static double nextGaussian()
     {
         return _rnd.nextGaussian();
     }
 
-    public static final boolean nextBoolean()
+    public static boolean nextBoolean()
     {
         return _rnd.nextBoolean();
     }
 
-    public static final void nextBytes(byte[] array)
+    public static void nextBytes(byte[] array)
     {
         _rnd.nextBytes(array);
     }
@@ -184,6 +185,21 @@ public class Rnd
     public static<T> T from(T... variants)
     {
         return getRndFromArray(variants);
+    }
+
+    public static<T> void arrayMix(T[] priority)
+    {
+        List<T> tmpList = new ArrayList<>();
+        for (T t : priority)
+            tmpList.add(t);
+
+        int i = 0;
+        while (!tmpList.isEmpty())
+        {
+            priority[i] = getRndFromList(tmpList);
+            tmpList.remove(priority[i]);
+            i++;
+        }
     }
 
 

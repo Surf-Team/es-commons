@@ -62,6 +62,8 @@ public class HttpRequest
 
         URL obj = new URL(url);
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+        con.setConnectTimeout(2000);
+        con.setReadTimeout(2000);
 
         // optional default is GET
         con.setRequestMethod("GET");

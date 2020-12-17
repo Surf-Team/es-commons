@@ -1,5 +1,7 @@
 package ru.es.log;
 
+import ru.es.util.TimeUtils;
+
 import java.io.*;
 
 /**
@@ -67,9 +69,14 @@ public class Log
         }
     }
 
+    public static void setLogger(ESLogger _logger)
+    {
+        logger = _logger;
+    }
+
     public static void warning(String text)
     {
-        logger.warning(text);
+        logger.warning(TimeUtils.getTimeForLog()+text);
     }
 
     // логирование тяжёлых GUI перерисовок (например, которые не должны срабатывать чаще чем 2 раза в 1 секунду)
