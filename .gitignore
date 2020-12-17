@@ -6,8 +6,8 @@
 
 
 # IDE
-./idea
-/idea
+./.idea
+/.idea
 *.iml
 
 # BlueJ files
