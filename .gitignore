@@ -10,6 +10,13 @@
 /.idea
 *.iml
 
+# gradle
+/.gradle
+./.gradle
+./build
+/build
+
+
 # BlueJ files
 *.ctxt
 

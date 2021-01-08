@@ -1,14 +1,15 @@
 package ru.es.thread;
 
 import ru.es.lang.ESSetter;
-import javolution.util.FastTable;
+import ru.es.util.ListUtils;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClockEventHandler
 {
     private int cycle = 0;
-    private List<ESSetter<Integer>> clock40Tasks = new FastTable<>();
+    private List<ESSetter<Integer>> clock40Tasks = ListUtils.concurrentList();
 
     public void event()
     {

@@ -1,13 +1,8 @@
 package ru.es.util;
 
 import ru.es.lang.Nameable;
-import javolution.util.FastTable;
-import javolution.util.FastSet;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Created by saniller on 07.05.2015.
@@ -239,7 +234,7 @@ public class StringUtils
 
     public static String getNewName(List<? extends Nameable> existedNameables, String prefix)
     {
-        List<String> existedPostfix = new FastTable<>();
+        List<String> existedPostfix = new ArrayList<>();
         for (Nameable n : existedNameables)
         {
             if (prefix == null || prefix.isEmpty() || n.getName().startsWith(prefix))
@@ -259,7 +254,7 @@ public class StringUtils
                 }
             }
         }
-        Set<Integer> foundedInts = new FastSet<>();
+        Set<Integer> foundedInts = new HashSet<>();
         for (String s : existedPostfix)
         {
             try

@@ -2,6 +2,7 @@ package ru.es.lang.patterns;
 
 import ru.es.util.ListUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +26,7 @@ public abstract class ViewListUpdater<Key, Value>
                 activeViews.put(key, add(key));
             }
         }
-        for (Key addr : ListUtils.createList(activeViews.keySet()))
+        for (Key addr : new ArrayList<>(activeViews.keySet()))
         {
             if (!collection.contains(addr))
             {

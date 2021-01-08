@@ -1,6 +1,5 @@
 package ru.es.util;
 
-import javolution.util.FastTable;
 import ru.es.log.Log;
 
 import java.text.SimpleDateFormat;
@@ -68,7 +67,7 @@ public class TimeUtils
     public static long getSmallestMillsFromPeriods(String fromString) throws Exception
     {
         StringTokenizer t = new StringTokenizer(fromString, ",");
-        List<String> times = new FastTable<String>();
+        List<String> times = new ArrayList<>();
         while (t.hasMoreTokens())
         {
             String s = t.nextToken();

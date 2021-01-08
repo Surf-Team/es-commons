@@ -588,4 +588,13 @@ public class ESMath
             return  initValue;
         return initValue - initValue % quantize;
     }
+
+
+    // used for layout to adjust widths to honor the min/max policies consistently
+    public static double boundedSize(double value, double min, double max) {
+        // if max < value, return max
+        // if min > value, return min
+        // if min > max, return min
+        return Math.min(Math.max(value, min), Math.max(min,max));
+    }
 }

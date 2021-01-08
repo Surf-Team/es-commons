@@ -1,16 +1,16 @@
 package ru.es.net;
 
+import ru.es.lang.ESEventHandler;
 import ru.es.log.Log;
 import ru.es.thread.SimpleThreadPool;
-import ru.es.thread.UnloadableThreadPoolManager;
 import ru.es.thread.RunnableImpl;
+import ru.es.util.ByteUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -24,22 +24,104 @@ public abstract class TCPServer
 {
     String serverAddr;
     int port;
-    ClientsCatchingThread catchThread;
     ServerSocket serverSocket;
-    SimpleThreadPool threadPool = new SimpleThreadPool("SimpleThreadPool", 2);
+
+    public SimpleThreadPool executorThreadPool;
+    ConcurrentLinkedQueue<User> users = new ConcurrentLinkedQueue<User>();
+    ArrayList<User> usersCopy = new ArrayList<>();
+
+    // private
+    private int maxId = 0;
+    private long lastService = System.currentTimeMillis();
+    private boolean running = false;
+    private byte[] lineFeed;
+
+    // settings
+    public long USER_MAX_INACTIVE = 5*60*1000;
+    public int USER_READ_BUFFER_SIZE = 32*1024;
+    public int USER_WRITE_BUFFER_SIZE = 64*1024;
+    public int EXECUTOR_THREAD_COUNT = 2;
+    public int BACKLOG = 100;
+    public String SERVER_LOG_NAME = "TcpServer";
+    public boolean USER_CLOSE_ON_FAIL = true;
+    public int SERVICE_DELAY = 60*1000;
+    public int PROCESS_USERS_DELAY = 100;
+    public boolean DEBUG = false;
+
+    public ESEventHandler<User> userClosed = new ESEventHandler<>();
 
     public TCPServer(String serverAddr, int serverPort)
     {
         this.serverAddr = serverAddr;
         this.port = serverPort;
+    }
 
-        catchThread = new ClientsCatchingThread();
-        UnloadableThreadPoolManager.getInstance().executeTask(catchThread);
+    public void start()
+    {
+        running = true;
+        executorThreadPool = new SimpleThreadPool(SERVER_LOG_NAME+"_UsersThreadPool", EXECUTOR_THREAD_COUNT);
+
+        lineFeed = "\n".getBytes(Charset.defaultCharset());
+
+        try
+        {
+            serverSocket = new ServerSocket(port,BACKLOG);
+        }
+        catch (IOException e)
+        {
+            Log.warning(SERVER_LOG_NAME+": Couldn't listen to port "+port+": "+e.getMessage());
+            close();
+            return;
+        }
+
+        Thread serverSocketThread = new Thread(()->
+        {
+            Log.warning(SERVER_LOG_NAME+": Waiting for a client on port: "+port);
+
+            while (running)
+            {
+                try
+                {
+                    Socket newClient = serverSocket.accept();
+                    if (allowAddUser(newClient))
+                    {
+                        User u = new User(newClient, maxId);
+                        Log.warning(SERVER_LOG_NAME+": Client connected: "+u.id+", "+ newClient.getInetAddress().getHostAddress() + ", users size: " + (users.size()+1));
+                        users.add(u);
+                        maxId++;
+                    }
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+        serverSocketThread.setName(SERVER_LOG_NAME+"_AcceptSocket");
+        serverSocketThread.start();
+
+        Thread usersReadThread = new Thread(()->
+        {
+            while (running)
+            {
+                processUsers();
+                try
+                {
+                    Thread.sleep(PROCESS_USERS_DELAY);
+                }
+                catch (InterruptedException e)
+                {
+                    break;
+                }
+            }
+        });
+        usersReadThread.setName(SERVER_LOG_NAME+"_ReadPackets");
+        usersReadThread.start();
     }
 
     public void close()
     {
-        catchThread.runing = false;
+        running = false;
 
         try
         {
@@ -48,63 +130,40 @@ public abstract class TCPServer
         }
         catch (Exception e)
         {
-            Log.warning("TCPConnection: Cant close");
+            Log.warning(SERVER_LOG_NAME+": Cant close");
         }
-        Log.warning("TCPConnection: Closed");
+        users.clear();
+        Log.warning(SERVER_LOG_NAME+": Closed");
     }
 
-    private class ClientsCatchingThread extends RunnableImpl
+    private void processUsers()
     {
-        private boolean runing = true;
-
-        @Override
-        public void runImpl()
+        usersCopy.clear();
+        usersCopy.addAll(users);
+        for (User u : usersCopy)
         {
-            try
-            {
-                serverSocket = new ServerSocket(port);
-            }
-            catch (IOException e)
-            {
-                Log.warning("TCPConnection: Couldn't listen to port "+port);
-                close();
-                return;
-            }
+            u.receivePackets();
+        }
 
-            try
+        if (lastService + SERVICE_DELAY < System.currentTimeMillis())
+        {
+            usersCopy.clear();
+            usersCopy.addAll(users);
+            for (User u : usersCopy)
             {
-                Log.warning("TCPConnection: Waiting for a client on port: "+port);
-
-                while (runing)
+                if (u.lastActive + USER_MAX_INACTIVE < System.currentTimeMillis())
                 {
-                    Socket fromClientSocket = serverSocket.accept(); // block...
-
-                    addUser(fromClientSocket);
-
-                    Log.warning("TCPConnection: Client connected");
+                    u.close(CloseReason.Inactivity);
                 }
             }
-            catch (IOException e)
-            {
-                Log.warning("TCPConnection: Can't accept");
-                close();
-                return;
-            }
+            lastService = System.currentTimeMillis();
         }
     }
 
-    public boolean allowAddUser(Socket socket)
+    protected boolean allowAddUser(Socket socket)
     {
         return true;
     }
-
-    private void addUser(Socket socket)
-    {
-        if (allowAddUser(socket))
-            users.add(new User(socket));
-    }
-
-    ConcurrentLinkedQueue<User> users = new ConcurrentLinkedQueue<User>();
 
     public ConcurrentLinkedQueue<User> getUsers()
     {
@@ -113,7 +172,7 @@ public abstract class TCPServer
 
     public void broadcastMessage(String message)
     {
-        threadPool.executeTask(new RunnableImpl() {
+        executorThreadPool.executeTask(new RunnableImpl() {
             @Override
             public void runImpl() throws Exception
             {
@@ -128,7 +187,7 @@ public abstract class TCPServer
                     }
                     catch (Exception e)
                     {
-                        Log.warning("TCPServer: Error when broadcast message");
+                        Log.warning(SERVER_LOG_NAME+": Error when broadcast message");
                         e.printStackTrace();
                     }
                 }
@@ -136,52 +195,39 @@ public abstract class TCPServer
         });
     }
 
-    public static boolean closeOnFail = false;
 
     public class User
     {
+        public int id;
         Socket socket;
-        BufferedReader in;
+        //BufferedReader in;
         PrintWriter out;
+        byte[] readBuffer = new byte[USER_READ_BUFFER_SIZE];
+        int pos = 0;
+        public long lastActive = System.currentTimeMillis();
+        public final String ip;
 
-        User(Socket socket)
+        User(Socket socket, int id)
         {
+            this.id = id;
             this.socket = socket;
+            this.ip = socket.getInetAddress().getHostAddress();
 
             try
             {
-                out = new PrintWriter(socket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                out = new PrintWriter(new BufferedWriter(
+                        new OutputStreamWriter(socket.getOutputStream(), Charset.defaultCharset()),
+                        USER_WRITE_BUFFER_SIZE),
+                        true);
+
+                /*in = new BufferedReader(new InputStreamReader(socket.getInputStream(), Charset.defaultCharset()),
+                        USER_READ_BUFFER_SIZE);*/
             }
             catch (IOException e)
             {
-                Log.warning("TCPConnection: fail when accept User. It may be crash the server loop");
+                Log.warning(SERVER_LOG_NAME+": fail when accept User "+id);
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
-
-            RunnableImpl loop = new RunnableImpl()
-            {
-                @Override
-                public void runImpl()
-                {
-                    String input;
-                    try
-                    {
-                        while ((input = in.readLine()) != null)
-                        {
-                            packetReceived(User.this, input);
-                        }
-                    }
-                    catch (IOException e)
-                    {
-                        Log.warning("TCPConnection: User loop failed");
-                        e.printStackTrace();
-                        if (closeOnFail)
-                            close();
-                    }
-                }
-            };
-            UnloadableThreadPoolManager.getInstance().executeTask(loop);
         }
 
         public void sendPacket(String packet)
@@ -190,10 +236,12 @@ public abstract class TCPServer
                 out.println(packet);
         }
 
-        public void close()
+        public void close(CloseReason closeReason)
         {
-            Log.warning("TCPConnection: Closing the user");
-            if (socket != null)
+            Log.warning(SERVER_LOG_NAME+": Closing the user "+id+" due "+closeReason);
+            users.remove(this);
+            userClosed.event(this);
+            if (socket != null && !socket.isClosed())
             {
                 try
                 {
@@ -201,7 +249,7 @@ public abstract class TCPServer
                 }
                 catch (IOException e)
                 {
-                    Log.warning("TCPConnection: fail when closing User");
+                    Log.warning(SERVER_LOG_NAME+": fail when closing User "+id);
                     e.printStackTrace();
                 }
             }
@@ -211,6 +259,71 @@ public abstract class TCPServer
         {
             return socket;
         }
+
+        public void receivePackets()
+        {
+            try
+            {
+                if (socket.getInputStream().available() > 0)
+                {
+                    lastActive = System.currentTimeMillis();
+                    int read = socket.getInputStream().available();
+
+                    socket.getInputStream().read(readBuffer, pos, read);
+                    pos += read;
+
+                    boolean containsNewLine = ByteUtils.contains(readBuffer, lineFeed, true, pos);
+
+                    if (containsNewLine)
+                    {
+                        String s = new String(readBuffer, 0, pos-lineFeed.length);
+                        pos = 0;
+                        if (DEBUG)
+                            Log.warning(SERVER_LOG_NAME+": Packet received: "+s);
+                        executorThreadPool.execute(() ->
+                        {
+                            try
+                            {
+                                packetReceived(User.this, s);
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                    else
+                        Log.warning(SERVER_LOG_NAME+": Waiting for full packet. User "+id);
+                }
+
+                /*String input = in.readLine();
+                if (input != null)
+                {
+                    lastActive = System.currentTimeMillis();
+                    executorThreadPool.execute(()->packetReceived(User.this, input));
+                } */
+            }
+            catch (IOException e)
+            {
+                Log.warning(SERVER_LOG_NAME+": User loop failed: " + id);
+                e.printStackTrace();
+                if (USER_CLOSE_ON_FAIL)
+                    close(CloseReason.ServerCloseError);
+            }
+
+            if (socket.isClosed())
+                close(CloseReason.SocketClosedByExternal);
+        }
+    }
+
+    public enum CloseReason
+    {
+        Inactivity,
+        ServerCloseError,
+        SocketClosedByExternal,
+        ManualClose,
+        PerformanceSecurity;
+
     }
 
     public abstract void packetReceived(User user, String packet);

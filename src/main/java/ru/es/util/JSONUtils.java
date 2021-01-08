@@ -1,5 +1,6 @@
 package ru.es.util;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -15,11 +16,9 @@ public class JSONUtils
     {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(f));
 
-        JsonParser jsonParser = new JsonParser();
-        JsonElement element = jsonParser.parse(bufferedReader);
+        JsonElement element = JsonParser.parseReader(bufferedReader);
 
-        JsonObject object = element.getAsJsonObject();
-        return object;
+        return element.getAsJsonObject();
     }
 
 }

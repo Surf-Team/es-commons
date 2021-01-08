@@ -79,4 +79,24 @@ public class SimpleThreadPool
         }
     }
 
+    public ScheduledFuture<?> runTimer(Runnable r, long millis, boolean repeat)
+    {
+        try
+        {
+            if(millis < 0)
+                millis = 0;
+
+            if (repeat)
+                return schedudledExecutor.scheduleAtFixedRate(r, millis,
+                    millis, TimeUnit.MILLISECONDS);
+            else
+                return schedudledExecutor.schedule(r, millis, TimeUnit.MILLISECONDS);
+        }
+        catch(RejectedExecutionException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 }

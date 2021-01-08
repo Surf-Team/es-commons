@@ -1,12 +1,13 @@
 package ru.es.util;
 
+import javolution.util.FastSet;
+import javolution.util.FastTable;
 import ru.es.log.Log;
 import ru.es.math.ESMath;
 import ru.es.math.Rnd;
-import javolution.util.FastTable;
-import javolution.util.FastSet;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,7 +20,7 @@ public class ListUtils
 {
     public static List<Integer> getListOfInt(String fromString)
     {
-        List<Integer> ret = new FastTable<Integer>();
+        List<Integer> ret = new ArrayList<>();
 
         StringTokenizer t = new StringTokenizer(fromString, ",");
         try
@@ -38,7 +39,7 @@ public class ListUtils
 
     public static List<Float> getListOfFloat(String fromString)
     {
-        List<Float> ret = new FastTable<Float>();
+        List<Float> ret = new ArrayList<Float>();
 
         StringTokenizer t = new StringTokenizer(fromString, ",");
         try
@@ -57,7 +58,7 @@ public class ListUtils
 
     public static List<Double> getListOfDouble(String fromString)
     {
-        List<Double> ret = new FastTable<Double>();
+        List<Double> ret = new ArrayList<>();
 
         StringTokenizer t = new StringTokenizer(fromString, ",");
         try
@@ -130,7 +131,7 @@ public class ListUtils
 
     public static List<String> stringArrayToList(String[] array)
     {
-        List<String> ret = new FastTable<String>();
+        List<String> ret = new ArrayList<>();
         for (String s : array)
         {
             ret.add(s);
@@ -140,7 +141,7 @@ public class ListUtils
 
     public static<T> List<T> arrayToList(T... array)
     {
-        List<T> ret = new FastTable<>();
+        List<T> ret = new ArrayList<>();
         for (T s : array)
         {
             ret.add(s);
@@ -196,7 +197,7 @@ public class ListUtils
 
     public static List<String> getListOfString(String line, String separator)
     {
-        List<String> ret = new FastTable<>();
+        List<String> ret = new ArrayList<>();
         StringTokenizer t = new StringTokenizer(line, separator);
         while (t.hasMoreTokens())
         {
@@ -209,7 +210,7 @@ public class ListUtils
 
     public static List<Boolean> getListOfBoolean(String fullString, String separator)
     {
-        List<Boolean> ret = new FastTable<>();
+        List<Boolean> ret = new ArrayList<>();
         StringTokenizer t = new StringTokenizer(fullString, separator);
         while (t.hasMoreTokens())
         {
@@ -222,7 +223,7 @@ public class ListUtils
 
     public static List<Long> getListOfLong(String fullString, String separator)
     {
-        List<Long> ret = new FastTable<>();
+        List<Long> ret = new ArrayList<>();
         StringTokenizer t = new StringTokenizer(fullString, separator);
         while (t.hasMoreTokens())
         {
@@ -235,7 +236,7 @@ public class ListUtils
 
     public static<T> List<T> getList(String fullString, String separator, Class Tclass)
     {
-        List<T> ret = new FastTable<>();
+        List<T> ret = new ArrayList<>();
         StringTokenizer t = new StringTokenizer(fullString, separator);
         while (t.hasMoreTokens())
         {
@@ -248,82 +249,9 @@ public class ListUtils
         }
         return ret;
     }
+    
 
-    public static<T> String LLtoString(List<List<T>> doubledList)
-    {
-        List<String> firstList = new FastTable<>();
-        for (List<?> l : doubledList)
-        {
-            String str = ListUtils.getStringFromList(l, ",");
-            firstList.add(str);
-        }
-        return ListUtils.getStringFromList(firstList, ";");
-    }
-
-    public static<T> String LStoString(List<Set<T>> doubledList)
-    {
-        List<String> firstList = new FastTable<>();
-        for (Set<?> l : doubledList)
-        {
-            String str = ListUtils.getStringFromList(l, ",");
-            firstList.add(str);
-        }
-        return ListUtils.getStringFromList(firstList, ";");
-    }
-
-    public static List<List<Long>> parseListOfListOfLong(String fromString)
-    {
-        //Log.warning("Count ; in "+fromString+" is: "+StringUtils.countSymbols(fromString, ";"));
-        String[] first = fromString.split(";");
-        List<List<Long>> ret = new FastTable<>();
-        for (int i = 0; i < StringUtils.countSymbols(fromString, ";") + 1; i++)
-        {
-            ret.add(new FastTable<Long>());
-        }
-
-        int index = 0;
-        for (String f : first)
-        {
-            f = f.trim();
-            ret.get(index).addAll(getListOfLong(f, ","));
-            index++;
-        }
-        return ret;
-    }
-
-    public static<T> String storeCollectionOfSet(Collection<Set<T>> doubledList)
-    {
-        List<String> firstList = new FastTable<>();
-        for (Set<?> l : doubledList)
-        {
-            String str = ListUtils.getStringFromList(l, ",");
-            firstList.add(str);
-        }
-        return ListUtils.getStringFromList(firstList, ";");
-    }
-
-
-    public static<T> List<Set<T>> parseListOfSet(String fromString, Class Tclass)
-    {
-        String[] first = fromString.split(";");
-        List<Set<T>> ret = new FastTable<>();
-        for (int i = 0; i < StringUtils.countSymbols(fromString, ";") + 1; i++)
-        {
-            ret.add(new FastSet<T>());
-        }
-
-        int index = 0;
-        for (String f : first)
-        {
-            f = f.trim();
-            ret.get(index).addAll(getList(f, ",", Tclass));
-            index++;
-        }
-        return ret;
-    }
-
-
-    public static Object createInstance(String v, Class neadedClass)
+    private static Object createInstance(String v, Class neadedClass)
     {
         if (neadedClass == Boolean.class)
             return Boolean.parseBoolean(v);
@@ -373,7 +301,7 @@ public class ListUtils
 
     public static<T> void removeEquals(Collection<T> list, T containsThis)
     {
-        List<T> toRemove = new FastTable<>();
+        List<T> toRemove = new ArrayList<>();
         for (T t : list)
         {
             if (t.equals(containsThis))
@@ -478,32 +406,10 @@ public class ListUtils
             list.addAll(toAdd);
     }
 
-    public static<T> List<T> createList(T... items)
-    {
-        List<T> list = new FastTable<>();
-        for (T t : items)
-        {
-            list.add(t);
-        }
-        return list;
-    }
-
-
-
-    public static<T> List<T> create(T... items)
-    {
-        List<T> list = new ArrayList<>();
-        for (T t : items)
-        {
-            list.add(t);
-        }
-        return list;
-    }
-
 
     public static List<Integer> createListI(int... items)
     {
-        List<Integer> list = new FastTable<>();
+        List<Integer> list = new ArrayList<>();
         for (Integer t : items)
         {
             list.add(t);
@@ -513,14 +419,12 @@ public class ListUtils
 
     public static<T> List<T> createList(Collection<T> items)
     {
-        List<T> list = new FastTable<>();
-        list.addAll(items);
-        return list;
+        return new ArrayList<>(items);
     }
 
     public static<T> List<T> createList(List<T> baseList, T... items)
     {
-        List<T> list = new FastTable<>();
+        List<T> list = new ArrayList<>();
         list.addAll(baseList);
         list.addAll(Arrays.asList(items));
         return list;
@@ -529,17 +433,13 @@ public class ListUtils
 
     public static<T> List<T> createList(List<T> items)
     {
-        List<T> list = new FastTable<>();
-        for (T t : items)
-        {
-            list.add(t);
-        }
+        List<T> list = new ArrayList<>(items);
         return list;
     }
 
     public static<T> List<T> combine(List<T>... lists)
     {
-        List<T> ret = new FastTable<T>();
+        List<T> ret = new ArrayList<T>();
         for (List<T> list : lists)
         {
             ret.addAll(list);
@@ -549,7 +449,7 @@ public class ListUtils
 
     public static<T> List<T> combine(List<T> list, T... etc)
     {
-        List<T> ret = new FastTable<T>();
+        List<T> ret = new ArrayList<>();
         ret.addAll(list);
         for (T e : etc)
         {
@@ -557,29 +457,11 @@ public class ListUtils
         }
         return ret;
     }
-
-    public static<T> Set<T> listToSet(List<T> list)
-    {
-        Set<T> ret = new FastSet<>();
-        for (T t : list)
-            ret.add(t);
-
-        return ret;
-    }
-
-    public static<T> List<T> setToList(Set<T> set)
-    {
-        List<T> ret = new FastTable<>();
-        for (T t : set)
-            ret.add(t);
-
-        return ret;
-    }
-
+    
     public static<K,V> void modificateMap(Map<K,V> modificable, Map<K,V> newMap)
     {
         modificable.putAll(newMap);
-        List<K> toRemove = new FastTable<>();
+        List<K> toRemove = new ArrayList<>();
         for (K k : modificable.keySet())
         {
             if (!newMap.containsKey(k))
@@ -806,6 +688,24 @@ public class ListUtils
         public final List<T> added = new ArrayList<>();
         public final List<T> removed = new ArrayList<>();
     }
+
+    public static<T> List<T> concurrentList()
+    {
+        return new FastTable<>();
+    }
+
+    public static<T> List<T> createConcurrentList(T... items)
+    {
+        List<T> ret = concurrentList();
+        ret.addAll(Arrays.asList(items));
+        return ret;
+    }
+
+    public static<T> Set<T> concurrentSet()
+    {
+        return new FastSet<T>();
+    }
+
 }
 
 

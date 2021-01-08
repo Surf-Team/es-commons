@@ -1,7 +1,5 @@
 package ru.es.util;
 
-//import com.alee.utils.ImageUtils;
-import javolution.util.FastTable;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -11,6 +9,7 @@ import org.jdom2.output.XMLOutputter;
 import ru.es.log.Log;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
@@ -133,49 +132,6 @@ public class FileUtils
     }
 
 
-    public static Properties getPropertiesFile(String file)
-    {
-        try
-        {
-            Properties settings = new Properties();
-            File newFile = new File(file);
-            if (newFile.exists())
-            {
-                InputStream is = new FileInputStream(newFile);
-                settings.loadFromXML(is);
-                is.close();
-            }
-            return settings;
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-
-    public static void savePropertiesFile(Properties p, String file)
-    {
-        try
-        {
-            File newFile = new File(file);
-
-            if (!newFile.exists())
-            {
-                File folder = new File(newFile.getParent());
-                folder.mkdirs();
-                //newFile.createNewFile();
-            }
-
-            FileOutputStream f = new FileOutputStream(file);
-            p.storeToXML(f, "");
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
 
 
     public static void saveXmlDoc(Element element, File fullPatch) throws IOException
@@ -270,7 +226,7 @@ public class FileUtils
 
         });
 
-        List<String> ret = new FastTable<>();
+        List<String> ret = new ArrayList<>();
 
         if (files != null)
         {
@@ -319,7 +275,7 @@ public class FileUtils
         }
         else return name;
     }
-
+    
 
     public static String getFilePatchNameExceptType(File f)
     {
@@ -335,7 +291,7 @@ public class FileUtils
     // максимальная вложенность +2 папки (текущая, следующая, после следующая)
     public static List<File> getAllFilesInFolder(File folder, String endWith) // ".dll"
     {
-        List<File> ret = new FastTable<>();
+        List<File> ret = new ArrayList<>();
         File[] files = folder.listFiles(new FileFilter()
         {
             @Override
@@ -388,7 +344,7 @@ public class FileUtils
 
     public static List<File> findFiles(List<String> fileNames, List<File> folders)
     {
-        List<File> ret = new FastTable<>();
+        List<File> ret = new ArrayList<>();
         for (File f : folders)
         {
             if (f.exists())
@@ -444,5 +400,14 @@ public class FileUtils
             Log.error("Unknown OSC: "+OS);
             return new File(sysProperties.getProperty("user.home") + File.separator + "Documents");
         }
+    }
+
+    public static Properties getPropertiesFile(File file) throws IOException
+    {
+        Properties ret = new Properties();
+        InputStream in = new FileInputStream(file);
+        ret.load(in);
+        in.close();
+        return ret;
     }
 }

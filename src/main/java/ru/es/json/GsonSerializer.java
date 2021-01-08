@@ -1,6 +1,7 @@
 package ru.es.json;
 
 import com.google.gson.Gson;
+import javolution.util.FastTable;
 import ru.es.log.Log;
 import ru.es.util.FileUtils;
 
@@ -16,6 +17,7 @@ public class GsonSerializer<T>
     {
         gson = new Gson();
         this.file = file;
+        FastTable fs = new FastTable();
     }
 
     public T load(Class<T> c)

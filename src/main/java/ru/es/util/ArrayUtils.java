@@ -1,9 +1,9 @@
 package ru.es.util;
 
-import javolution.util.FastTable;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
@@ -43,7 +43,7 @@ public class ArrayUtils
 
     public static<T> List<T> toList(T[] array)
     {
-        List<T> t = new FastTable<>();
+        List<T> t = new ArrayList<>();
         for (T ta : array)
         {
             t.add(ta);
@@ -53,7 +53,7 @@ public class ArrayUtils
     
     public static List<Integer> toIntList(int[] array)
     {
-        List<Integer> t = new FastTable<>();
+        List<Integer> t = new ArrayList<>();
         for (int ta : array)
         {
             t.add(ta);

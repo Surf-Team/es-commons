@@ -1,6 +1,5 @@
 package ru.es.util;
 
-import javolution.util.FastTable;
 
 import java.util.*;
 
@@ -60,7 +59,7 @@ public class MapUtils
     public static <K,V> void modificate(Map<K, V> notesInTicksStat, Map<K, V> tmpMap)
     {
         // проверка на соответствие
-        List<K> replace = new FastTable<>();
+        List<K> replace = new ArrayList<>();
         for (K l : tmpMap.keySet())
         {
             if (notesInTicksStat.containsKey(l))
@@ -73,7 +72,7 @@ public class MapUtils
             notesInTicksStat.put(l, tmpMap.get(l));
 
         // удаление несовпадающих тиков
-        List<K> ticksToRemove = new FastTable<>();
+        List<K> ticksToRemove = new ArrayList<>();
         for (K l : notesInTicksStat.keySet())
         {
             if (!tmpMap.keySet().contains(l))
@@ -83,7 +82,7 @@ public class MapUtils
             notesInTicksStat.remove(l);
 
         // добавление новых тиков
-        List<K> ticksToAdd = new FastTable<>();
+        List<K> ticksToAdd = new ArrayList<>();
         for (K l : tmpMap.keySet())
         {
             if (!notesInTicksStat.keySet().contains(l))

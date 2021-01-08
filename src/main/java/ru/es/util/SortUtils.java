@@ -1,7 +1,5 @@
 package ru.es.util;
 
-import javolution.util.FastTable;
-
 import java.util.*;
 
 
@@ -37,7 +35,7 @@ public class SortUtils
 
     public static List<Long> sortLongs(Collection<Long> longList)
     {
-        List<Long> sortedList = new FastTable<>();
+        List<Long> sortedList = new ArrayList<>();
         for (long n : longList)
         {
             int index = 0;
@@ -65,8 +63,8 @@ public class SortUtils
 
     public static<K> List sortByValue(Map<K, Integer> map, boolean smallFirst)
     {
-        List<K> ret = new FastTable<>();
-        List<Integer> tempInt = new FastTable<>();
+        List<K> ret = new ArrayList<>();
+        List<Integer> tempInt = new ArrayList<>();
 
         for (Map.Entry<K, Integer> n : map.entrySet())
         {
@@ -117,8 +115,8 @@ public class SortUtils
 
     public static<K> List<K> sortByValueF(Map<K, Float> map, boolean smallFirst)
     {
-        List<K> ret = new FastTable<>();
-        List<Float> tempInt = new FastTable<>();
+        List<K> ret = new ArrayList<>();
+        List<Float> tempInt = new ArrayList<>();
 
         for (Map.Entry<K, Float> n : map.entrySet())
         {
@@ -170,8 +168,8 @@ public class SortUtils
 
     public static<K> List sortByDoubleValue(Map<K, Double> map, boolean smallFirst)
     {
-        List<K> ret = new FastTable<>();
-        List<Double> tempInt = new FastTable<>();
+        List<K> ret = new ArrayList<>();
+        List<Double> tempInt = new ArrayList<>();
 
         for (Map.Entry<K, Double> n : map.entrySet())
         {
