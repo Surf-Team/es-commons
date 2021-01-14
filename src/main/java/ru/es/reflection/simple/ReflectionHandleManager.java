@@ -8,18 +8,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SimpleHandleManager<T> implements IHandleManager<T>
+@Deprecated
+public class ReflectionHandleManager<T> implements IHandleManager<T>
 {
-    private final Class<? extends SimpleHandler<T>> assignable;
+    private final Class<? extends ReflectionObject<T>> assignable;
 
-    public Map<T, SimpleHandler<T>> database = new ConcurrentHashMap<>();
-    public Set<SimpleHandler<T>> cleanable = new HashSet<>();
-    public Map<T, SimpleHandler<T>> tempDatabase = new ConcurrentHashMap<>();
+    public Map<T, ReflectionObject<T>> database = new ConcurrentHashMap<>();
+    public Set<ReflectionObject<T>> cleanable = new HashSet<>();
+    public Map<T, ReflectionObject<T>> tempDatabase = new ConcurrentHashMap<>();
 
     // settings
     public boolean cleanOnReload = true;
 
-    public SimpleHandleManager(Class<? extends SimpleHandler<T>> assignable)
+    public ReflectionHandleManager(Class<? extends ReflectionObject<T>> assignable)
     {
         this.assignable = assignable;
     }
@@ -32,7 +33,7 @@ public class SimpleHandleManager<T> implements IHandleManager<T>
 
         if (cleanCleanableOnReload())
         {
-            for (Map.Entry<T, SimpleHandler<T>> e : tempDatabase.entrySet())
+            for (Map.Entry<T, ReflectionObject<T>> e : tempDatabase.entrySet())
             {
                 if (cleanable.contains(e.getValue()))
                     tempDatabase.remove(e.getKey());
@@ -42,7 +43,7 @@ public class SimpleHandleManager<T> implements IHandleManager<T>
     }
 
     // example: return IAdminCommandHandler.class;
-    public Class<? extends SimpleHandler<T>> getAssignable()
+    public Class<? extends ReflectionObject<T>> getAssignable()
     {
         return assignable;
     }
@@ -61,7 +62,7 @@ public class SimpleHandleManager<T> implements IHandleManager<T>
             try
             {
                 Object o = c.newInstance();
-                SimpleHandler handler = ((SimpleHandler) o);
+                ReflectionObject handler = ((ReflectionObject) o);
 
                 registerTemporary(handler, cleanCleanableOnReload());
             }
@@ -77,17 +78,17 @@ public class SimpleHandleManager<T> implements IHandleManager<T>
         }
     }
 
-    public void register(SimpleHandler<T> h, boolean cleanable)
+    public void register(ReflectionObject<T> h, boolean cleanable)
     {
-        database.put(h.getUID(), h);
-        tempDatabase.put(h.getUID(), h);
+        database.put(h.getHandlerName(), h);
+        tempDatabase.put(h.getHandlerName(), h);
         if (cleanable)
             this.cleanable.add(h);
     }
 
-    private void registerTemporary(SimpleHandler<T> h, boolean cleanable)
+    private void registerTemporary(ReflectionObject<T> h, boolean cleanable)
     {
-        tempDatabase.put(h.getUID(), h);
+        tempDatabase.put(h.getHandlerName(), h);
         if (cleanable)
             this.cleanable.add(h);
     }

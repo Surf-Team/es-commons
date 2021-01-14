@@ -3,7 +3,7 @@ package ru.es.models;
 import com.allatori.annotations.ControlFlowObfuscation;
 import ru.es.log.Log;
 import ru.es.thread.RunnableImpl;
-import ru.es.thread.UnloadableThreadPoolManager;
+import ru.es.thread.SingletonThreadPool;
 import ru.es.util.Environment;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -35,7 +35,7 @@ public abstract class ReusablePool<T>
 
         if (cleanDelayed)
         {
-            UnloadableThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new RunnableImpl()
+            SingletonThreadPool.getInstance().scheduleGeneralAtFixedRate(new RunnableImpl()
             {
                 @Override
                 @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
@@ -72,7 +72,7 @@ public abstract class ReusablePool<T>
 
         if (announceDelaySec != -1)
         {
-            UnloadableThreadPoolManager.getInstance().scheduleGeneralAtFixedRate(new RunnableImpl()
+            SingletonThreadPool.getInstance().scheduleGeneralAtFixedRate(new RunnableImpl()
             {
                 @Override
                 @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)

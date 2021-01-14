@@ -6,30 +6,47 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by saniller on 10.07.2015.
  */
-public class UnloadableThreadPoolManager
+public class SingletonThreadPool
 {
-    private static UnloadableThreadPoolManager instance;
+    private static SingletonThreadPool instance;
 
-    public static UnloadableThreadPoolManager getInstance()
+    public static SingletonThreadPool getInstance()
     {
         if(instance == null)
-            instance = new UnloadableThreadPoolManager();
+            instance = new SingletonThreadPool();
 
         return instance;
     }
 
     private ScheduledThreadPoolExecutor schedudledExecutor;
     private ThreadPoolExecutor executor;
+    private ThreadPoolExecutor executorLow;
 
-    private UnloadableThreadPoolManager()
+    private SingletonThreadPool()
     {
-        schedudledExecutor = new ScheduledThreadPoolExecutor(2, new PriorityThreadFactory("microSchedudledExecutor", Thread.NORM_PRIORITY, false));
-        executor = new ThreadPoolExecutor(2, Integer.MAX_VALUE, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new PriorityThreadFactory("microExecutor", Thread.NORM_PRIORITY, false));
+        schedudledExecutor = new ScheduledThreadPoolExecutor(2, new PriorityThreadFactory(
+                "SingletonScheduled", Thread.NORM_PRIORITY, false));
+        executor = new ThreadPoolExecutor(2, Integer.MAX_VALUE, 5L,
+                TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new PriorityThreadFactory("SingletonExecutor",
+                Thread.NORM_PRIORITY, false));
+        executorLow = new ThreadPoolExecutor(1, 1, 5L,
+                TimeUnit.SECONDS, new LinkedBlockingQueue<>(), new PriorityThreadFactory("SingletonExecutorLow",
+                Thread.MIN_PRIORITY, false));
     }
 
     public void executeTask(RunnableImpl r)
     {
         executor.execute(r);
+    }
+
+    public void execute(Runnable r)
+    {
+        executor.execute(r);
+    }
+
+    public void executeLow(RunnableImpl r)
+    {
+        executorLow.execute(r);
     }
 
     public ScheduledFuture<?> scheduleGeneral(RunnableImpl r, long delay)
@@ -106,4 +123,7 @@ public class UnloadableThreadPoolManager
             return _group;
         }
     }
+
+
+
 }

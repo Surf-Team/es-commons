@@ -27,6 +27,14 @@ public class SimpleThreadPool
         Log.warning(poolName+": cores: "+threads);
     }
 
+    public void stop()
+    {
+        schedudledExecutor.getQueue().clear();
+        schedudledExecutor.shutdownNow();
+        executor.getQueue().clear();
+        executor.shutdownNow();
+    }
+
     public void executeTask(RunnableImpl r)
     {
         executor.execute(r);
@@ -61,14 +69,10 @@ public class SimpleThreadPool
         try
         {
             if(delay < 0)
-            {
                 delay = 0;
-            }
 
             if(initial < 0)
-            {
                 initial = 0;
-            }
 
             return schedudledExecutor.scheduleAtFixedRate(r, initial, delay, TimeUnit.MILLISECONDS);
         }

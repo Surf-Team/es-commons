@@ -1,7 +1,7 @@
 package ru.es.net;
 
 import ru.es.log.Log;
-import ru.es.thread.UnloadableThreadPoolManager;
+import ru.es.thread.SingletonThreadPool;
 import ru.es.thread.RunnableImpl;
 
 import java.io.BufferedReader;
@@ -47,7 +47,7 @@ public abstract class TCPClient
 
     public void executeThread(RunnableImpl r)
     {
-        UnloadableThreadPoolManager.getInstance().executeTask(r);
+        SingletonThreadPool.getInstance().executeTask(r);
     }
 
     private class NetworkThread extends RunnableImpl
@@ -84,7 +84,7 @@ public abstract class TCPClient
                 {
                     final String msg = input;
 
-                    UnloadableThreadPoolManager.getInstance().executeTask(new RunnableImpl()
+                    SingletonThreadPool.getInstance().executeTask(new RunnableImpl()
                     {
                         @Override
                         public void runImpl()

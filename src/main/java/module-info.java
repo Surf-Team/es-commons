@@ -20,4 +20,5 @@ module ru.es.commons {
     exports ru.es.lang.logic;
     exports ru.es.lang.limiters;
     exports ru.es.lang.patterns;
+    exports ru.es.reflection.simple;
 }
