@@ -6,6 +6,8 @@ module ru.es.commons {
     requires transitive jdk.httpserver;
     requires transitive com.google.gson;
     requires transitive javolution.core.java;
+    requires java.compiler;
+    requires reflections;
 
     exports ru.es.annotation;
     exports ru.es.json;

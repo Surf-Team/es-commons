@@ -422,6 +422,18 @@ public class ListUtils
         return new ArrayList<>(items);
     }
 
+    public static <T> List<T> createListFromArr(T[] items)
+    {
+        ArrayList<T> ret = new ArrayList<>();
+        for (T t : items)
+        {
+            ret.add(t);
+        }
+
+        return ret;
+    }
+
+
     public static<T> List<T> createList(List<T> baseList, T... items)
     {
         List<T> list = new ArrayList<>();
@@ -434,6 +446,14 @@ public class ListUtils
     public static<T> List<T> createList(List<T> items)
     {
         List<T> list = new ArrayList<>(items);
+        return list;
+    }
+
+    public static<T> List<T> createList(T... items)
+    {
+        List<T> list = new ArrayList<>();
+        for (T t : items)
+            list.add(t);
         return list;
     }
 

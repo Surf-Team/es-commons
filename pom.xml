@@ -75,6 +75,13 @@
 			<artifactId>annotations</artifactId>
 			<version>6.9</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>0.9.12</version>
+		</dependency>
 	</dependencies>
 
 	<!-- Нужен для возможности компиляции модульной системы, иначе использует старую версию -->

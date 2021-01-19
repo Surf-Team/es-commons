@@ -18,5 +18,4 @@ public class ResourceUtils
 
         return new String(buffer);
     }
-
 }
