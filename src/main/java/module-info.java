@@ -12,15 +12,16 @@ module ru.es.commons {
     exports ru.es.annotation;
     exports ru.es.json;
     exports ru.es.lang;
+    exports ru.es.lang.table;
+    exports ru.es.lang.logic;
+    exports ru.es.lang.limiters;
+    exports ru.es.lang.patterns;
     exports ru.es.log;
     exports ru.es.math;
     exports ru.es.models;
     exports ru.es.net;
     exports ru.es.reflection;
+    exports ru.es.reflection.simple;
     exports ru.es.thread;
     exports ru.es.util;
-    exports ru.es.lang.logic;
-    exports ru.es.lang.limiters;
-    exports ru.es.lang.patterns;
-    exports ru.es.reflection.simple;
 }

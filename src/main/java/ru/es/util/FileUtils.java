@@ -9,6 +9,7 @@ import org.jdom2.output.XMLOutputter;
 import ru.es.log.Log;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -409,5 +410,14 @@ public class FileUtils
         ret.load(in);
         in.close();
         return ret;
+    }
+
+    public static String[] readLines(File file) throws IOException
+    {
+        FileInputStream fileInputStream = new FileInputStream(file);
+        byte[] input = fileInputStream.readAllBytes();
+        fileInputStream.close();
+        String inputStr = new String(input, StandardCharsets.UTF_8);
+        return inputStr.split("\r\n");
     }
 }

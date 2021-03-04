@@ -91,6 +91,28 @@ public class SingletonThreadPool
         }
     }
 
+    public ScheduledFuture<?> scheduleWithFixedDelay(RunnableImpl r, long initial, long delay)
+    {
+        try
+        {
+            if(delay < 0)
+            {
+                delay = 0;
+            }
+
+            if(initial < 0)
+            {
+                initial = 0;
+            }
+
+            return schedudledExecutor.scheduleWithFixedDelay(r, initial, delay, TimeUnit.MILLISECONDS);
+        }
+        catch(RejectedExecutionException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
 
     private class PriorityThreadFactory implements ThreadFactory

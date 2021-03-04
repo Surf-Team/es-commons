@@ -53,6 +53,28 @@ public abstract class ESFixedArrayMap<K,V>
         }
     }
 
+    //todo не протестировано!
+    public void remove(K key)
+    {
+        if (containsKey(key))
+        {
+            int moveKey = 0;
+            for (int i = 0; i < currentSize; i++)
+            {
+                if (keyArray[i] == key)
+                {
+                    moveKey--;
+                }
+                else
+                {
+                    keyArray[i + moveKey] = keyArray[i];
+                    valueArray[i + moveKey] = valueArray[i];
+                }
+            }
+            currentSize += moveKey; // move key < 0
+        }
+    }
+
     @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
     public void putUnchecked(K key, V value)
     {
