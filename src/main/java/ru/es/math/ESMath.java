@@ -2,6 +2,7 @@ package ru.es.math;
 
 import com.allatori.annotations.ControlFlowObfuscation;
 import ru.es.annotation.Slow;
+import ru.es.log.Log;
 import ru.es.util.SortUtils;
 
 import java.math.BigDecimal;
@@ -20,6 +21,21 @@ import java.util.Set;
  */
 public class ESMath
 {
+    // во сколько раз одно больше другого
+    // если good больше, то знак плюс, если evil больше, то знак минус
+    public static double equality(int good, int evil)
+    {
+        if (good == evil)
+            return 0;
+        else
+        {
+            if (good > evil)
+                return (double) good / evil;
+            else
+                return (double) evil / good * -1;
+        }
+    }
+
     @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
     public static int constrain(int value, int min, int max)
     {

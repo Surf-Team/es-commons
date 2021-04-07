@@ -31,7 +31,11 @@ public class TimeUtils
 
             if (splitTimeOfDay.length > 2)
             {
-                calendar.set(Calendar.DAY_OF_WEEK, Integer.parseInt(splitTimeOfDay[2]));
+                int dayOfWeek = Integer.parseInt(splitTimeOfDay[2]) + 1; // считаем по русски, чтобы первый день был понедельником, а ВС - 7й
+                if (dayOfWeek == 8)
+                    dayOfWeek = 1;
+
+                calendar.set(Calendar.DAY_OF_WEEK, dayOfWeek);
                 if(calendar.getTimeInMillis() < currentTime.getTimeInMillis())
                 {
                     calendar.add(Calendar.DAY_OF_WEEK, 7);

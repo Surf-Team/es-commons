@@ -2,10 +2,13 @@ package ru.es.lang.table;
 
 import ru.es.log.Log;
 import ru.es.util.FileUtils;
+import ru.es.util.ListUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CSVTable extends Table
@@ -13,6 +16,21 @@ public class CSVTable extends Table
     public CSVTable(File csvFile, String csvId) throws IOException
     {
         readCsv(csvFile, csvId);
+    }
+
+    // create table with only one column (for later usage)
+    public CSVTable(CSVTable from, String idColumnName)
+    {
+        for (int i = 0; i < from.rows.size(); i++)
+        {
+            Row r = from.rows.get(i);
+            int id = r.id;
+
+            Row newRow = new Row();
+            newRow.add(idColumnName, ""+id);
+
+            rows.add(newRow);
+        }
     }
 
     private void readCsv(File csvFile, String csvId) throws IOException
@@ -101,5 +119,31 @@ public class CSVTable extends Table
         }
 
         return ret;
+    }
+
+    public void pasteColumn(String oldName, String newName, CSVTable from)
+    {
+        for (int i = 0; i < rows.size(); i++)
+        {
+            rows.get(i).add(newName, from.rows.get(i).getValue(oldName));
+        }
+    }
+
+    public void pasteColumn(String[] oldNames, String newName, CSVTable from)
+    {
+        List<String> tmpString = new ArrayList<>();
+
+        for (int i = 0; i < rows.size(); i++)
+        {
+            Row fromRow = from.rows.get(i);
+            for (String s : oldNames)
+            {
+                String tmp = fromRow.getValue(s);
+                if (!tmp.isEmpty())
+                    tmpString.add(tmp);
+            }
+            rows.get(i).add(newName, ListUtils.toString(tmpString, ","));
+            tmpString.clear();
+        }
     }
 }

@@ -656,9 +656,17 @@ public class ListUtils
     public static<T> String toString(List<T> b, String delim)
     {
         StringBuilder ret = new StringBuilder();
+
+        boolean first = true;
+
         for (T bt : b)
         {
-            ret.append(bt.toString() + delim);
+            if (first)
+                first = false;
+            else
+                ret.append(delim);
+            
+            ret.append(bt.toString());
         }
         return ret.toString();
     }
