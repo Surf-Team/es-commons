@@ -13,6 +13,11 @@ import java.util.Map;
 
 public class CSVTable extends Table
 {
+    public CSVTable()
+    {
+
+    }
+
     public CSVTable(File csvFile, String csvId) throws IOException
     {
         readCsv(csvFile, csvId);

@@ -45,7 +45,7 @@ public class SinglePool<T>
 			public void runImpl() throws Exception
 			{
 				String arrayDat = "";
-				Log.warning(poolName + ": Sec " + FannounceDelaySec + ", get " + getStat + ", setFree: " + addStat + ", created: " + createdStat+", arraySize: "+pile.arraySizeStat());
+				//Log.warning(poolName + ": Sec " + FannounceDelaySec + ", get " + getStat + ", setFree: " + addStat + ", created: " + createdStat+", arraySize: "+pile.arraySizeStat());
 				createdStat = 0;
 				addStat = 0;
 				getStat = 0;

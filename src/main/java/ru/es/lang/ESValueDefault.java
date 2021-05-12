@@ -12,7 +12,7 @@ public class ESValueDefault<T> implements ESValue<T>
         value = defaultValue;
     }
 
-    private T value;
+    public T value;
 
     @Override
     @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)

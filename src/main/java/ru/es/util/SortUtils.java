@@ -113,6 +113,59 @@ public class SortUtils
         return ret;
     }
 
+
+    public static<K> List sortByValueL(Map<K, Long> map, boolean smallFirst)
+    {
+        List<K> ret = new ArrayList<>();
+        List<Long> tmlLongs = new ArrayList<>();
+
+        for (Map.Entry<K, Long> n : map.entrySet())
+        {
+            long value = n.getValue();
+            int index = 0;
+            if (ret.isEmpty())
+            {
+                ret.add(n.getKey());
+                tmlLongs.add(value);
+            }
+            else
+            {
+                boolean added = false;
+                for (long alreadyInList : tmlLongs)
+                {
+                    if (smallFirst)
+                    {
+                        if (value <= alreadyInList)
+                        {
+                            ret.add(index, n.getKey());
+                            tmlLongs.add(index, value);
+                            added = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (value >= alreadyInList)
+                        {
+                            ret.add(index, n.getKey());
+                            tmlLongs.add(index, value);
+                            added = true;
+                            break;
+                        }
+                    }
+                    index++;
+                }
+                if (!added)
+                {
+                    ret.add(n.getKey());
+                    tmlLongs.add(value);
+                }
+            }
+        }
+
+        return ret;
+    }
+
     public static<K> List<K> sortByValueF(Map<K, Float> map, boolean smallFirst)
     {
         List<K> ret = new ArrayList<>();

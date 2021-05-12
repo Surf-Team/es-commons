@@ -28,7 +28,7 @@ public class Rnd
 
         int index = Rnd.get(0, list.size()-1);
         T ret = list.get(index);
-        list.remove(ret);
+        list.remove((Object) ret);
         return ret;
     }
 

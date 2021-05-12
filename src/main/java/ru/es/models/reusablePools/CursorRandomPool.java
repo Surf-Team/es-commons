@@ -90,7 +90,7 @@ public class CursorRandomPool<T>
 				{
 					arrayDat += p.arraySizeStat()+" ";
 				}
-				Log.warning(poolName + ": Sec " + FannounceDelaySec + ", get " + getStat + ", setFree: " + addStat + ", created: " + createdStat+", arraySize: "+arrayDat);
+				//Log.warning(poolName + ": Sec " + FannounceDelaySec + ", get " + getStat + ", setFree: " + addStat + ", created: " + createdStat+", arraySize: "+arrayDat);
 				createdStat = 0;
 				addStat = 0;
 				getStat = 0;

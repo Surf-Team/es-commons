@@ -33,6 +33,17 @@ public class Row
         return getEntry(name).value;
     }
 
+    public String getValue(String name, String defaultVal)
+    {
+        try
+        {
+            return getEntry(name).value;
+        }
+        catch (Exception e)
+        {
+            return defaultVal;
+        }
+    }
 
 
     public Row clone()

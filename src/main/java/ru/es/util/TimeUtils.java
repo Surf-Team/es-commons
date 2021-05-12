@@ -227,13 +227,22 @@ public class TimeUtils
         return format1.format(d);
     }
 
-    public static int getDayOfWeek() // считаем с нуля. 0 - понедельник
+    public static int getDayOfWeek() // 1 - воскресенье, 2 - понедельник
     {
-        Date d = new Date();
-        SimpleDateFormat format1;
-        format1 = new SimpleDateFormat("F");
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 
-        return Integer.parseInt(format1.format(d));
+        return dayOfWeek;
+        //Date d = new Date();
+        //SimpleDateFormat format1;
+        //format1 = new SimpleDateFormat("F");
+        //return Integer.parseInt(format1.format(d));
+    }
+
+    public static void main(String[] args)
+    {
+        Log.warning("dayOfWeek: "+getDayOfWeek());
     }
 
     public static String getTimeString(long time)
