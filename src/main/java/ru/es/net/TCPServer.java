@@ -56,7 +56,7 @@ public abstract class TCPServer
         this.port = serverPort;
     }
 
-    public void start()
+    public void start() throws IOException
     {
         running = true;
         executorThreadPool = new SimpleThreadPool(SERVER_LOG_NAME+"_UsersThreadPool", EXECUTOR_THREAD_COUNT);
@@ -71,7 +71,7 @@ public abstract class TCPServer
         {
             Log.warning(SERVER_LOG_NAME+": Couldn't listen to port "+port+": "+e.getMessage());
             close();
-            return;
+            throw e;
         }
 
         Thread serverSocketThread = new Thread(()->
@@ -105,13 +105,16 @@ public abstract class TCPServer
             while (running)
             {
                 processUsers();
-                try
+                if (PROCESS_USERS_DELAY > 0)
                 {
-                    Thread.sleep(PROCESS_USERS_DELAY);
-                }
-                catch (InterruptedException e)
-                {
-                    break;
+                    try
+                    {
+                        Thread.sleep(PROCESS_USERS_DELAY);
+                    }
+                    catch (InterruptedException e)
+                    {
+                        break;
+                    }
                 }
             }
         });
@@ -238,7 +241,9 @@ public abstract class TCPServer
 
         public void close(CloseReason closeReason)
         {
-            Log.warning(SERVER_LOG_NAME+": Closing the user "+id+" due "+closeReason);
+            if (DEBUG)
+                Log.warning(SERVER_LOG_NAME+": Closing the user "+id+" due "+closeReason);
+            
             users.remove(this);
             userClosed.event(this);
             if (socket != null && !socket.isClosed())
@@ -280,17 +285,7 @@ public abstract class TCPServer
                         pos = 0;
                         if (DEBUG)
                             Log.warning(SERVER_LOG_NAME+": Packet received: "+s);
-                        executorThreadPool.execute(() ->
-                        {
-                            try
-                            {
-                                packetReceived(User.this, s);
-                            }
-                            catch (Exception e)
-                            {
-                                e.printStackTrace();
-                            }
-                        });
+                        packetThreadRoute(this, s);
                     }
                     else
                         Log.warning(SERVER_LOG_NAME+": Waiting for full packet. User "+id);
@@ -314,6 +309,21 @@ public abstract class TCPServer
             if (socket.isClosed())
                 close(CloseReason.SocketClosedByExternal);
         }
+    }
+
+    protected void packetThreadRoute(User user, String s)
+    {
+        executorThreadPool.execute(() ->
+        {
+            try
+            {
+                packetReceived(user, s);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
+        });
     }
 
     public enum CloseReason

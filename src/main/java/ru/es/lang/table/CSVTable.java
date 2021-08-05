@@ -49,7 +49,10 @@ public class CSVTable extends Table
         for (int i = 0; i < lines.length; i++)
         {
             String line = lines[i];
-            String[] columns = line.split("\t");
+
+            // -1 позволяет учитывать пустые значения, а иначе два \t\t разбиваются в 1
+            String[] columns = line.split("\t", -1);
+
             if (i == 0)
             {
                 if (csvId != null)

@@ -33,6 +33,24 @@ public class Row
         return getEntry(name).value;
     }
 
+    public int getValueInt(String name)
+    {
+        return Integer.parseInt(getValue(name));
+    }
+    public boolean getValueBoolean(String name)
+    {
+        return Boolean.parseBoolean(getValue(name));
+    }
+
+    public double getValueDouble(String name)
+    {
+        return Double.parseDouble(getValue(name));
+    }
+    public float getValueFloat(String name)
+    {
+        return Float.parseFloat(getValue(name));
+    }
+
     public String getValue(String name, String defaultVal)
     {
         try

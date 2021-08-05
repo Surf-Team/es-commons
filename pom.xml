@@ -57,7 +57,8 @@
 			<groupId>org.javolution</groupId>
 			<artifactId>javolution-core-java</artifactId>
 			<version>6.0.0</version>
-			<exclusions>  <!-- это убираем, т.к. иначе проблемы с модульной системой будут -->
+			<!-- проблемы с модульной системой  -->
+			<exclusions>
 				<exclusion>
 					<groupId>org.osgi</groupId>
 					<artifactId>org.osgi.core</artifactId>

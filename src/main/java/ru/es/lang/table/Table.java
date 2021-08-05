@@ -169,6 +169,20 @@ public abstract class Table
         return null;
     }
 
+    public List<Row> getRowsByValue(String key, String value)
+    {
+        List<Row> ret = new ArrayList<>();
+        for (Row row : rows)
+        {
+            for (Entry p : row.entries)
+            {
+                if (p.key.equals(key) && p.value.equals(value))
+                    ret.add(row);
+            }
+        }
+        return ret;
+    }
+
 
     public Row addRow()
     {

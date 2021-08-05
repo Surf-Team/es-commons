@@ -415,6 +415,8 @@ public class FileUtils
     public static String[] readLines(File file) throws IOException
     {
         FileInputStream fileInputStream = new FileInputStream(file);
+        //byte[] input = new byte[fileInputStream.available()];
+        //fileInputStream.read(input);
         byte[] input = fileInputStream.readAllBytes();
         fileInputStream.close();
         String inputStr = new String(input, StandardCharsets.UTF_8);

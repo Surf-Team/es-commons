@@ -30,6 +30,8 @@ public class ReflectionManager<T extends ReflectionObject<String>> implements St
 
     public void load(Class<?>[] constructorClasses, Object[] constructorObjects) throws Exception
     {
+        // проблемы с AOT graal vm
+
         Log.warning("ReflectionManager: loading "+reflectionName);
         Reflections reflections = new Reflections(packageName);
 
@@ -44,6 +46,11 @@ public class ReflectionManager<T extends ReflectionObject<String>> implements St
             objectMap.put(newInstance.getHandlerName(), newInstance);
             //Log.warning("Loaded handler: "+newInstance.getHandlerName());
         }
+    }
+
+    public void add(T instance)
+    {
+        objectMap.put(instance.getHandlerName(), instance);
     }
 
     @Override
