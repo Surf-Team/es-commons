@@ -11,20 +11,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CSVTable extends Table
+public class TSVTable extends Table
 {
-    public CSVTable()
+    public TSVTable()
     {
 
     }
 
-    public CSVTable(File csvFile, String csvId) throws IOException
+    public TSVTable(File csvFile, String csvId) throws IOException
     {
         readCsv(csvFile, csvId);
     }
 
     // create table with only one column (for later usage)
-    public CSVTable(CSVTable from, String idColumnName)
+    public TSVTable(TSVTable from, String idColumnName)
     {
         for (int i = 0; i < from.rows.size(); i++)
         {
@@ -129,7 +129,7 @@ public class CSVTable extends Table
         return ret;
     }
 
-    public void pasteColumn(String oldName, String newName, CSVTable from)
+    public void pasteColumn(String oldName, String newName, TSVTable from)
     {
         for (int i = 0; i < rows.size(); i++)
         {
@@ -137,7 +137,7 @@ public class CSVTable extends Table
         }
     }
 
-    public void pasteColumn(String[] oldNames, String newName, CSVTable from)
+    public void pasteColumn(String[] oldNames, String newName, TSVTable from)
     {
         List<String> tmpString = new ArrayList<>();
 
