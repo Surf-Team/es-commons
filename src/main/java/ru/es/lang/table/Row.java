@@ -39,7 +39,17 @@ public class Row
     }
     public boolean getValueBoolean(String name)
     {
-        return Boolean.parseBoolean(getValue(name));
+        String val = getValue(name);
+        if (val.equals("1"))
+            return true;
+        else if (val.equals("0"))
+            return false;
+        else if (val.equalsIgnoreCase("true"))
+            return true;
+        else if (val.equalsIgnoreCase("false"))
+            return false;
+
+        throw new RuntimeException("Row.Boolean: Wrong value: "+val+" for entry: "+name);
     }
 
     public double getValueDouble(String name)
