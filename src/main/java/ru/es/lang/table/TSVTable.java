@@ -165,4 +165,9 @@ public class TSVTable extends Table
     {
         super.writeFile(file);
     }
+
+    public void removeRow(Row r)
+    {
+        rows.remove(r);
+    }
 }
