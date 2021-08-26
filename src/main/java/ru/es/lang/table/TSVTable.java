@@ -1,5 +1,6 @@
 package ru.es.lang.table;
 
+import ru.es.lang.Filter;
 import ru.es.log.Log;
 import ru.es.util.FileUtils;
 import ru.es.util.ListUtils;
@@ -15,6 +16,7 @@ public class TSVTable extends Table
 {
     // может быть null, если таблица не читалась из файла, а просто была создана
     public File file;
+    public Map<TSVTable, Filter<Row>> subTables = new HashMap<>();
 
     public TSVTable()
     {
@@ -169,5 +171,38 @@ public class TSVTable extends Table
     public void removeRow(Row r)
     {
         rows.remove(r);
+    }
+
+    // создать новую таблицу из выборки текущей таблицы
+    // при вызове reBuildSubtables для родительской таблицы, второстепенная будет обновлена
+    // больше ни какой связи между таблицами нет (кроме одинаковых объектов Row)
+    public TSVTable createSubTable(Filter<Row> filter)
+    {
+        TSVTable ret = new TSVTable();
+
+        buildSubtable(ret, filter);
+
+        subTables.put(ret, filter);
+
+        return ret;
+    }
+
+    public void reBuildSubtables()
+    {
+        for (Map.Entry<TSVTable, Filter<Row>> entry : subTables.entrySet())
+        {
+            buildSubtable(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private void buildSubtable(TSVTable subTable, Filter<Row> filter)
+    {
+        subTable.rows.clear();
+        for (Row r : rows)
+        {
+            if (filter.accept(r))
+                subTable.rows.add(r);
+        }
+        subTable.reBuildSubtables();
     }
 }
