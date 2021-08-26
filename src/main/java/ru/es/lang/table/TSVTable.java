@@ -13,6 +13,9 @@ import java.util.Map;
 
 public class TSVTable extends Table
 {
+    // может быть null, если таблица не читалась из файла, а просто была создана
+    public File file;
+
     public TSVTable()
     {
 
@@ -20,6 +23,7 @@ public class TSVTable extends Table
 
     public TSVTable(File csvFile, String csvId) throws IOException
     {
+        this.file = csvFile;
         readCsv(csvFile, csvId);
     }
 
@@ -153,5 +157,12 @@ public class TSVTable extends Table
             rows.get(i).add(newName, ListUtils.toString(tmpString, ","));
             tmpString.clear();
         }
+    }
+
+    // запись в файл, из которого таблица была считана.
+    // если таблица не была считана из файла, то будет ошибка!
+    public void write() throws IOException
+    {
+        super.writeFile(file);
     }
 }
