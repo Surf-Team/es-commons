@@ -1,6 +1,7 @@
 package ru.es.util;
 
 import ru.es.log.Log;
+import ru.es.math.ESMath;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -426,4 +427,39 @@ public class TimeUtils
         }
         return false;
     }
+
+    // test
+    /*public static void main(String[] args)
+    {
+        int eachSeconds = 15;
+        int minTime = 3;
+
+        long curTimeStamp = System.currentTimeMillis();
+        long curTime = System.currentTimeMillis();
+        for (int i = 0; i < 20; i++)
+        {
+            long result = getCondensator(curTime, eachSeconds, minTime);
+            long endTime = curTime + result;
+            curTime += 1000;
+            Log.warning("after "+i+" sec we will waiting for "+result+" ms. End time is: "+(endTime-curTimeStamp));
+        }
+
+        System.exit(0);
+    } */
+
+    // достать кол-во милисекунд до следующей временной точки, кратной eachSeconds, но не раньше чем через minTime
+    public static long getAlignedTime(int eachSeconds, int minTime)
+    {
+        long curTime = System.currentTimeMillis();
+        return getAlignedTime(curTime, eachSeconds, minTime);
+    }
+
+    private static long getAlignedTime(long curTime, int eachSeconds, int minTimeSeconds)
+    {
+        long eachMillis = eachSeconds * 1000;
+        long minLimit = minTimeSeconds * 1000;
+
+        return ESMath.nextAlignedNumber(curTime, eachMillis, minLimit);
+    }
+
 }

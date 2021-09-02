@@ -613,4 +613,17 @@ public class ESMath
         // if min > max, return min
         return Math.min(Math.max(value, min), Math.max(min,max));
     }
+
+    // ищет следующее число от from, кратное each, но не ближе minDistance к from
+    public static long nextAlignedNumber(long from, long each, long minDistance)
+    {
+        long millisLeft = each - (from % (each));
+
+        long floorMult = 0;
+        if (millisLeft < minDistance)
+            floorMult = minDistance / each + 1;
+
+        //Log.warning("floorMult: "+floorMult);
+        return millisLeft + (floorMult*each);
+    }
 }
