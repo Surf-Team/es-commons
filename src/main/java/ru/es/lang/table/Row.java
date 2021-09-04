@@ -37,6 +37,16 @@ public class Row
     {
         return Integer.parseInt(getValue(name));
     }
+
+    public int getValueInt(String name, int defaultVal)
+    {
+        String value = getValue(name);
+        if (value == null)
+            return defaultVal;
+        else
+            return Integer.parseInt(value);
+    }
+
     public boolean getValueBoolean(String name)
     {
         String val = getValue(name);
@@ -51,6 +61,18 @@ public class Row
 
         throw new RuntimeException("Row.Boolean: Wrong value: "+val+" for entry: "+name);
     }
+
+
+    public boolean getValueBoolean(String name, boolean defaultVal)
+    {
+        String val = getValue(name);
+
+        if (val == null)
+            return defaultVal;
+
+        return getValueBoolean(name);
+    }
+
 
     public double getValueDouble(String name)
     {
