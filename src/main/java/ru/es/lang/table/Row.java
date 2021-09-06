@@ -30,7 +30,15 @@ public class Row
 
     public String getValue(String name)
     {
-        return getEntry(name).value;
+        try
+        {
+            return getEntry(name).value;
+        }
+        catch (NullPointerException npe)
+        {
+            Log.warning("Entry "+name+" is null in row "+id+" "+entries.get(0).value);
+            throw npe;
+        }
     }
 
     public int getValueInt(String name)
