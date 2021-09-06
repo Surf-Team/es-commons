@@ -15,8 +15,6 @@ import java.util.Map;
 public abstract class Table
 {
     public List<Row> rows = new ArrayList<>(1000);
-    protected String startLine = null;
-    protected String endLine;
 
     public Table()
     {

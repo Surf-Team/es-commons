@@ -8,12 +8,18 @@ import java.io.IOException;
 // GodWorld ClientDat Editor parser table
 public class GWTable extends Table
 {
-    public final String idName;
+    public String idName;
+    public String startLine = null;
+    public String endLine;
 
     public GWTable(File f, String idName) throws IOException
     {
         this.idName = idName;
         readClassic(f);
+    }
+
+    public GWTable()
+    {
     }
 
     private void readClassic(File file) throws IOException
