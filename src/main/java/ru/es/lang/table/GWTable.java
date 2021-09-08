@@ -11,9 +11,11 @@ public class GWTable extends Table
     public String idName;
     public String startLine = null;
     public String endLine;
+    private File file;
 
     public GWTable(File f, String idName) throws IOException
     {
+        this.file = f;
         this.idName = idName;
         readClassic(f);
     }
@@ -109,5 +111,12 @@ public class GWTable extends Table
 
         if (to.id == Integer.MIN_VALUE && idName != null)
             throw new RuntimeException("Cant find ID for row line, line: " + line + ", idName: " + idName);
+    }
+
+    // запись в файл, из которого таблица была считана.
+    // если таблица не была считана из файла, то будет ошибка!
+    public void write() throws IOException
+    {
+        super.writeFile(file);
     }
 }

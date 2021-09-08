@@ -1,5 +1,6 @@
 package ru.es.lang.table;
 
+import ru.es.lang.Filter;
 import ru.es.lang.StringCall;
 import ru.es.log.Log;
 
@@ -199,5 +200,26 @@ public abstract class Table
         }
 
         return ret;
+    }
+
+    public Row findFirst(Filter<Row> filter)
+    {
+        for (Row r : rows)
+        {
+            if (filter.accept(r))
+                return r;
+        }
+        return null;
+    }
+
+    public void removeRows(Filter<Row> filter)
+    {
+        List<Row> toRemove = new ArrayList<>();
+        for (Row r : rows)
+        {
+            if (filter.accept(r))
+                toRemove.add(r);
+        }
+        rows.removeAll(toRemove);
     }
 }

@@ -174,7 +174,7 @@ public class StringUtils
 
         float pow = (float) Math.pow(10, fixedZeroCount);
 
-        int a = (int) (num * pow);
+        int a = (int) Math.round(num * pow);
 
         float b = (float) a / pow;
         return ""+b;
