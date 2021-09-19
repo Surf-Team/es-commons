@@ -206,10 +206,18 @@ public class FileUtils
 
     public static Element getXmlDocument(File file) throws IOException, JDOMException
     {
-        SAXBuilder parser = new SAXBuilder();
-        FileReader fr = new FileReader(file);
-        Document ret = parser.build(fr);
-        return ret.getRootElement();
+        try
+        {
+            SAXBuilder parser = new SAXBuilder();
+            FileReader fr = new FileReader(file);
+            Document ret = parser.build(fr);
+            return ret.getRootElement();
+        }
+        catch (Exception e)
+        {
+            Log.warning("Error in file: "+file.getName());
+            throw e;
+        }
     }
 
     public static void renameFIle(File file, File newName)
