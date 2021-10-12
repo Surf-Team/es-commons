@@ -27,6 +27,20 @@ public class ArrayUtils
         }
     }
 
+    public static <T> boolean containsEqual(T[] array, T value) {
+        if(array == null) {
+            return false;
+        } else {
+            for(int i = 0; i < array.length; ++i) {
+                if(value.equals(array[i])) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
     public static boolean contains(int[] array, int value) {
         if(array == null) {
             return false;
