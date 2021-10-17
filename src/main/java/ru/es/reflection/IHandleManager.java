@@ -4,9 +4,9 @@ import java.util.Map;
 
 public interface IHandleManager<T>
 {
-    void acceptTemporaryes();
+    void acceptTemporaries();
 
-    void createNewTemporaryes();
+    void createNewTemporaries();
 
     void checkRegisterTemporary(Class<?> clazz);
 

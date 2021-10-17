@@ -25,7 +25,7 @@ public class ReflectionHandleManager<T> implements IHandleManager<T>
         this.assignable = assignable;
     }
 
-    public void createNewTemporaryes()
+    public void createNewTemporaries()
     {
         tempDatabase = new ConcurrentHashMap<>();
 
@@ -93,7 +93,7 @@ public class ReflectionHandleManager<T> implements IHandleManager<T>
             this.cleanable.add(h);
     }
 
-    public void acceptTemporaryes()
+    public void acceptTemporaries()
     {
         database = tempDatabase;
     }

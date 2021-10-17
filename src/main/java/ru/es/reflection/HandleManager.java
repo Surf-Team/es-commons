@@ -1,10 +1,9 @@
 package ru.es.reflection;
 
 import org.apache.commons.lang3.ClassUtils;
+import ru.es.log.Log;
 
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -16,7 +15,7 @@ public abstract class HandleManager<T> implements IHandleManager<T>
     public Set<Handler<T>> cleanable = new HashSet<>();
     public Map<T, Handler<T>> tempDatabase = new ConcurrentHashMap<>();
 
-    public void createNewTemporaryes()
+    public void createNewTemporaries()
     {
         tempDatabase = new ConcurrentHashMap<>();
 
@@ -83,7 +82,7 @@ public abstract class HandleManager<T> implements IHandleManager<T>
             this.cleanable.add(h);
     }
 
-    public void acceptTemporaryes()
+    public void acceptTemporaries()
     {
         database = tempDatabase;
     }
@@ -97,5 +96,17 @@ public abstract class HandleManager<T> implements IHandleManager<T>
     public int getSize()
     {
         return database.size();
+    }
+
+    public void reload(Collection<Class<?>> classes)
+    {
+        Log.warning(getClass().getName()+": loading classes...");
+        createNewTemporaries();
+        for(Class<?> c : classes)
+        {
+            checkRegisterTemporary(c);
+        }
+        acceptTemporaries();
+        Log.warning(getClass().getName()+" Loaded "+database.size()+" classes");
     }
 }

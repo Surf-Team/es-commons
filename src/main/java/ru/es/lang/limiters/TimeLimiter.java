@@ -1,31 +1,68 @@
 package ru.es.lang.limiters;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TimeLimiter
 {
-    Map<String, Long> lastAuthMap = new HashMap<>();
-    long limitMillis;
+    Map<String, Long> keys = new ConcurrentHashMap<>();
+    long defaultDelay;
+    public boolean runSynchronized = true;
+    private final Object sync = new Object();
 
-    public TimeLimiter(long limitMillis)
+    public TimeLimiter(long defaultDelay)
     {
-        this.limitMillis = limitMillis;
+        this.defaultDelay = defaultDelay;
     }
 
-    public synchronized boolean allow(String ip)
+    public TimeLimiter(boolean runSynchronized)
     {
-        long lastAuth = lastAuthMap.getOrDefault(ip, 0L);
+        this.runSynchronized = runSynchronized;
+    }
 
-        if (System.currentTimeMillis() - lastAuth < limitMillis)
+    public boolean allow(String key)
+    {
+        if (runSynchronized)
+        {
+            synchronized (sync)
+            {
+                return allowImpl(key, defaultDelay);
+            }
+        }
+        else
+            return allowImpl(key, defaultDelay);
+    }
+
+    public boolean allow(String key, long delay)
+    {
+        if (runSynchronized)
+        {
+            synchronized (sync)
+            {
+                return allowImpl(key, delay);
+            }
+        }
+        else
+            return allowImpl(key, delay);
+    }
+
+    private boolean allowImpl(String key, long delay)
+    {
+        long lastAuth = keys.getOrDefault(key, 0L);
+
+        if (System.currentTimeMillis() - lastAuth < delay)
         {
             return false;
         }
         else
         {
-            lastAuthMap.put(ip, System.currentTimeMillis());
+            keys.put(key, System.currentTimeMillis());
             return true;
         }
     }
 
+    public void clean()
+    {
+        keys.clear();
+    }
 }

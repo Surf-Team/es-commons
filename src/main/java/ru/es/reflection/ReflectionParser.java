@@ -30,12 +30,12 @@ public class ReflectionParser
     {
         handleManagers.add(h);
 
-        h.createNewTemporaryes();
+        h.createNewTemporaries();
         for (Class<?> clazz : loadedClasses.values())
         {
             h.checkRegisterTemporary(clazz);
         }
-        h.acceptTemporaryes();
+        h.acceptTemporaries();
 
         Log.warning("ESReflections "+name+": registered handle manager "+h.getClass().getName()+". Assigned "+h.getSize()+" classes.");
     }
@@ -114,13 +114,13 @@ public class ReflectionParser
         for (IHandleManager h : handleManagers)
         {
             Log.warning("ESReflections "+name+": checking handleManager: "+h.getClass().getName());
-            h.createNewTemporaryes();
+            h.createNewTemporaries();
             for(int i = 0; i < classesGlobal.size(); i++)
             {
                 clazz = classesGlobal.get(i);
                 h.checkRegisterTemporary(clazz);
             }
-            h.acceptTemporaryes();
+            h.acceptTemporaries();
             Log.warning("ESReflections "+name+": Loaded "+h.getSize()+" classes for "+h.getClass().getName());
         }
     }
