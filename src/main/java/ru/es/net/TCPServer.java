@@ -152,7 +152,7 @@ public abstract class TCPServer
     private void createUser(Socket newClient)
     {
         User u = new User(newClient, maxId);
-        Log.warning(SERVER_LOG_NAME+": Client connected: "+u.id+", "+ newClient.getInetAddress().getHostAddress() + ", users size: " + (users.size()+1));
+        //Log.warning(SERVER_LOG_NAME+": Client connected: "+u.id+", "+ newClient.getInetAddress().getHostAddress() + ", users size: " + (users.size()+1));
         users.add(u);
         maxId++;
     }
@@ -200,6 +200,7 @@ public abstract class TCPServer
             System.gc();
             //usedMemoryMB = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000;
             //Log.warning("Service: usage RAM after GC: "+ (usedMemoryMB)+" MB");
+            Log.warning(SERVER_LOG_NAME+": Clients connected for all time: "+maxId+", users size now: " + (users.size()+1));
 
             lastService = System.currentTimeMillis();
         }
