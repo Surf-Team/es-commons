@@ -1,6 +1,7 @@
 package ru.es.net;
 
 import ru.es.lang.ESEventHandler;
+import ru.es.lang.limiters.CountTimeLimiter;
 import ru.es.log.Log;
 import ru.es.thread.SimpleThreadPool;
 import ru.es.thread.RunnableImpl;
@@ -41,12 +42,13 @@ public abstract class TCPServer
     public int USER_READ_BUFFER_SIZE = 32*1024;
     public int USER_WRITE_BUFFER_SIZE = 64*1024;
     public int EXECUTOR_THREAD_COUNT = 2;
-    public int BACKLOG = 100;
+    public int BACKLOG = 1000;
     public String SERVER_LOG_NAME = "TcpServer";
     public boolean USER_CLOSE_ON_FAIL = true;
-    public int SERVICE_DELAY = 60*1000;
+    public int SERVICE_DELAY = 5*1000;
     public int PROCESS_USERS_DELAY = 100;
     public boolean DEBUG = false;
+    public int FREE_MEMORY_LIMIT = 64*1024*1024;
 
     public ESEventHandler<User> userClosed = new ESEventHandler<>();
 
@@ -80,16 +82,41 @@ public abstract class TCPServer
 
             while (running)
             {
+                Socket newClient = null;
+
                 try
                 {
-                    Socket newClient = serverSocket.accept();
-                    if (allowAddUser(newClient))
+                    long allocatedMemory = (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory());
+                    long presumableFreeMemory = Runtime.getRuntime().maxMemory() - allocatedMemory;
+
+                    //Log.warning("presumableFreeMemory: "+presumableFreeMemory);
+
+                    //if (users.size() < maxProcessingUsers)
+                    if (presumableFreeMemory > FREE_MEMORY_LIMIT)
                     {
-                        User u = new User(newClient, maxId);
-                        Log.warning(SERVER_LOG_NAME+": Client connected: "+u.id+", "+ newClient.getInetAddress().getHostAddress() + ", users size: " + (users.size()+1));
-                        users.add(u);
-                        maxId++;
+                        newClient = serverSocket.accept();
+                        if (allowAddUser(newClient))
+                        {
+                            createUser(newClient);
+                        }
                     }
+                    else
+                    {
+                        Log.warning("Memory exceed. Wait for GC... Users: " + users.size() + "");
+
+                        try
+                        {
+                            Thread.sleep(500);
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                catch (OutOfMemoryError e)
+                {
+                    e.printStackTrace();
                 }
                 catch (IOException e)
                 {
@@ -120,6 +147,14 @@ public abstract class TCPServer
         });
         usersReadThread.setName(SERVER_LOG_NAME+"_ReadPackets");
         usersReadThread.start();
+    }
+
+    private void createUser(Socket newClient)
+    {
+        User u = new User(newClient, maxId);
+        Log.warning(SERVER_LOG_NAME+": Client connected: "+u.id+", "+ newClient.getInetAddress().getHostAddress() + ", users size: " + (users.size()+1));
+        users.add(u);
+        maxId++;
     }
 
     public void close()
@@ -159,6 +194,13 @@ public abstract class TCPServer
                     u.close(CloseReason.Inactivity);
                 }
             }
+
+            //long usedMemoryMB = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000;
+            //Log.warning("Service: usage RAM: "+ (usedMemoryMB)+" MB");
+            System.gc();
+            //usedMemoryMB = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000;
+            //Log.warning("Service: usage RAM after GC: "+ (usedMemoryMB)+" MB");
+
             lastService = System.currentTimeMillis();
         }
     }
@@ -267,15 +309,17 @@ public abstract class TCPServer
 
         public void receivePackets()
         {
+            int available = 0;
             try
             {
                 if (socket.getInputStream().available() > 0)
                 {
                     lastActive = System.currentTimeMillis();
-                    int read = socket.getInputStream().available();
+                    available = socket.getInputStream().available();
 
-                    socket.getInputStream().read(readBuffer, pos, read);
-                    pos += read;
+
+                    socket.getInputStream().read(readBuffer, pos, available);
+                    pos += available;
 
                     boolean containsNewLine = ByteUtils.contains(readBuffer, lineFeed, true, pos);
 
@@ -301,6 +345,20 @@ public abstract class TCPServer
             catch (IOException e)
             {
                 Log.warning(SERVER_LOG_NAME+": User loop failed: " + id);
+                e.printStackTrace();
+                if (USER_CLOSE_ON_FAIL)
+                    close(CloseReason.ServerCloseError);
+            }
+            catch (IndexOutOfBoundsException e)
+            {
+                Log.warning(SERVER_LOG_NAME+": User loop failed: " + id+". User read buffer limit. Available bytes in socket: "+available);
+                //e.printStackTrace();
+                if (USER_CLOSE_ON_FAIL)
+                    close(CloseReason.ServerCloseError);
+            }
+            catch (Exception e)
+            {
+                Log.warning(SERVER_LOG_NAME+": User loop failed: " + id+". Unhandled error: "+e.getMessage());
                 e.printStackTrace();
                 if (USER_CLOSE_ON_FAIL)
                     close(CloseReason.ServerCloseError);
