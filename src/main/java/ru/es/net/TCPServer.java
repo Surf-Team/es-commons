@@ -102,7 +102,7 @@ public abstract class TCPServer
                     }
                     else
                     {
-                        Log.warning("Memory exceed. Wait for GC... Users: " + users.size() + "");
+                        Log.warning("Memory exceed! presumableFreeMemory: "+presumableFreeMemory+". Wait for GC... Users: " + users.size() + "");
 
                         try
                         {
