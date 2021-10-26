@@ -49,6 +49,7 @@ public abstract class TCPServer
     public int PROCESS_USERS_DELAY = 100;
     public boolean DEBUG = false;
     public int FREE_MEMORY_LIMIT = 64*1024*1024;
+    public boolean GC_ON_SERVICE = true;
 
     public ESEventHandler<User> userClosed = new ESEventHandler<>();
 
@@ -195,12 +196,15 @@ public abstract class TCPServer
                 }
             }
 
-            //long usedMemoryMB = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000;
-            //Log.warning("Service: usage RAM: "+ (usedMemoryMB)+" MB");
-            System.gc();
-            //usedMemoryMB = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000;
-            //Log.warning("Service: usage RAM after GC: "+ (usedMemoryMB)+" MB");
-            Log.warning(SERVER_LOG_NAME+": Clients connected for all time: "+maxId+", users size now: " + (users.size()+1));
+            if (GC_ON_SERVICE)
+            {
+                long usedMemoryMB = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000;
+                Log.warning("Service: usage RAM: " + (usedMemoryMB) + " MB");
+                System.gc();
+                usedMemoryMB = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000 / 1000;
+                Log.warning("Service: usage RAM after GC: " + (usedMemoryMB) + " MB");
+                Log.warning(SERVER_LOG_NAME + ": Clients connected for all time: " + maxId + ", users size now: " + (users.size() + 1));
+            }
 
             lastService = System.currentTimeMillis();
         }
