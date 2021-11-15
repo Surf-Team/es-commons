@@ -6,9 +6,98 @@ import ru.es.log.Log;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class XMLUtils
 {
+	// читаем атрибут в порядке приоритета из разных элементов (например из родительских)
+	public static String readAttribute(String name, String defaultValue, Element... priority)
+	{
+		if (priority.length == 0)
+			throw new RuntimeException("priority.length == 0");
+
+		String value = null;
+		Attribute a = null;
+
+		for (Element e : priority)
+		{
+			if (e == null)
+				continue;
+
+			a = e.getAttribute(name);
+			if (a != null)
+			{
+				value = a.getValue();
+				break;
+			}
+		}
+
+		if (a == null)
+			value = defaultValue;
+
+		return value;
+	}
+
+	// читаем атрибут в порядке приоритета из разных элементов (например из родительских)
+	public static String readAttribute(String name, Element... priority)
+	{
+		if (priority.length == 0)
+			throw new RuntimeException("priority.length == 0");
+
+		String value = null;
+		Attribute a = null;
+
+		for (Element e : priority)
+		{
+			if (e == null)
+				continue;
+
+			a = e.getAttribute(name);
+			if (a != null)
+			{
+				value = a.getValue();
+				break;
+			}
+		}
+
+		if (a == null)
+			throw new RuntimeException("Attribute is not found. Default value is not set. Attribute: "+name);
+
+		return value;
+	}
+
+
+	// читаем элементы в порядке приоритета из разных элементов (например из родительских)
+	// all: true = объединяем родительские и свои. false = обрываем считывание, если элемент встретился в одном месте
+	public static List<Element> getElements(String name, boolean all, Element... priority)
+	{
+		if (priority.length == 0)
+			throw new RuntimeException("priority.length == 0");
+
+		List<Element> ret = new ArrayList<>();
+
+		List<Element> found = null;
+
+		for (Element e : priority)
+		{
+			if (e == null)
+				continue;
+			
+			found = e.getChildren(name);
+			if (found != null)
+			{
+				ret.addAll(found);
+
+				if (!all)
+					break;
+			}
+		}
+		return ret;
+	}
+
+
+
 	// читаем параметры из xml атрибутов, записываем их в класс
 	public static void parse(Object o, Element e, boolean debug)
 	{

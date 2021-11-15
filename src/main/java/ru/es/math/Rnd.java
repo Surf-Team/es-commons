@@ -131,6 +131,11 @@ public class Rnd
         return ESMath.constrain(min, min + _rnd.nextFloat() * (max-min), max);
     }
 
+    public static double get(double min, double max)
+    {
+        return ESMath.constrain(min, min + _rnd.nextDouble() * (max-min), max);
+    }
+
     /**
      * Gets a random number from 0(inclusive) to n(exclusive)
      *
