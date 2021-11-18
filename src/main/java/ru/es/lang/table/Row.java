@@ -36,7 +36,7 @@ public class Row
         }
         catch (NullPointerException npe)
         {
-            Log.warning("Entry "+name+" is null in row "+id+" "+entries.get(0).value);
+            Log.warning("Cant find entry: "+name+" in row "+id+" "+entries.get(0).value);
             throw npe;
         }
     }

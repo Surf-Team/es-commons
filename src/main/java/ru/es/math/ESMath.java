@@ -626,4 +626,26 @@ public class ESMath
         //Log.warning("floorMult: "+floorMult);
         return millisLeft + (floorMult*each);
     }
+
+    public static int getMinFrom(int[] values)
+    {
+        int min = Integer.MAX_VALUE;
+        for (int val : values)
+        {
+            if (val < min)
+                min = val;
+        }
+        return min;
+    }
+
+    public static int getMaxFrom(int[] values)
+    {
+        int max = Integer.MIN_VALUE;
+        for (int val : values)
+        {
+            if (val > max)
+                max = val;
+        }
+        return max;
+    }
 }
