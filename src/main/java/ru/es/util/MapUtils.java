@@ -94,4 +94,41 @@ public class MapUtils
         //Log.warning("MapUtils: modificate map. tmpMapSize: " + tmpMap.size() + ", replaced: " + replace.size() + ", added: " + ticksToAdd.size() + ", removed: " + ticksToRemove.size());
     }
 
+    public static Map<Integer, Integer> parseMapOfInt(String data)
+    {
+        Map<Integer, Integer> map = new HashMap<>();
+
+        if (data.isEmpty())
+            return map;
+
+        for (String entry : data.split(";"))
+        {
+            if (entry.isEmpty())
+                continue;
+            
+            String[] entrtyArr = entry.split(",");
+            int key = Integer.parseInt(entrtyArr[0]);
+            int value = Integer.parseInt(entrtyArr[0]);
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    public static String mapOfIntToString(Map<Integer, Integer> map)
+    {
+        StringBuilder ret = new StringBuilder();
+        boolean first = true;
+        for (var e : map.entrySet())
+        {
+            if (!first)
+                ret.append(";");
+            else
+                first = false;
+
+            ret.append(e.getKey());
+            ret.append(",");
+            ret.append(e.getValue());
+        }
+        return ret.toString();
+    }
 }

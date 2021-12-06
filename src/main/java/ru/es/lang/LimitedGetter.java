@@ -30,8 +30,9 @@ public class LimitedGetter<T>
 
     public T getRefreshed()
     {
-        refresh();
-        return get();
+        lastUpdated = System.currentTimeMillis();
+        lastValue = getter.get();
+        return lastValue;
     }
 
     public void refresh()
