@@ -108,7 +108,7 @@ public class MapUtils
             
             String[] entrtyArr = entry.split(",");
             int key = Integer.parseInt(entrtyArr[0]);
-            int value = Integer.parseInt(entrtyArr[0]);
+            int value = Integer.parseInt(entrtyArr[1]);
             map.put(key, value);
         }
         return map;
