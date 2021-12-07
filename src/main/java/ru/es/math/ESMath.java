@@ -7,10 +7,7 @@ import ru.es.util.SortUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -647,5 +644,35 @@ public class ESMath
                 max = val;
         }
         return max;
+    }
+
+    // разрезаем число на части
+    // 10, 3 вернёт int[] { 4, 3, 3 }
+    // 11, 3 вернёт int[] { 4, 4, 3 }
+    public static int[] slice(int fullSize, int slices)
+    {
+        if (slices > fullSize)
+            slices = fullSize;
+
+        int[] ret = new int[slices];
+
+        // сначала добавляем равные части
+        int equalPattern = fullSize / slices;
+        Arrays.fill(ret, equalPattern);
+
+        fullSize -= equalPattern * slices;
+
+        // потом добавляем остатки
+        int i = 0;
+        while (fullSize > 0)
+        {
+            ret[i] += 1;
+            fullSize -= 1;
+            i++;
+            if (i == slices)
+                i = 0;
+        }
+
+        return ret;
     }
 }
