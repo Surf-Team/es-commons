@@ -330,7 +330,7 @@ public abstract class TCPServer
 
                     if (containsNewLine)
                     {
-                        String s = new String(readBuffer, 0, pos-lineFeed.length);
+                        String s = new String(readBuffer, 0, pos); // -lineFeed.length = wrong? \r len = 1 != 2
                         pos = 0;
                         if (DEBUG)
                             Log.warning(SERVER_LOG_NAME+": Packet received: "+s);

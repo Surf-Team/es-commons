@@ -1,6 +1,8 @@
 package ru.es.math;
 
 
+import ru.es.util.Words;
+
 import java.util.*;
 
 /**
@@ -553,4 +555,15 @@ public class Rnd
         }
     }
 
+
+    public static String generateRandomHash(int size)
+    {
+        StringBuilder sb = new StringBuilder();
+        while (size > 0)
+        {
+            sb.append(Rnd.getRndFromArray(Words.wordsAll));
+            size--;
+        }
+        return sb.toString();
+    }
 }

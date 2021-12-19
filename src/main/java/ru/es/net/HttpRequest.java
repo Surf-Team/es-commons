@@ -135,6 +135,7 @@ public class HttpRequest
             //Create connection
             url = new URL(targetURL);
             connection = (HttpURLConnection)url.openConnection();
+            connection.setConnectTimeout(6000);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type",
                     "application/x-www-form-urlencoded");
