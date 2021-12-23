@@ -112,6 +112,7 @@ public class FileUtils
 
         FileOutputStream outputStream = new FileOutputStream(newFile);
         outputStream.write(data.getBytes());
+        outputStream.close();
     }
 
     public static void writeFile(File newFile, byte[] data)
@@ -125,6 +126,7 @@ public class FileUtils
 
             FileOutputStream fileOutputStream = new FileOutputStream(newFile);
             fileOutputStream.write(data, 0, data.length);
+            fileOutputStream.close();
         }
         catch(IOException e)
         {
