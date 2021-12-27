@@ -29,8 +29,9 @@ public class TSVTable extends Table
         readCsv(csvFile, csvId);
     }
 
-    public TSVTable(String[] lines, String id)
+    public TSVTable(String text, String id)
     {
+        String[] lines = text.split("\n");
         createTableFromStringArray(lines, id);
     }
 
