@@ -29,6 +29,11 @@ public class TSVTable extends Table
         readCsv(csvFile, csvId);
     }
 
+    public TSVTable(String[] lines, String id)
+    {
+        createTableFromStringArray(lines, id);
+    }
+
     // create table with only one column (for later usage)
     public TSVTable(TSVTable from, String idColumnName)
     {
@@ -47,7 +52,11 @@ public class TSVTable extends Table
     private void readCsv(File csvFile, String csvId) throws IOException
     {
         String[] lines = FileUtils.readLines(csvFile);
+        createTableFromStringArray(lines, csvId);
+    }
 
+    private void createTableFromStringArray(String[] lines, String csvId)
+    {
         int indexColumnIndex = -1;
         Map<Integer, String> tableHead = new HashMap<>();
         Map<String, Integer> tableHeadRev = new HashMap<>();
