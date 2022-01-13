@@ -1,11 +1,14 @@
 package ru.es.reflection.simple;
 
+import ru.es.lang.Converter;
+import ru.es.lang.ConverterExc;
 import ru.es.lang.StringTable;
 import ru.es.log.Log;
 import ru.es.reflection.ReflectionUtils;
 
 import org.reflections.Reflections;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +20,7 @@ public class ReflectionManager<T extends ReflectionObject<String>> implements St
     private final String packageName;
     private final Class<T> tClass;
     private final Map<String, T> objectMap = new HashMap<>();
+    private ConverterExc<Class<T>, T> constructor;
 
     // example:
     //String packageName = "ru.es.PolyformStudio.handlers.subWindows";
@@ -48,6 +52,11 @@ public class ReflectionManager<T extends ReflectionObject<String>> implements St
         }
     }
 
+    public void setConstructor(ConverterExc<Class<T>, T> constructor)
+    {
+        this.constructor = constructor;
+    }
+
     public void add(T instance)
     {
         objectMap.put(instance.getHandlerName(), instance);
@@ -63,4 +72,15 @@ public class ReflectionManager<T extends ReflectionObject<String>> implements St
     {
         return objectMap;
     }
+
+    public Class<T> getAssignable()
+    {
+        return tClass;
+    }
+
+    public ConverterExc<Class<T>, T> getConstructor()
+    {
+        return constructor;
+    }
 }
+

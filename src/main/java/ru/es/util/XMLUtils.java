@@ -101,7 +101,8 @@ public class XMLUtils
 	// читаем параметры из xml атрибутов, записываем их в класс
 	public static void parse(Object o, Element e, boolean debug)
 	{
-		Log.warning("XmlUtils.parse: object: "+o.toString());
+		if (debug)
+			Log.warning("XmlUtils.parse: object: "+o.toString());
 		for (Field f : o.getClass().getFields())
 		{
 			String fieldName = f.getName();
@@ -181,8 +182,8 @@ public class XMLUtils
 					throw new RuntimeException("Error parse xml attribute field: " + fieldName + "->" + a.getValue());
 				}
 			}
-			else
-				Log.warning("Attribute "+fieldName+" is null");
+			//else
+				//Log.warning("Attribute "+fieldName+" is null");
 		}
 	}
 }
