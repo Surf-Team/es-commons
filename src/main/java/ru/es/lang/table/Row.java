@@ -55,6 +55,11 @@ public class Row
             return Integer.parseInt(value);
     }
 
+    public long getValueLong(String name)
+    {
+        return Long.parseLong(getValue(name));
+    }
+
     public boolean getValueBoolean(String name)
     {
         String val = getValue(name);
