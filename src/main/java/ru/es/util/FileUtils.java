@@ -106,7 +106,18 @@ public class FileUtils
     public static void writeFile(File newFile, String data) throws IOException
     {
         if (!newFile.exists())
-            newFile.createNewFile();
+        {
+            try
+            {
+                newFile.createNewFile();
+            }
+            catch (IOException e)
+            {
+                Log.warning(e.getMessage()+", file: "+newFile.getAbsolutePath());
+                throw e;
+            }
+        }
+
 
         newFile.mkdirs();
 
