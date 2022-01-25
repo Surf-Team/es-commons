@@ -24,7 +24,7 @@ public class ConfigUtils
 		// может быть указано сразу несколько окружений для перезаписи
 		for (String stage : stageNames)
 		{
-			File stageConfigFile = new File("./"+subFolder+"/config." + stage + ".properties");
+			File stageConfigFile = new File("./"+subFolder+"/"+configName+"." + stage + ".properties");
 			Log.warning("Loading config: "+stageConfigFile.getName());
 			Properties stageConfig = FileUtils.getPropertiesFile(stageConfigFile);
 			// перезаписыванием значения базового конфига
