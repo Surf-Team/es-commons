@@ -241,6 +241,15 @@ public class TimeUtils
         //return Integer.parseInt(format1.format(d));
     }
 
+    public static DayOfWeek getDayOfWeekEnum()
+    {
+        Calendar c = Calendar.getInstance();
+        c.setTime(new Date());
+        int dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+
+        return DayOfWeek.values()[dayOfWeek-1];
+    }
+
     public static void main(String[] args)
     {
         Log.warning("dayOfWeek: "+getDayOfWeek());
