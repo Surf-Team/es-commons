@@ -13,6 +13,7 @@ public abstract class HandleManager<T> implements IHandleManager<T>
 {
     public Map<T, Handler<T>> database = new ConcurrentHashMap<>();
     public Set<Handler<T>> cleanable = new HashSet<>();
+    public Set<Handler<T>> notCleanable = new HashSet<>();
     public Map<T, Handler<T>> tempDatabase = new ConcurrentHashMap<>();
 
     public void createNewTemporaries()
@@ -70,6 +71,8 @@ public abstract class HandleManager<T> implements IHandleManager<T>
         }
         if (cleanable)
             this.cleanable.add(h);
+        else
+            this.notCleanable.add(h);
     }
 
     private void registerTemporary(Handler<T> h, boolean cleanable)
@@ -109,4 +112,14 @@ public abstract class HandleManager<T> implements IHandleManager<T>
         acceptTemporaries();
         Log.warning(getClass().getName()+" Loaded "+database.size()+" classes");
     }
+
+    // не чистый метод. Не использовать для строительства арзхитектуры
+    public List<Handler<T>> getAllHandler()
+    {
+        List<Handler<T>> handlers = new ArrayList<>();
+        handlers.addAll(cleanable);
+        handlers.addAll(notCleanable);
+        return handlers;
+    }
+
 }
