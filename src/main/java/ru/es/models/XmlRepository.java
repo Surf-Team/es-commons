@@ -1,6 +1,7 @@
 package ru.es.models;
 
 import org.jdom2.Element;
+import ru.es.log.Log;
 import ru.es.util.FileUtils;
 
 import java.io.File;
@@ -27,6 +28,7 @@ public abstract class XmlRepository
 
 	public void reload() throws Exception
 	{
+		Log.warning("Loading XML: "+getClass().getSimpleName()+"...");
 		rootXml = FileUtils.getXmlDocument(file);
 		reloadImpl(rootXml);
 	}
