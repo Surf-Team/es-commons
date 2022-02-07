@@ -306,4 +306,13 @@ public class StringUtils
             id++;
         }
     }
+
+    public static String limit(String text, int letters)
+    {
+        if (text.length() > letters)
+            text = text.substring(0, letters);
+
+        return text;
+    }
+
 }

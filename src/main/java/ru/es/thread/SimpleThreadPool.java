@@ -103,4 +103,33 @@ public class SimpleThreadPool
         }
     }
 
+
+    public void printStats(String name)
+    {
+        String[] stats = new String[]
+                {
+                        "Schedudled Thread Pools:",
+                        " + _scheduledExecutor:",
+                        " |- ActiveThreads:   " + schedudledExecutor.getActiveCount(),
+                        " |- getCorePoolSize: " + schedudledExecutor.getCorePoolSize(),
+                        " |- PoolSize:        " + schedudledExecutor.getPoolSize(),
+                        " |- MaximumPoolSize: " + schedudledExecutor.getMaximumPoolSize(),
+                        " |- CompletedTasks:  " + schedudledExecutor.getCompletedTaskCount(),
+                        " |- ScheduledTasks:  " + (schedudledExecutor.getTaskCount() - schedudledExecutor.getCompletedTaskCount()),
+                        " |- Queue:           " + schedudledExecutor.getQueue().size(),
+                        " | -------",
+                        " + _executor:",
+                        " |- ActiveThreads:   " + executor.getActiveCount(),
+                        " |- getCorePoolSize: " + executor.getCorePoolSize(),
+                        " |- PoolSize:        " + executor.getPoolSize(),
+                        " |- MaximumPoolSize: " + executor.getMaximumPoolSize(),
+                        " |- CompletedTasks:  " + executor.getCompletedTaskCount(),
+                        " |- ScheduledTasks:  " + (executor.getTaskCount() - executor.getCompletedTaskCount()),
+                        " |- Queue:           " + executor.getQueue().size(),
+                        " | -------"};
+
+        Log.warning("### Thread Pool Stats: "+ name+" ###");
+        for (String s : stats)
+            Log.warning(s);
+    }
 }
