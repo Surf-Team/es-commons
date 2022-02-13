@@ -164,6 +164,28 @@ public class FileUtils
         fw.close();
     }
 
+
+    public static void saveXmlDocWideFormat(Element element, File fullPatch) throws IOException
+    {
+        fullPatch.getParentFile().mkdirs();
+
+        if (!fullPatch.exists())
+            fullPatch.createNewFile();
+
+        Document doc = new Document(element);
+
+        XMLOutputter outputter = new XMLOutputter();
+
+        Format f = Format.getPrettyFormat();
+        f.setIndent("\t");
+        f.setTextMode(Format.TextMode.TRIM);
+
+        outputter.setFormat(f);
+        FileWriter fw = new FileWriter(fullPatch);
+        outputter.output(doc, fw);
+        fw.close();
+    }
+
     public static void saveXmlDocZipped(Element element, File fullPatch)
     {
         try
