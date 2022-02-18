@@ -28,7 +28,7 @@ public abstract class XmlRepository
 
 	public void reload() throws Exception
 	{
-		Log.warning("Loading XML: "+getClass().getSimpleName()+"...");
+		//Log.warning("Loading XML: "+getClass().getSimpleName()+"...");
 		rootXml = FileUtils.getXmlDocument(file);
 		reloadImpl(rootXml);
 	}
