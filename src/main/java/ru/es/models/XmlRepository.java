@@ -1,16 +1,23 @@
 package ru.es.models;
 
+import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
+import ru.es.lang.Converter;
 import ru.es.log.Log;
 import ru.es.util.FileUtils;
 
-import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public abstract class XmlRepository
 {
 	public final File file;
 
 	public Element rootXml;
+
+	// предварительная обработка xml кода. Можно добавлять всякие условия
+	public Converter<String, String> preProcessor;
 
 	public XmlRepository(File file) throws Exception
 	{
@@ -28,8 +35,18 @@ public abstract class XmlRepository
 
 	public void reload() throws Exception
 	{
-		//Log.warning("Loading XML: "+getClass().getSimpleName()+"...");
-		rootXml = FileUtils.getXmlDocument(file);
+		// preprocessor
+		String text = new String(FileUtils.getBytes(file), StandardCharsets.UTF_8);
+		if (preProcessor != null)
+			text = preProcessor.convert(text);
+
+
+		// read xml
+		SAXBuilder parser = new SAXBuilder();
+		InputStream inputStreamReader = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+		Document ret = parser.build(inputStreamReader);
+		rootXml = ret.getRootElement();
+
 		reloadImpl(rootXml);
 	}
 
