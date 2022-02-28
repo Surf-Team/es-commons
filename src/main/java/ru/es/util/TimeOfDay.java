@@ -10,4 +10,12 @@ public class TimeOfDay
 		this.hour = hour;
 		this.minute = minute;
 	}
+
+	public int getSecondInDay()
+	{
+		int secondIndex = hour * 60*60;
+		secondIndex += minute * 60;
+		return secondIndex;
+	}
+
 }

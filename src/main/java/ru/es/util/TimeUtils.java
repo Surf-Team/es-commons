@@ -4,6 +4,7 @@ import ru.es.log.Log;
 import ru.es.math.ESMath;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -471,4 +472,10 @@ public class TimeUtils
         return ESMath.nextAlignedNumber(curTime, eachMillis, minLimit);
     }
 
+    public static long getCurrentSecondInDay()
+    {
+        LocalDateTime date = LocalDateTime.now();
+
+        return date.toLocalTime().toSecondOfDay();
+    }
 }
