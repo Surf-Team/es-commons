@@ -457,6 +457,19 @@ public class ListUtils
         return list;
     }
 
+    public static<T> List<T> createListFromArrays(T[]... items)
+    {
+        List<T> list = new ArrayList<>();
+        for (T[] tt : items)
+        {
+            for (T t : tt)
+            {
+                list.add(t);
+            }
+        }
+        return list;
+    }
+
     public static<T> List<T> combine(List<T>... lists)
     {
         List<T> ret = new ArrayList<T>();
