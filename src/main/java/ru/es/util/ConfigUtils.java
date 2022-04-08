@@ -13,8 +13,13 @@ public class ConfigUtils
 	// Сначала читается defaults, затем по умолчанию developer. Если укажем production, то прочитается defaults, затем production
 	public static Properties loadProperties(String subFolder, String configName, String... stageNames) throws IOException
 	{
+		return loadPropertiesInPatch("", subFolder, configName, stageNames);
+	}
+
+	public static Properties loadPropertiesInPatch(String initPatch, String subFolder, String configName, String... stageNames) throws IOException
+	{
 		// изначально все настройки считываются из config.defaults
-		File configFile = new File("./"+subFolder+"/"+configName+".defaults.properties");
+		File configFile = new File(initPatch+"./"+subFolder+"/"+configName+".defaults.properties");
 		Properties config = FileUtils.getPropertiesFile(configFile);
 
 		// затем в эти же properties перезаписываются значения из окружения (developer, preproduction, production)
@@ -24,7 +29,7 @@ public class ConfigUtils
 		// может быть указано сразу несколько окружений для перезаписи
 		for (String stage : stageNames)
 		{
-			File stageConfigFile = new File("./"+subFolder+"/"+configName+"." + stage + ".properties");
+			File stageConfigFile = new File(initPatch+"./"+subFolder+"/"+configName+"." + stage + ".properties");
 			Log.warning("Loading config: "+stageConfigFile.getName());
 			Properties stageConfig = FileUtils.getPropertiesFile(stageConfigFile);
 			// перезаписыванием значения базового конфига
