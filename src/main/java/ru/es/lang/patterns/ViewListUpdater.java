@@ -1,7 +1,5 @@
 package ru.es.lang.patterns;
 
-import ru.es.util.ListUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,4 +37,18 @@ public abstract class ViewListUpdater<Key, Value>
     public abstract void removed(Value value);
 
     public abstract Value add(Key key);
+
+    public boolean changeChecker(Key oldKey, Key changedKey)
+    {
+        if (!oldKey.equals(changedKey))
+        {
+            removed(activeViews.get(oldKey));
+            activeViews.remove(oldKey);
+            activeViews.put(changedKey, add(changedKey));
+            collection.remove(oldKey);
+            collection.add(changedKey);
+            return true;
+        }
+        return false;
+    }
 }
