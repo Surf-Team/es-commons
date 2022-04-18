@@ -167,7 +167,14 @@ public class FileUtils
 
     public static void saveXmlDocWideFormat(Element element, File fullPatch) throws IOException
     {
-        fullPatch.getParentFile().mkdirs();
+        try
+        {
+            fullPatch.getParentFile().mkdirs();
+        }
+        catch (Exception e)
+        {
+            
+        }
 
         if (!fullPatch.exists())
             fullPatch.createNewFile();
