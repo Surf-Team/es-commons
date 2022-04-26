@@ -276,4 +276,11 @@ public class SortUtils
         Arrays.sort(strings, String.CASE_INSENSITIVE_ORDER);
     }
 
+    public static List<String> sort(Collection<String> collection)
+    {
+        var sortedList = ListUtils.createList(collection);
+        Collections.sort(sortedList);
+
+        return sortedList;
+    }
 }
