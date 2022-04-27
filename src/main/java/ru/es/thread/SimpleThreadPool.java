@@ -42,10 +42,28 @@ public class SimpleThreadPool
 
     public void execute(Runnable r)
     {
-        executor.execute(r);
+        // оборачиваем, иначе ошибки не будут видны
+        executor.execute(new RunnableImpl() {
+            @Override
+            public void runImpl() throws Exception
+            {
+                r.run();
+            }
+        });
     }
 
-    public ScheduledFuture<?> scheduleGeneral(RunnableImpl r, long delay)
+    public ScheduledFuture<?> runOnce(Runnable r, long delay)
+    {
+        return runOnce(new RunnableImpl() {
+            @Override
+            public void runImpl() throws Exception
+            {
+                r.run();
+            }
+        }, delay);
+    }
+
+    public ScheduledFuture<?> runOnce(RunnableImpl r, long delay)
     {
         try
         {
@@ -64,25 +82,6 @@ public class SimpleThreadPool
         }
     }
 
-    public ScheduledFuture<?> scheduleGeneralAtFixedRate(RunnableImpl r, long initial, long delay)
-    {
-        try
-        {
-            if(delay < 0)
-                delay = 0;
-
-            if(initial < 0)
-                initial = 0;
-
-            return schedudledExecutor.scheduleAtFixedRate(r, initial, delay, TimeUnit.MILLISECONDS);
-        }
-        catch(RejectedExecutionException e)
-        {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public ScheduledFuture<?> runTimer(Runnable r, long millis, boolean repeat)
     {
         try
@@ -90,11 +89,21 @@ public class SimpleThreadPool
             if(millis < 0)
                 millis = 0;
 
+            // оборачиваем, иначе ошибки не будут видны
+            RunnableImpl wrapper = new RunnableImpl() {
+                @Override
+                public void runImpl() throws Exception
+                {
+                    r.run();
+                }
+            };
+
+
             if (repeat)
-                return schedudledExecutor.scheduleAtFixedRate(r, millis,
+                return schedudledExecutor.scheduleAtFixedRate(wrapper, millis,
                     millis, TimeUnit.MILLISECONDS);
             else
-                return schedudledExecutor.schedule(r, millis, TimeUnit.MILLISECONDS);
+                return schedudledExecutor.schedule(wrapper, millis, TimeUnit.MILLISECONDS);
         }
         catch(RejectedExecutionException e)
         {
