@@ -7,14 +7,14 @@ import java.util.concurrent.*;
 
 public class SimpleThreadPool
 {
-    public ScheduledThreadPoolExecutor schedudledExecutor;
+    public ScheduledThreadPoolExecutor scheduledExecutor;
     private ThreadPoolExecutor executor;
 
     public SimpleThreadPool()
     {
         int cores = Runtime.getRuntime().availableProcessors();
         cores = ESMath.max(4, cores-1);
-        schedudledExecutor = new ScheduledThreadPoolExecutor(cores, new PriorityThreadFactory("schedudledExecutor", Thread.NORM_PRIORITY, false));
+        scheduledExecutor = new ScheduledThreadPoolExecutor(cores, new PriorityThreadFactory("schedudledExecutor", Thread.NORM_PRIORITY, false));
         executor = new ThreadPoolExecutor(cores, cores, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new PriorityThreadFactory("executor", Thread.NORM_PRIORITY, false));
         Log.warning("SimpleThreadPool: cores: "+cores);
     }
@@ -22,15 +22,15 @@ public class SimpleThreadPool
     public SimpleThreadPool(String poolName, int threads)
     {
         threads = ESMath.max(1, threads);
-        schedudledExecutor = new ScheduledThreadPoolExecutor(threads, new PriorityThreadFactory("schedudled"+poolName, Thread.NORM_PRIORITY, false));
+        scheduledExecutor = new ScheduledThreadPoolExecutor(threads, new PriorityThreadFactory("schedudled"+poolName, Thread.NORM_PRIORITY, false));
         executor = new ThreadPoolExecutor(threads, threads, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new PriorityThreadFactory(poolName, Thread.NORM_PRIORITY, false));
         Log.warning(poolName+": cores: "+threads);
     }
 
     public void stop()
     {
-        schedudledExecutor.getQueue().clear();
-        schedudledExecutor.shutdownNow();
+        scheduledExecutor.getQueue().clear();
+        scheduledExecutor.shutdownNow();
         executor.getQueue().clear();
         executor.shutdownNow();
     }
@@ -72,7 +72,7 @@ public class SimpleThreadPool
                 delay = 0;
             }
 
-            return schedudledExecutor.schedule(r, delay, TimeUnit.MILLISECONDS);
+            return scheduledExecutor.schedule(r, delay, TimeUnit.MILLISECONDS);
         }
         catch(Exception e)
         {
@@ -100,10 +100,10 @@ public class SimpleThreadPool
 
 
             if (repeat)
-                return schedudledExecutor.scheduleAtFixedRate(wrapper, millis,
+                return scheduledExecutor.scheduleAtFixedRate(wrapper, millis,
                     millis, TimeUnit.MILLISECONDS);
             else
-                return schedudledExecutor.schedule(wrapper, millis, TimeUnit.MILLISECONDS);
+                return scheduledExecutor.schedule(wrapper, millis, TimeUnit.MILLISECONDS);
         }
         catch(RejectedExecutionException e)
         {
@@ -119,13 +119,13 @@ public class SimpleThreadPool
                 {
                         "Schedudled Thread Pools:",
                         " + _scheduledExecutor:",
-                        " |- ActiveThreads:   " + schedudledExecutor.getActiveCount(),
-                        " |- getCorePoolSize: " + schedudledExecutor.getCorePoolSize(),
-                        " |- PoolSize:        " + schedudledExecutor.getPoolSize(),
-                        " |- MaximumPoolSize: " + schedudledExecutor.getMaximumPoolSize(),
-                        " |- CompletedTasks:  " + schedudledExecutor.getCompletedTaskCount(),
-                        " |- ScheduledTasks:  " + (schedudledExecutor.getTaskCount() - schedudledExecutor.getCompletedTaskCount()),
-                        " |- Queue:           " + schedudledExecutor.getQueue().size(),
+                        " |- ActiveThreads:   " + scheduledExecutor.getActiveCount(),
+                        " |- getCorePoolSize: " + scheduledExecutor.getCorePoolSize(),
+                        " |- PoolSize:        " + scheduledExecutor.getPoolSize(),
+                        " |- MaximumPoolSize: " + scheduledExecutor.getMaximumPoolSize(),
+                        " |- CompletedTasks:  " + scheduledExecutor.getCompletedTaskCount(),
+                        " |- ScheduledTasks:  " + (scheduledExecutor.getTaskCount() - scheduledExecutor.getCompletedTaskCount()),
+                        " |- Queue:           " + scheduledExecutor.getQueue().size(),
                         " | -------",
                         " + _executor:",
                         " |- ActiveThreads:   " + executor.getActiveCount(),
@@ -140,5 +140,19 @@ public class SimpleThreadPool
         Log.warning("### Thread Pool Stats: "+ name+" ###");
         for (String s : stats)
             Log.warning(s);
+    }
+
+    public void shutdown() throws InterruptedException
+    {
+        try
+        {
+            scheduledExecutor.shutdown();
+            scheduledExecutor.awaitTermination(2, TimeUnit.SECONDS);
+        }
+        finally
+        {
+            executor.shutdown();
+            executor.awaitTermination(2, TimeUnit.SECONDS);
+        }
     }
 }
