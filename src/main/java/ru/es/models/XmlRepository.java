@@ -8,26 +8,40 @@ import ru.es.log.Log;
 import ru.es.util.FileUtils;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public abstract class XmlRepository
 {
-	public final File file;
+	public final URL file;
 
 	public Element rootXml;
 
 	// предварительная обработка xml кода. Можно добавлять всякие условия
 	public Converter<String, String> preProcessor;
 
-	public XmlRepository(File file) throws Exception
+	public XmlRepository(URL file) throws Exception
 	{
 		this.file = file;
 		reload();
 	}
 
-	public XmlRepository(File file, boolean autoLoad) throws Exception
+	public XmlRepository(URL file, boolean autoLoad) throws Exception
 	{
 		this.file = file;
+
+		if (autoLoad)
+			reload();
+	}
+	public XmlRepository(File file) throws Exception
+	{
+		this.file = file.toURI().toURL();
+		reload();
+	}
+
+	public XmlRepository(File file, boolean autoLoad) throws Exception
+	{
+		this.file = file.toURI().toURL();
 
 		if (autoLoad)
 			reload();
@@ -36,7 +50,11 @@ public abstract class XmlRepository
 	public void reload() throws Exception
 	{
 		// preprocessor
-		String text = new String(FileUtils.getBytes(file), StandardCharsets.UTF_8);
+		var stream = file.openStream();
+		byte[] bytes = stream.readAllBytes();
+		stream.close();
+
+		String text = new String(bytes, StandardCharsets.UTF_8);
 		if (preProcessor != null)
 			text = preProcessor.convert(text);
 

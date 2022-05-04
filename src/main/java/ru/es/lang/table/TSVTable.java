@@ -7,6 +7,8 @@ import ru.es.util.ListUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.Map;
 public class TSVTable extends Table
 {
     // может быть null, если таблица не читалась из файла, а просто была создана
-    public File file;
+    public URL file;
     public Map<TSVTable, Filter<Row>> subTables = new HashMap<>();
 
     public TSVTable()
@@ -25,8 +27,14 @@ public class TSVTable extends Table
 
     public TSVTable(File csvFile, String csvId) throws IOException
     {
+        this.file = csvFile.toURI().toURL();
+        readCsv(file, csvId);
+    }
+
+    public TSVTable(URL csvFile, String csvId) throws IOException
+    {
         this.file = csvFile;
-        readCsv(csvFile, csvId);
+        readCsv(file, csvId);
     }
 
     public TSVTable(String text, String id)
@@ -50,7 +58,7 @@ public class TSVTable extends Table
         }
     }
 
-    private void readCsv(File csvFile, String csvId) throws IOException
+    private void readCsv(URL csvFile, String csvId) throws IOException
     {
         String[] lines = FileUtils.readLines(csvFile);
         createTableFromStringArray(lines, csvId);
@@ -175,7 +183,7 @@ public class TSVTable extends Table
     // если таблица не была считана из файла, то будет ошибка!
     public void write() throws IOException
     {
-        super.writeFile(file);
+        super.writeFile(new File(file.getFile()));
     }
 
     public void removeRow(Row r)

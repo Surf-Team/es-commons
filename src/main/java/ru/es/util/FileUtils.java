@@ -9,6 +9,7 @@ import org.jdom2.output.XMLOutputter;
 import ru.es.log.Log;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -262,6 +263,23 @@ public class FileUtils
         }
     }
 
+    public static Element getXmlDocument(URL file) throws IOException, JDOMException
+    {
+        try
+        {
+            SAXBuilder parser = new SAXBuilder();
+            var is = file.openStream();
+            Document ret = parser.build(is);
+            is.close();
+            return ret.getRootElement();
+        }
+        catch (Exception e)
+        {
+            Log.warning("Error in file: "+file.getPath());
+            throw e;
+        }
+    }
+
     public static void renameFIle(File file, File newName)
     {
         file.renameTo(newName);
@@ -462,6 +480,20 @@ public class FileUtils
         return ret;
     }
 
+    public static Properties loadProperties(URL url, String subPath) throws IOException
+    {
+        return loadProperties(new URL(url.toString()+subPath));
+    }
+
+    public static Properties loadProperties(URL url) throws IOException
+    {
+        Properties ret = new Properties();
+        InputStream in = url.openStream();
+        ret.load(in);
+        in.close();
+        return ret;
+    }
+
     public static String[] readLines(File file) throws IOException
     {
         FileInputStream fileInputStream = new FileInputStream(file);
@@ -469,6 +501,17 @@ public class FileUtils
         //fileInputStream.read(input);
         byte[] input = fileInputStream.readAllBytes();
         fileInputStream.close();
+        String inputStr = new String(input, StandardCharsets.UTF_8);
+        return inputStr.split("\r\n");
+    }
+
+    public static String[] readLines(URL file) throws IOException
+    {
+        InputStream is = file.openStream();
+        //byte[] input = new byte[fileInputStream.available()];
+        //fileInputStream.read(input);
+        byte[] input = is.readAllBytes();
+        is.close();
         String inputStr = new String(input, StandardCharsets.UTF_8);
         return inputStr.split("\r\n");
     }

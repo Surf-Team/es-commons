@@ -3,6 +3,7 @@ package ru.es.util;
 import ru.es.log.Log;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Properties;
 
 public class ConfigUtils
@@ -33,6 +34,30 @@ public class ConfigUtils
 			File stageConfigFile = new File(initPatch+"/"+subFolder+"/"+configName+"." + stage + ".properties");
 			Log.warning("Loading config: "+stageConfigFile.getName());
 			Properties stageConfig = FileUtils.getPropertiesFile(stageConfigFile);
+			// перезаписыванием значения базового конфига
+			config.putAll(stageConfig);
+		}
+
+		return config;
+	}
+
+	// вариант, когда нужно указать начальную директорию
+	public static Properties loadPropertiesInPatch(URL initPatch, String subFolder, String configName, String... stageNames) throws IOException
+	{
+		// изначально все настройки считываются из config.defaults
+		URL configFile = new URL(initPatch+"/"+subFolder+"/"+configName+".defaults.properties");
+		Properties config = FileUtils.loadProperties(configFile);
+
+		// затем в эти же properties перезаписываются значения из окружения (developer, preproduction, production)
+		// окруженние указывается в первом аргументе запуска. Если не указано, то будет developer
+		if (stageNames.length == 0)
+			stageNames = new String[] {"developer"};
+		// может быть указано сразу несколько окружений для перезаписи
+		for (String stage : stageNames)
+		{
+			URL stageConfigFile = new URL(initPatch+"/"+subFolder+"/"+configName+"." + stage + ".properties");
+			Log.warning("Loading config: "+stageConfigFile.toString());
+			Properties stageConfig = FileUtils.loadProperties(stageConfigFile);
 			// перезаписыванием значения базового конфига
 			config.putAll(stageConfig);
 		}
