@@ -3,6 +3,7 @@ package ru.es.lang.table;
 import ru.es.lang.Filter;
 import ru.es.lang.StringCall;
 import ru.es.log.Log;
+import ru.es.util.FileUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -67,6 +68,13 @@ public abstract class Table
         StringBuilder sb = createFileString();
         FileOutputStream fileOutputStream = new FileOutputStream(f);
         fileOutputStream.write(sb.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    // запись по URL с поддержкой загрузки на удалённый сервер по http
+    public void writeFile(URL url) throws IOException
+    {
+        StringBuilder sb = createFileString();
+        FileUtils.writeToURL(url, sb.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     protected abstract StringBuilder createFileString();

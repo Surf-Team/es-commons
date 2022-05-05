@@ -8,6 +8,9 @@ module ru.es.commons {
     requires transitive javolution.core.java;
     requires java.compiler;
     requires reflections;
+	requires org.apache.httpcomponents.httpclient;
+    requires org.apache.httpcomponents.httpcore;
+    requires org.apache.httpcomponents.httpmime;
 
     exports ru.es.annotation;
     exports ru.es.json;

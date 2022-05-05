@@ -1,5 +1,18 @@
 package ru.es.util;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.FileEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -103,7 +116,6 @@ public class FileUtils
     }
 
 
-
     public static void writeFile(File newFile, String data) throws IOException
     {
         if (!newFile.exists())
@@ -114,7 +126,7 @@ public class FileUtils
             }
             catch (IOException e)
             {
-                Log.warning(e.getMessage()+", file: "+newFile.getAbsolutePath());
+                Log.warning(e.getMessage() + ", file: " + newFile.getAbsolutePath());
                 throw e;
             }
         }
@@ -140,13 +152,11 @@ public class FileUtils
             fileOutputStream.write(data, 0, data.length);
             fileOutputStream.close();
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             throw new RuntimeException(e);
         }
     }
-
-
 
 
     public static void saveXmlDoc(Element element, File fullPatch) throws IOException
@@ -174,7 +184,7 @@ public class FileUtils
         }
         catch (Exception e)
         {
-            
+
         }
 
         if (!fullPatch.exists())
@@ -219,7 +229,7 @@ public class FileUtils
         }
         catch (Exception ex)
         {
-            Log.warning("Error saving XmlDoc, patch: "+fullPatch.getAbsolutePath());
+            Log.warning("Error saving XmlDoc, patch: " + fullPatch.getAbsolutePath());
             ex.printStackTrace();
         }
     }
@@ -241,7 +251,7 @@ public class FileUtils
         }
         catch (Exception e)
         {
-            Log.warning("Error getXmlXMLDocument: "+file);
+            Log.warning("Error getXmlXMLDocument: " + file);
             e.printStackTrace();
         }
         return null;
@@ -258,7 +268,7 @@ public class FileUtils
         }
         catch (Exception e)
         {
-            Log.warning("Error in file: "+file.getName());
+            Log.warning("Error in file: " + file.getName());
             throw e;
         }
     }
@@ -275,7 +285,7 @@ public class FileUtils
         }
         catch (Exception e)
         {
-            Log.warning("Error in file: "+file.getPath());
+            Log.warning("Error in file: " + file.getPath());
             throw e;
         }
     }
@@ -287,9 +297,12 @@ public class FileUtils
 
     public static List<String> getFilesInFolder(File folder, final String formatWithPoint)
     {
-        String[] files = folder.list(new FilenameFilter() {
+        String[] files = folder.list(new FilenameFilter()
+        {
 
-            @Override public boolean accept(File folder, String name) {
+            @Override
+            public boolean accept(File folder, String name)
+            {
                 return name.endsWith(formatWithPoint);
             }
 
@@ -307,10 +320,12 @@ public class FileUtils
         return ret;
     }
 
-    /**public static BufferedImage loadImage(File file)
-    {
-        return ImageUtils.loadImage(file);
-    }  **/
+    /**
+     * public static BufferedImage loadImage(File file)
+     * {
+     * return ImageUtils.loadImage(file);
+     * }
+     **/
 
     public static void copyFile(File src, File dest) throws IOException
     {
@@ -344,7 +359,7 @@ public class FileUtils
         }
         else return name;
     }
-    
+
 
     public static String getFilePatchNameExceptType(File f)
     {
@@ -394,7 +409,7 @@ public class FileUtils
                                         return false;
                                     }
                                 });
-                                
+
                                 if (files != null)
                                     ret.addAll(ListUtils.arrayToList(files));
                             }
@@ -466,7 +481,7 @@ public class FileUtils
         }
         else
         {
-            Log.error("Unknown OSC: "+OS);
+            Log.error("Unknown OSC: " + OS);
             return new File(sysProperties.getProperty("user.home") + File.separator + "Documents");
         }
     }
@@ -482,7 +497,7 @@ public class FileUtils
 
     public static Properties loadProperties(URL url, String subPath) throws IOException
     {
-        return loadProperties(new URL(url.toString()+subPath));
+        return loadProperties(new URL(url.toString() + subPath));
     }
 
     public static Properties loadProperties(URL url) throws IOException
@@ -514,5 +529,57 @@ public class FileUtils
         is.close();
         String inputStr = new String(input, StandardCharsets.UTF_8);
         return inputStr.split("\r\n");
+    }
+
+    public static void writeToURL(URL url, byte[] bytes) throws IOException
+    {
+        String urlString = url.toString();
+
+        if (urlString.startsWith("file:"))
+        {
+            writeFile(new File(url.getFile()), bytes);
+        }
+        else
+        {
+            if (urlString.startsWith("http"))
+            {
+                String path = url.getPath();
+                String file = url.getFile();
+                String host = url.getHost();
+                String protocol = url.getProtocol();
+                Log.warning("path: "+path);
+                Log.warning("file: "+file);
+                Log.warning("host: "+host);
+                Log.warning("protocol: "+protocol);
+                String pathToFile = file.substring(1, file.lastIndexOf("/")+1);
+
+                String uploadScriptFile = "upload.php";
+                String scriptURL = protocol+"://"+host+"/"+uploadScriptFile;
+
+                HttpClient httpClient = HttpClientBuilder.create().build();
+                //HttpPut putRequest = new HttpPut(scriptURL);
+                HttpPost request = new HttpPost(scriptURL);
+                //request.addHeader("Content-Type", "multipart/form-data");
+                //request.addHeader("Content-Length", bytes.length+""); добавляется сам
+
+                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+                builder.addTextBody("path", pathToFile);
+                builder.addBinaryBody("userfile", bytes, ContentType.APPLICATION_OCTET_STREAM, file);
+                // fileParamName should be replaced with parameter name your REST API expect.
+                //builder.addPart("fileParamName", new FileBody(file));
+                //builder.addPart("optionalParam", new StringBody("true", ContentType.create("text/plain", Consts.ASCII)));
+                request.setEntity(builder.build());
+
+                HttpResponse response = httpClient.execute(request);
+
+                HttpEntity entity = response.getEntity();
+                String result = EntityUtils.toString(entity);
+                Log.warning(result);
+                EntityUtils.consume(entity);
+
+            }
+            else
+                throw new IOException("Wrong protocol! "+url);
+        }
     }
 }
