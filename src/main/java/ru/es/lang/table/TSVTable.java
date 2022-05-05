@@ -183,7 +183,7 @@ public class TSVTable extends Table
     // если таблица не была считана из файла, то будет ошибка!
     public void write() throws IOException
     {
-        super.writeFile(new File(file.getFile()));
+        super.writeFile(file);
     }
 
     public void removeRow(Row r)
