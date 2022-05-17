@@ -133,4 +133,9 @@ public class Row
     {
         entries.add(new Entry(key, value));
     }
+
+    public void set(String key, String value)
+    {
+        getEntry(key).value = value;
+    }
 }

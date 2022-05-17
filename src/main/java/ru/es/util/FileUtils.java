@@ -35,6 +35,19 @@ import java.util.zip.GZIPOutputStream;
  */
 public class FileUtils
 {
+    private static final XMLOutputter xmlWriter = new XMLOutputter();
+    private static final SAXBuilder xmlReader = new SAXBuilder();
+
+    static
+    {
+        // set xml default format
+        Format xmlFormat = Format.getPrettyFormat();
+		xmlFormat.setIndent("\t");
+		xmlFormat.setTextMode(Format.TextMode.TRIM);
+		xmlWriter.setFormat(xmlFormat);
+    }
+
+
     public static String readFile(String file)
     {
         String ret = "";
@@ -581,5 +594,15 @@ public class FileUtils
             else
                 throw new IOException("Wrong protocol! "+url);
         }
+    }
+
+    public static Element toXml(String text) throws Exception
+    {
+        return xmlReader.build(new StringReader(text)).getRootElement();
+    }
+
+    public static String xmlToString(Element element)
+    {
+        return xmlWriter.outputString(element);
     }
 }
