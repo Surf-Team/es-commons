@@ -144,7 +144,7 @@ public class TimeUtils
     public static String convertMillsToFormatedStringMinSec(long mills, boolean ru)
     {
         long seconds = (mills / 1000) % 60;
-        long minutes = (mills / 1000 / 60) % 60;
+        long minutes = (mills / 1000 / 60);
 
         if (!ru)
             return ""+minutes+" minutes, "+seconds+" seconds";
