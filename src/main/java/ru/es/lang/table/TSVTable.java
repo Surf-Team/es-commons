@@ -118,7 +118,7 @@ public class TSVTable extends Table
     }
 
     @Override
-    protected StringBuilder createFileString()
+    public StringBuilder createFileString()
     {
         StringBuilder ret = new StringBuilder();
 

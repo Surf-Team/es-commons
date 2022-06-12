@@ -27,4 +27,6 @@ module ru.es.commons {
     exports ru.es.reflection.simple;
     exports ru.es.thread;
     exports ru.es.util;
+	exports ru.es.models.cache;
+    exports ru.es.models.exceptions;
 }

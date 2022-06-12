@@ -365,12 +365,13 @@ public class FileUtils
     public static String getFileNameExceptType(File f)
     {
         String name = f.getName();
-        if (name.contains("//."))
+        if (name.contains("."))
         {
             int index = name.lastIndexOf(".");
             return name.substring(0, index);
         }
-        else return name;
+        else
+            return name;
     }
 
 
@@ -559,15 +560,17 @@ public class FileUtils
                 String path = url.getPath();
                 String file = url.getFile();
                 String host = url.getHost();
+                int port = url.getPort();
                 String protocol = url.getProtocol();
                 Log.warning("path: "+path);
                 Log.warning("file: "+file);
                 Log.warning("host: "+host);
+                Log.warning("port: "+port);
                 Log.warning("protocol: "+protocol);
                 String pathToFile = file.substring(1, file.lastIndexOf("/")+1);
 
                 String uploadScriptFile = "upload.php";
-                String scriptURL = protocol+"://"+host+"/"+uploadScriptFile;
+                String scriptURL = protocol+"://"+host+":"+port+"/"+uploadScriptFile;
 
                 HttpClient httpClient = HttpClientBuilder.create().build();
                 //HttpPut putRequest = new HttpPut(scriptURL);

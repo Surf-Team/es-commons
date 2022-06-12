@@ -113,6 +113,16 @@ public class ArrayUtils
         return -1;
     }
 
+    public static int indexOf(int[] arr, int element)
+    {
+        for (int i = 0; i < arr.length; i++)
+        {
+            if (arr[i] == element)
+                return i;
+        }
+        return -1;
+    }
+
     public static byte[] getBytes(byte[] array, int from, int to)
     {
         byte[] ret = new byte[to-from];

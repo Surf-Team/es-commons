@@ -445,7 +445,10 @@ public class ListUtils
 
     public static<T> List<T> createList(List<T> items)
     {
-        List<T> list = new ArrayList<>(items);
+        List<T> list = new ArrayList<>();
+        if (items != null)
+            list.addAll(items);
+
         return list;
     }
 
@@ -724,7 +727,72 @@ public class ListUtils
         return ret;
     }
 
-    public static class ListChanges<T>
+    public static<T> int containsIn(List<List<T>> lists, T object)
+    {
+        for (List<T> list : lists)
+        {
+            if (list.contains(object))
+                return lists.indexOf(list);
+        }
+
+        return -1;
+    }
+
+    public static<T> void removeFrom(List<List<T>> lists, T object)
+    {
+        for (List<T> list : lists)
+        {
+            list.remove(object);
+        }
+    }
+
+    public static<T> List<T> getListWithLowerItems(List<List<T>> lists)
+    {
+        List<T> ret = null;
+        int lowerItems = Integer.MAX_VALUE;
+
+        for (List<T> list : lists)
+        {
+            if (list.size() < lowerItems)
+            {
+                lowerItems = list.size();
+                ret = list;
+            }
+        }
+        return ret;
+    }
+
+	public static int[] sortByPoints(List<?> teams, int[] points, boolean smallFirst)
+	{
+        var teamsSorted = ListUtils.createList(teams);
+        teamsSorted.sort(new Comparator() {
+            @Override
+            public int compare(Object o1, Object o2)
+            {
+                int indexOf1 = teams.indexOf(o1);
+                int indexOf2 = teams.indexOf(o2);
+
+                int points1 = points[indexOf1];
+                int points2 = points[indexOf2];
+
+                if (smallFirst)
+                    return points1 - points2;
+                else
+                    return points2 - points1;
+            }
+        });
+
+        int[] ret = new int[points.length];
+
+        for (int i = 0; i < ret.length; i++)
+        {
+            ret[i] = teams.indexOf(teamsSorted.get(i));
+        }
+
+        return ret;
+	}
+
+	public static class ListChanges<T>
     {
         public final List<T> added = new ArrayList<>();
         public final List<T> removed = new ArrayList<>();
