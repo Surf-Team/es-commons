@@ -2,6 +2,8 @@ package ru.es.models.cache;
 
 import ru.es.log.Log;
 import ru.es.models.exceptions.ForbiddenException;
+import ru.es.util.HtmlUtils;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,6 +30,14 @@ public class FileTemplateManager implements ITemplateManager
 	public String readStaticFile(String f) throws Exception
 	{
 		return new String(readStaticFile(getFile(f)));
+	}
+
+	// более новая версия
+	public String read(String f, int lang) throws Exception
+	{
+		String ret = new String(readStaticFile(getFile(f)));
+		ret = HtmlUtils.replaceLangTag(ret, lang);
+		return ret;
 	}
 
 	public byte[] readStaticFile(File f) throws IOException
