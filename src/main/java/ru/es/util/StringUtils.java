@@ -315,4 +315,23 @@ public class StringUtils
         return text;
     }
 
+    public static String getStageName(String[] args)
+    {
+        String stageName = "developer";
+        if (args != null && args.length > 0)
+        {
+            stageName = "";
+            boolean first = true;
+            for (String s : args)
+            {
+                if (!first)
+                    stageName += " ";
+
+                stageName += s;
+
+                first = false;
+            }
+        }
+        return stageName;
+    }
 }
