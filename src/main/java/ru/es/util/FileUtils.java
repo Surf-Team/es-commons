@@ -470,6 +470,26 @@ public class FileUtils
         }
     }
 
+    public static List<File> getAllFoldersIn(File folder, boolean includeRoot)
+    {
+        List<File> ret = new ArrayList<>();
+
+        if (includeRoot)
+            ret.add(folder);
+
+        File[] files = folder.listFiles();
+        if (files != null)
+        {
+            for (File f : files)
+            {
+                if (f.isDirectory())
+                    ret.addAll(getAllFoldersIn(f, true));
+            }
+        }
+
+        return ret;
+    }
+
     public static byte[] getBytes(File file1) throws IOException
     {
         FileInputStream fis = new FileInputStream(file1);
