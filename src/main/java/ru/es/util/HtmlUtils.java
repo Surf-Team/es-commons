@@ -1,7 +1,9 @@
 package ru.es.util;
 
+import org.apache.commons.lang3.tuple.Pair;
 import ru.es.lang.StringReplaceCall;
 import ru.es.lang.Value;
+import ru.es.lang.table.Entry;
 
 public class HtmlUtils
 {
@@ -100,5 +102,43 @@ public class HtmlUtils
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public static String hrefArgs(String baseHref, Entry... entries)
+	{
+		String ret = baseHref;
+		ret += "?";
+
+		boolean first = true;
+		for (Entry e : entries)
+		{
+			if (!first)
+				ret+="&";
+			ret += e.key +"="+e.value;
+
+			first = false;
+		}
+		return ret;
+	}
+
+	public static String button(String name, String baseHref, Entry... args)
+	{
+		StringBuilder ret = new StringBuilder();
+		ret.append("<a class='button' href='");
+		ret.append(hrefArgs(baseHref, args));
+		ret.append("'>");
+		ret.append(name);
+		ret.append("</a>");
+		return ret.toString();
+	}
+	public static String a(String name, String baseHref, Entry... args)
+	{
+		StringBuilder ret = new StringBuilder();
+		ret.append("<a href='");
+		ret.append(hrefArgs(baseHref, args));
+		ret.append("'>");
+		ret.append(name);
+		ret.append("</a>");
+		return ret.toString();
 	}
 }

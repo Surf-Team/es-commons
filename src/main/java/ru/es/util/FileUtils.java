@@ -1,32 +1,20 @@
 package ru.es.util;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import ru.es.util.writers.FileUrlWriter;
+import ru.es.util.writers.HttpUrlWriter;
+import ru.es.util.writers.UrlByteWriter;
 import ru.es.log.Log;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -37,6 +25,7 @@ public class FileUtils
 {
     private static final XMLOutputter xmlWriter = new XMLOutputter();
     private static final SAXBuilder xmlReader = new SAXBuilder();
+    private static Map<String, UrlByteWriter> protocolWriters = new HashMap<>();
 
     static
     {
@@ -45,6 +34,10 @@ public class FileUtils
 		xmlFormat.setIndent("\t");
 		xmlFormat.setTextMode(Format.TextMode.TRIM);
 		xmlWriter.setFormat(xmlFormat);
+
+        FileUtils.addWriter("file", new FileUrlWriter());
+        FileUtils.addWriter("http", new HttpUrlWriter());
+        FileUtils.addWriter("https", new HttpUrlWriter());
     }
 
 
@@ -569,54 +562,13 @@ public class FileUtils
     {
         String urlString = url.toString();
 
-        if (urlString.startsWith("file:"))
-        {
-            writeFile(new File(url.getFile()), bytes);
-        }
+        String protocol = url.getProtocol();
+        var writer = protocolWriters.get(protocol);
+
+        if (writer == null)
+            throw new IOException("Wrong protocol! " + url);
         else
-        {
-            if (urlString.startsWith("http"))
-            {
-                String path = url.getPath();
-                String file = url.getFile();
-                String host = url.getHost();
-                int port = url.getPort();
-                String protocol = url.getProtocol();
-                Log.warning("path: "+path);
-                Log.warning("file: "+file);
-                Log.warning("host: "+host);
-                Log.warning("port: "+port);
-                Log.warning("protocol: "+protocol);
-                String pathToFile = file.substring(1, file.lastIndexOf("/")+1);
-
-                String uploadScriptFile = "upload.php";
-                String scriptURL = protocol+"://"+host+":"+port+"/"+uploadScriptFile;
-
-                HttpClient httpClient = HttpClientBuilder.create().build();
-                //HttpPut putRequest = new HttpPut(scriptURL);
-                HttpPost request = new HttpPost(scriptURL);
-                //request.addHeader("Content-Type", "multipart/form-data");
-                //request.addHeader("Content-Length", bytes.length+""); добавляется сам
-
-                MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                builder.addTextBody("path", pathToFile);
-                builder.addBinaryBody("userfile", bytes, ContentType.APPLICATION_OCTET_STREAM, file);
-                // fileParamName should be replaced with parameter name your REST API expect.
-                //builder.addPart("fileParamName", new FileBody(file));
-                //builder.addPart("optionalParam", new StringBody("true", ContentType.create("text/plain", Consts.ASCII)));
-                request.setEntity(builder.build());
-
-                HttpResponse response = httpClient.execute(request);
-
-                HttpEntity entity = response.getEntity();
-                String result = EntityUtils.toString(entity);
-                Log.warning(result);
-                EntityUtils.consume(entity);
-
-            }
-            else
-                throw new IOException("Wrong protocol! "+url);
-        }
+            writer.write(url, bytes);
     }
 
     public static Element toXml(String text) throws Exception
@@ -627,5 +579,10 @@ public class FileUtils
     public static String xmlToString(Element element)
     {
         return xmlWriter.outputString(element);
+    }
+
+    public static void addWriter(String protocol, UrlByteWriter writer)
+    {
+        protocolWriters.put(protocol, writer);
     }
 }

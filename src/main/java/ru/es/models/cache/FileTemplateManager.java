@@ -1,9 +1,9 @@
 package ru.es.models.cache;
 
+import ru.es.lang.Value;
 import ru.es.log.Log;
 import ru.es.models.exceptions.ForbiddenException;
 import ru.es.util.HtmlUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,6 +14,7 @@ public class FileTemplateManager implements ITemplateManager
 	public final FileCacheManager fileCache;
 	public final FileCacheSettings settings;
 	private final File htmlRoot;
+	private boolean allowHtmlFileTag = false;
 
 	public FileTemplateManager(FileCacheSettings settings,
 							   File htmlRoot)
@@ -29,18 +30,86 @@ public class FileTemplateManager implements ITemplateManager
 
 	public String readStaticFile(String f) throws Exception
 	{
-		return new String(readStaticFile(getFile(f)));
+		return readStaticFile(getFile(f));
 	}
 
 	// более новая версия
 	public String read(String f, int lang) throws Exception
 	{
-		String ret = new String(readStaticFile(getFile(f)));
+		String ret = readStaticFile(getFile(f));
 		ret = HtmlUtils.replaceLangTag(ret, lang);
 		return ret;
 	}
 
-	public byte[] readStaticFile(File f) throws IOException
+	// более новая версия
+	public String readNoExc(String f, int lang)
+	{
+		try
+		{
+			String ret = readStaticFile(getFile(f));
+			ret = HtmlUtils.replaceLangTag(ret, lang);
+			return ret;
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return "Template not found";
+		}
+	}
+
+	public String readStaticFile(File f) throws IOException
+	{
+		String ret = new String(readStaticFileB(f));
+
+		if (allowHtmlFileTag)
+		{
+			ret = processIncludeFile(ret);
+		}
+
+		return ret;
+	}
+
+	private String processIncludeFile(String text)
+	{
+		String startTag = "htmlfile(";
+		String endTag = ")";
+
+		int deadlock = 0;
+
+		Value<String> data = new Value<>(text);
+		while (true)
+		{
+			boolean replaced = HtmlUtils.replaceTag(data, startTag, endTag, value -> {
+				try
+				{
+					String fileContents = readStaticFile(value.get());
+					value.set(fileContents);
+					return true;
+				}
+				catch (Exception e)
+				{
+					Log.warning("Error in htmlfile tag");
+					e.printStackTrace();
+				}
+				return false;
+			});
+
+			if (!replaced)
+				break;
+
+			deadlock++;
+
+			if (deadlock > 1000)
+			{
+				Log.warning("processHtmlInclude: deadlock detected for tag: "+startTag+" "+endTag);
+				break;
+			}
+		}
+
+		return data.get();
+	}
+
+	public byte[] readStaticFileB(File f) throws IOException
 	{
 		URL url = f.toURI().toURL();
 
@@ -96,5 +165,13 @@ public class FileTemplateManager implements ITemplateManager
 	{
 		return settings.fileCache;
 	}
+
+	public void allowFileTag()
+	{
+		allowHtmlFileTag = true;
+	}
+
+
+
 
 }
