@@ -39,33 +39,6 @@ public class XMLUtils
 		return value;
 	}
 
-	// читаем атрибут в порядке приоритета из разных элементов (например из родительских)
-	public static String readAttribute(String name, Element... priority)
-	{
-		if (priority.length == 0)
-			throw new RuntimeException("priority.length == 0");
-
-		String value = null;
-		Attribute a = null;
-
-		for (Element e : priority)
-		{
-			if (e == null)
-				continue;
-
-			a = e.getAttribute(name);
-			if (a != null)
-			{
-				value = a.getValue();
-				break;
-			}
-		}
-
-		if (a == null)
-			throw new RuntimeException("Attribute is not found. Default value is not set. Attribute: "+name);
-
-		return value;
-	}
 
 
 	// читаем элементы в порядке приоритета из разных элементов (например из родительских)

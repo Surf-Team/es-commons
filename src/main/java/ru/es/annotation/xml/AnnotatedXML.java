@@ -17,49 +17,59 @@ public class AnnotatedXML
 		for (Element e : rootElement.getChildren())
 		{
 			T object = objectsType.getConstructor().newInstance();
-			for (Field f : objectsType.getFields())
-			{
-				String fieldName = f.getName();
-
-				Log.warning("Parsing field: "+fieldName);
-
-				for (Attribute a : e.getAttributes())
-					Log.warning("exist attrs: "+a.getName());
-				Attribute attribute = e.getAttribute(fieldName);
-				if (attribute != null)
-				{
-					f.set(object, parseValue(f.getType(), attribute.getValue()));
-				}
-				else
-				{
-					Element element = e.getChild(fieldName);
-					Class fieldType = f.getType();
-					if (fieldType.isArray())
-					{
-						var objectType = fieldType.getComponentType();
-						int arraySize = element.getAttributes().size();
-						Object[] array = (Object[]) Array.newInstance(objectType, arraySize);
-						if (arraySize > 0)
-						{
-							int i = 0;
-							for (Attribute a : element.getAttributes())
-							{
-								array[i] = parseValue(objectType, a.getValue());
-								i++;
-							}
-						}
-						f.set(object, array);
-					}
-					else
-					{
-						throw new RuntimeException("Field not found in XML or this is not primitive object or not array");
-					}
-				}
-			}
+			parse(object, e);
 			ret.add(object);
 		}
 
 		return ret;
+	}
+
+
+	public static<T> void parse(T object, Element e) throws IllegalAccessException
+	{
+		Class<T> objectClass = (Class<T>) object.getClass();
+
+		for (Field f : objectClass.getDeclaredFields())
+		{
+			f.setAccessible(true);
+
+			String fieldName = f.getName();
+
+			Log.warning("Parsing field: "+fieldName);
+
+			for (Attribute a : e.getAttributes())
+				Log.warning("exist attrs: "+a.getName());
+			Attribute attribute = e.getAttribute(fieldName);
+			if (attribute != null)
+			{
+				f.set(object, parseValue(f.getType(), attribute.getValue()));
+			}
+			else
+			{
+				Element element = e.getChild(fieldName);
+				Class fieldType = f.getType();
+				if (fieldType.isArray())
+				{
+					var objectType = fieldType.getComponentType();
+					int arraySize = element.getAttributes().size();
+					Object[] array = (Object[]) Array.newInstance(objectType, arraySize);
+					if (arraySize > 0)
+					{
+						int i = 0;
+						for (Attribute a : element.getAttributes())
+						{
+							array[i] = parseValue(objectType, a.getValue());
+							i++;
+						}
+					}
+					f.set(object, array);
+				}
+				else
+				{
+					throw new RuntimeException("Поле '"+fieldName+"' не найдено в XML или оно не является примитивным объектом или массивом примитивных объектов.");
+				}
+			}
+		}
 	}
 
 	private static Object parseValue(Class<?> type, String value)
@@ -79,4 +89,5 @@ public class AnnotatedXML
 		else
 			throw new RuntimeException("Unknown type: "+type.getName()+" = "+value);
 	}
+
 }

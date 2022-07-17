@@ -1,6 +1,8 @@
 package ru.es.util;
 
 
+import ru.es.lang.Converter;
+
 import java.util.*;
 
 /**
@@ -130,5 +132,22 @@ public class MapUtils
             ret.append(e.getValue());
         }
         return ret.toString();
+    }
+
+    public static<Key, Item> Map<Key, List<Item>> createLists(List<Item> list, Converter<Item, Key> mapBy)
+    {
+        Map<Key, List<Item>> map = new HashMap<>();
+        for (Item classId : list)
+        {
+            var key = mapBy.convert(classId);
+            List<Item> addTo = map.get(key);
+            if (addTo == null)
+            {
+                addTo = new ArrayList<>();
+                map.put(key, addTo);
+            }
+            addTo.add(classId);
+        }
+        return map;
     }
 }
