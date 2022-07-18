@@ -17,7 +17,7 @@ public class AnnotatedXML
 		for (Element e : rootElement.getChildren())
 		{
 			T object = objectsType.getConstructor().newInstance();
-			parse(object, e);
+			parse(object, objectsType, e);
 			ret.add(object);
 		}
 
@@ -25,57 +25,126 @@ public class AnnotatedXML
 	}
 
 
-	public static<T> void parse(T object, Element e) throws IllegalAccessException
+	public static<T> void parse(T object, Class<? extends T> objectClass, Element e) throws IllegalAccessException, NoSuchFieldException
 	{
-		Class<T> objectClass = (Class<T>) object.getClass();
-
 		for (Field f : objectClass.getDeclaredFields())
 		{
+			XmlParseSettings parseSettings = f.getAnnotation(XmlParseSettings.class);
+			if (parseSettings != null)
+			{
+				if (!parseSettings.allowParse())
+					continue;
+			}
+
 			f.setAccessible(true);
 
 			String fieldName = f.getName();
 
-			Log.warning("Parsing field: "+fieldName);
+			//Log.warning("Parsing field: "+fieldName);
 
-			for (Attribute a : e.getAttributes())
-				Log.warning("exist attrs: "+a.getName());
+			//for (Attribute a : e.getAttributes())
+				//Log.warning("exist attrs: "+a.getName());
+
 			Attribute attribute = e.getAttribute(fieldName);
 			if (attribute != null)
 			{
-				f.set(object, parseValue(f.getType(), attribute.getValue()));
+				try
+				{
+					f.set(object, parseValue(f.getType(), attribute.getValue()));
+				}
+				catch (NumberFormatException nfe)
+				{
+					Log.warning("Error in field: "+fieldName);
+					throw nfe;
+				}
 			}
 			else
 			{
-				Element element = e.getChild(fieldName);
-				Class fieldType = f.getType();
-				if (fieldType.isArray())
+				Attribute subAttribute = null;
+				for (Element child : e.getChildren())
 				{
-					var objectType = fieldType.getComponentType();
-					int arraySize = element.getAttributes().size();
-					Object[] array = (Object[]) Array.newInstance(objectType, arraySize);
-					if (arraySize > 0)
+					for (Attribute a : child.getAttributes())
 					{
-						int i = 0;
-						for (Attribute a : element.getAttributes())
+						if (a.getName().equalsIgnoreCase(f.getName()))
 						{
-							array[i] = parseValue(objectType, a.getValue());
-							i++;
+							subAttribute = a;
+							break;
 						}
 					}
-					f.set(object, array);
+					if (subAttribute != null)
+						break;
+				}
+
+				if (subAttribute != null)
+				{
+					try
+					{
+						f.set(object, parseValue(f.getType(), subAttribute.getValue()));
+					}
+					catch (NumberFormatException nfe)
+					{
+						Log.warning("Error in field (2): "+fieldName);
+						throw nfe;
+					}
 				}
 				else
 				{
-					throw new RuntimeException("Поле '"+fieldName+"' не найдено в XML или оно не является примитивным объектом или массивом примитивных объектов.");
+					Element element = e.getChild(fieldName);
+
+					if (element == null && parseSettings != null && parseSettings.allowDefaultValue())
+						continue;
+
+					Log.warning("Parsing array: "+fieldName);
+					Class fieldType = f.getType();
+					if (fieldType.isArray())
+					{
+						var objectType = fieldType.getComponentType();
+						int arraySize = element.getAttributes().size();
+						Object[] array = (Object[]) Array.newInstance(objectType, arraySize);
+
+						if (arraySize > 0)
+						{
+							int i = 0;
+							for (Attribute a : element.getAttributes())
+							{
+								try
+								{
+									array[i] = parseValue(objectType, a.getValue());
+								}
+								catch (NumberFormatException nfe)
+								{
+									Log.warning("Error in field (3): "+fieldName);
+									throw nfe;
+								}
+
+								i++;
+							}
+						}
+						f.set(object, array);
+					}
+					else
+					{
+						if (parseSettings != null && parseSettings.allowDefaultValue())
+							continue;
+						else
+							throw new RuntimeException("Поле '" + fieldName + "' не найдено в XML или оно не является примитивным объектом или массивом примитивных объектов.");
+					}
 				}
 			}
 		}
 	}
 
-	private static Object parseValue(Class<?> type, String value)
+	private static Object parseValue(Class type, String value) throws NoSuchFieldException, IllegalAccessException
 	{
-		if (type == Boolean.class)
-			return Boolean.parseBoolean(value);
+		if (type == boolean.class)
+		{
+			if (value.equals("1"))
+				return true;
+			else if (value.equals("0"))
+				return false;
+			else
+				return Boolean.parseBoolean(value);
+		}
 		else if (type == String.class)
 			return value;
 		else if (type == int.class)
@@ -86,6 +155,22 @@ public class AnnotatedXML
 			return Float.parseFloat(value);
 		else if (type == double.class)
 			return Double.parseDouble(value);
+		else if (type.isEnum())
+		{
+			// не тестировалось
+			Object o = Enum.valueOf(type, value);
+			if (o == null)
+			{
+				// find by ordinal
+				Field valuesFiled = type.getField("values");
+				Object[] values = (Object[]) valuesFiled.get(o);
+				return values[(int) o];
+			}
+			else
+				return o;
+
+			//throw new RuntimeException("Enum value not found: "+type+", "+value);
+		}
 		else
 			throw new RuntimeException("Unknown type: "+type.getName()+" = "+value);
 	}
