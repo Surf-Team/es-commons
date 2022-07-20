@@ -1,7 +1,6 @@
-package ru.es.annotation.xml;
+package ru.es.annotation;
 
 import org.jdom2.Element;
-import ru.es.annotation.map.AnnotatedMap;
 import ru.es.models.XmlRepository;
 
 import java.net.URL;

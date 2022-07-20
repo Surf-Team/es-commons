@@ -1,4 +1,4 @@
-package ru.es.annotation.xml;
+package ru.es.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,4 +1,4 @@
-package ru.es.annotation;
+package ru.es.math;
 
 import java.lang.annotation.*;
 

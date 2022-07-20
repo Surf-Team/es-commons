@@ -6,6 +6,7 @@ import ru.es.log.Log;
 import ru.es.math.ESMath;
 import ru.es.math.Rnd;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -192,6 +193,21 @@ public class ListUtils
     public static<T> String arrayToString(T[] array)
     {
         List<T> list = arrayToList(array);
+        return getStringFromList(list, ",");
+    }
+
+    public static<T> String arrayToStringRaw(Object array)
+    {
+        List list = new ArrayList();
+
+        if (array != null)
+        {
+            for (int i = 0; i < Array.getLength(array); i++)
+            {
+                list.add(Array.get(array, i));
+            }
+        }
+
         return getStringFromList(list, ",");
     }
 
