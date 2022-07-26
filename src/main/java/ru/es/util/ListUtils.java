@@ -808,7 +808,18 @@ public class ListUtils
         return ret;
 	}
 
-	public static class ListChanges<T>
+    public static void removeEmptyStrings(List<String> strings)
+    {
+        List<String> toRemove = new ArrayList<>();
+        for (String s : strings)
+        {
+            if (s.trim().isEmpty())
+                toRemove.add(s);;
+        }
+        strings.removeAll(toRemove);
+    }
+
+    public static class ListChanges<T>
     {
         public final List<T> added = new ArrayList<>();
         public final List<T> removed = new ArrayList<>();

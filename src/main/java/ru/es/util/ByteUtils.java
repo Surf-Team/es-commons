@@ -135,4 +135,51 @@ public class ByteUtils
             return -1;
         }
     }
+
+
+    public static int toInt(byte[] array, int from, int len, boolean up)
+    {
+        byte[] ret = new byte[len];
+
+        int value = 0;
+        if (up)
+        {
+            for (int i = from; i < from+len; i++)
+            {
+                value = (value << 8) + (array[i] & 0xFF);
+            }
+        }
+        else
+        {
+            for (int i = from+len-1; i >= from; i--)
+            {
+                value = (value << 8) + (array[i] & 0xFF);
+            }
+        }
+        return value;
+    }
+
+    public static float toFloat(byte[] array, int from, int len, boolean up)
+    {
+        byte[] ret = new byte[len];
+
+        int value = 0;
+        if (up)
+        {
+            for (int i = from; i < from+len; i++)
+            {
+                value = (value << 8) + (array[i] & 0xFF);
+            }
+        }
+        else
+        {
+            for (int i = from+len-1; i >= from; i--)
+            {
+                value = (value << 8) + (array[i] & 0xFF);
+            }
+        }
+
+        return Float.intBitsToFloat(value);
+    }
+
 }

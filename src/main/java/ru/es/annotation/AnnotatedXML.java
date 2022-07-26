@@ -105,7 +105,7 @@ public class AnnotatedXML
 					if (element == null && parseSettings != null && parseSettings.allowDefaultValue())
 						continue;
 
-					Log.warning("Parsing array: "+fieldName);
+					//Log.warning("Parsing array: "+fieldName);
 					Class fieldType = f.getType();
 					if (fieldType.isArray())
 					{
@@ -137,12 +137,14 @@ public class AnnotatedXML
 						}
 						f.set(object, array);
 					}
+					else if (element != null)
+					{
+						String text = element.getText();
+						f.set(object, text);
+					}
 					else
 					{
-						if (parseSettings != null && parseSettings.allowDefaultValue())
-							continue;
-						else
-							throw new RuntimeException("Поле '" + fieldName + "' не найдено в XML или оно не является примитивным объектом или массивом примитивных объектов.");
+						throw new RuntimeException("Поле '" + fieldName + "' не найдено в XML или оно не является примитивным объектом или массивом примитивных объектов.");
 					}
 				}
 			}

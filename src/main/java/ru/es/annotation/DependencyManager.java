@@ -27,7 +27,7 @@ public class DependencyManager
 
 
 
-	public<T> T getValue(Class<T> tClass, String key)
+	public<T> T getValue(Class<T> tClass, Object key)
 	{
 		return (T) getCollection(tClass).get(key);
 	}
