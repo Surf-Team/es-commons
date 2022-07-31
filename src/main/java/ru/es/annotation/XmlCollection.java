@@ -8,10 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+// создание типичной коллекции с объектами прямо из XML файла.
+// достаточно разметить (или можно даже не размечать) класс объектов
+// !!! подробности в AnnotatedXML
+// класс позволяет:
+// 1) получать списки объектов
+// 2) получать конкретный обхект по ключу. Ключ указывается через @UniqueKey
 public class XmlCollection<T> extends XmlRepository
 {
-	private List<T> items;
+	private List<T> objects;
 	private Map<String, Map<Object, T>> maps = new HashMap<>();
 
 	private final Class<T> tClass;
@@ -28,12 +33,12 @@ public class XmlCollection<T> extends XmlRepository
 	protected void reloadImpl(Element rootXml) throws Exception
 	{
 		// create list
-		List<T> items = AnnotatedXML.getList(tClass, rootXml);
+		List<T> objects = AnnotatedXML.getList(tClass, rootXml);
 
 		// create maps by Key annotation
-		Map<String, Map<Object, T>> maps = AnnotatedMap.createMaps(items);
+		Map<String, Map<Object, T>> maps = AnnotatedMap.createMaps(objects);
 
-		this.items = items;
+		this.objects = objects;
 		this.maps = maps;
 	}
 
@@ -43,12 +48,12 @@ public class XmlCollection<T> extends XmlRepository
 		throw new RuntimeException("Not implemented");
 	}
 
-	public List<T> getItems()
+	public List<T> getObjects()
 	{
-		return items;
+		return objects;
 	}
 
-	// поиск по всем ключам
+	// поиск по всем ключам @UniqueKey
 	public T get(Object key)
 	{
 		for (Map<Object, T> map : maps.values())

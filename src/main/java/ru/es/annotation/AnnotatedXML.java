@@ -2,17 +2,29 @@ package ru.es.annotation;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
-import ru.es.annotation.XmlParseSettings;
 import ru.es.log.Log;
 
-import javax.lang.model.type.ArrayType;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+// помогает парсить данные из XML
+// по умолчанию, парсинг будет происходить для всех полей класса
+// если поле не найдено, то будет ошибка
+// чтобы определить уникальный ключ в коллекции (для дальнейшего поиска обхекта по ключу), нужно поставить аннотацию @UniqueKey
+// чтобы не парсить какое-либо поле, нужно использовать аннотацию @XmlParseSettings(allowParse = false)
+// если значение может отсутствовать (не обязательное), соответственно нужно разрешить иметь значение по умолчанию @XmlParseSettings(allowDefaultValue = true
+// можно указать название группы через @Group(name = groupName), чтобы xml значение сохранялось внутри элемента с названием groupName
+// @ArrayInfo позволит более детально сохранять и загружать массивы
+// @NoSave позволит не сохранять поле
+// использование DependencyManager позволит парсить ссылки на объекты
 public class AnnotatedXML
 {
+	// получить список объектов из Xml файла (спарсить)
+	// не использовать на прямую. Лучше использовать XmlCollection<T> getCollection
 	public static<T> List<T> getList(Class<T> objectsType, Element rootElement) throws Exception
 	{
 		List<T> ret = new ArrayList<>();
@@ -26,16 +38,26 @@ public class AnnotatedXML
 		return ret;
 	}
 
+	// создание типичных коллекций из xml файла
+	public static<T> XmlCollection<T> getCollection(Class<T> objectsType, URL file) throws Exception
+	{
+		return new XmlCollection<T>(objectsType, file);
+	}
 
+	// спарсить объект
 	public static<T> void parse(T object, Class<? extends T> objectClass, Element e) throws IllegalAccessException, NoSuchFieldException
 	{
 		parse(object, objectClass, e, null);
 	}
 
+	// спарсить объект с учётом DependencyManager
 	public static<T> void parse(T object, Class<? extends T> objectClass, Element e, DependencyManager dependencyManager) throws IllegalAccessException, NoSuchFieldException
 	{
 		for (Field f : objectClass.getDeclaredFields())
 		{
+			if (Modifier.isStatic(f.getModifiers()))
+				continue;
+
 			XmlParseSettings parseSettings = f.getAnnotation(XmlParseSettings.class);
 			if (parseSettings != null)
 			{

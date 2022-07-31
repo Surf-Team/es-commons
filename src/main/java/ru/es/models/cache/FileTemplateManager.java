@@ -71,42 +71,7 @@ public class FileTemplateManager implements ITemplateManager
 
 	private String processIncludeFile(String text)
 	{
-		String startTag = "htmlfile(";
-		String endTag = ")";
-
-		int deadlock = 0;
-
-		Value<String> data = new Value<>(text);
-		while (true)
-		{
-			boolean replaced = HtmlUtils.replaceTag(data, startTag, endTag, value -> {
-				try
-				{
-					String fileContents = readStaticFile(value.get());
-					value.set(fileContents);
-					return true;
-				}
-				catch (Exception e)
-				{
-					Log.warning("Error in htmlfile tag");
-					e.printStackTrace();
-				}
-				return false;
-			});
-
-			if (!replaced)
-				break;
-
-			deadlock++;
-
-			if (deadlock > 1000)
-			{
-				Log.warning("processHtmlInclude: deadlock detected for tag: "+startTag+" "+endTag);
-				break;
-			}
-		}
-
-		return data.get();
+		return processIncludeFile(text, this, null, null);
 	}
 
 	public byte[] readStaticFileB(File f) throws IOException
@@ -172,6 +137,50 @@ public class FileTemplateManager implements ITemplateManager
 	}
 
 
+	public static<T> String processIncludeFile(String text, FileTemplateManager fileTemplateManager,
+											   OnIncludeHtmlEvent<T> onIncludeHtmlEvent, T object)
+	{
+		String startTag = "htmlfile(";
+		String endTag = ")";
+
+		int deadlock = 0;
+
+		Value<String> data = new Value<>(text);
+		while (true)
+		{
+			boolean replaced = HtmlUtils.replaceTag(data, startTag, endTag, value -> {
+				try
+				{
+					String fileContents = fileTemplateManager.readStaticFile(value.get());
+
+					if (onIncludeHtmlEvent != null)
+						fileContents = onIncludeHtmlEvent.onEvent(fileContents, object);
+
+					value.set(fileContents);
+					return true;
+				}
+				catch (Exception e)
+				{
+					Log.warning("Error in htmlfile tag");
+					e.printStackTrace();
+				}
+				return false;
+			});
+
+			if (!replaced)
+				break;
+
+			deadlock++;
+
+			if (deadlock > 1000)
+			{
+				Log.warning("processHtmlInclude: deadlock detected for tag: "+startTag+" "+endTag);
+				break;
+			}
+		}
+
+		return data.get();
+	}
 
 
 }
