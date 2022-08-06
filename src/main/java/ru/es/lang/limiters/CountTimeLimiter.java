@@ -1,15 +1,18 @@
 package ru.es.lang.limiters;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
+// удобный класс для создания ограничений на вызов каких либо функций
 public class CountTimeLimiter
 {
-    Map<String, List<Long>> map = new HashMap<>();
+    Map<String, List<Long>> map = new ConcurrentHashMap<>();
 
     long time;
     int countLimit;
 
+    // "не более чем countLimit в течение time"
     public CountTimeLimiter(long time, int countLimit)
     {
         this.time = time;
@@ -24,10 +27,10 @@ public class CountTimeLimiter
         }
     };
 
-    // repeated
-    public synchronized boolean allow(String ip)
+    // возвращает false, если пользователь привысил лимит + учитывает эту попытку
+    public synchronized boolean allow(String user)
     {
-        List<Long> lastWrongLogins = map.computeIfAbsent(ip, createMap);
+        List<Long> lastWrongLogins = map.computeIfAbsent(user, createMap);
 
         long curTime = System.currentTimeMillis();
 
@@ -44,25 +47,25 @@ public class CountTimeLimiter
         return count <= countLimit;
     }
 
-    // лояльный вариант, который не добавляет новые элементы, когда лимит привышен
-    public synchronized boolean allowAndAdd(String ip)
+    // лояльный вариант, который не добавляет новые элементы, когда лимит превышен
+    public synchronized boolean allowAndAdd(String user)
     {
-        if (allow(ip))
+        if (allow(user))
         {
-            add(ip);
+            add(user);
             return true;
         }
         return false;
     }
 
     // более строгий вариант, учитывающий попытки даже тогда, когда лимит превышен
-    public synchronized boolean addAndAllow(String ip)
+    public synchronized boolean addAndAllow(String user)
     {
-        add(ip);
-        return allow(ip);
+        add(user);
+        return allow(user);
     }
 
-    public synchronized boolean allowUnique(String ip)
+    public synchronized boolean allowUnique(String user)
     {
         long curTime = System.currentTimeMillis();
 
@@ -82,9 +85,9 @@ public class CountTimeLimiter
         return count <= countLimit;
     }
 
-    public synchronized void add(String ip)
+    public synchronized void add(String user)
     {
-        List<Long> lastWrongLogins = map.computeIfAbsent(ip, createMap);
+        List<Long> lastWrongLogins = map.computeIfAbsent(user, createMap);
 
         lastWrongLogins.add(System.currentTimeMillis());
     }
