@@ -7,7 +7,7 @@ import ru.es.lang.table.Entry;
 
 public class HtmlUtils
 {
-	public static String replaceLangTag(String text, int lang)
+	public static String replaceLangTag(String ret, int lang)
 	{
 		String removeStart = "";
 		String removeEnd = "";
@@ -22,9 +22,9 @@ public class HtmlUtils
 			removeEnd = "</rus>";
 		}
 
-		text = removeInsideTag(text, removeStart, removeEnd);
+		ret = removeInsideTag(ret, removeStart, removeEnd);
 
-		text = removeInsideTag(text, "<!--", "-->");
+		ret = removeInsideTag(ret, "<!--", "-->");
 
 		String deleteStart = "";
 		String deleteEnd = "";
@@ -38,11 +38,33 @@ public class HtmlUtils
 			deleteStart = "<eng>";
 			deleteEnd = "</eng>";
 		}
-		text = text.replaceAll(deleteStart, "");
-		text = text.replaceAll(deleteEnd, "");
+		ret = ret.replaceAll(deleteStart, "");
+		ret = ret.replaceAll(deleteEnd, "");
 
 
-		return text;
+		// short version (old)
+		Value<String> htmlVal = new Value<>(ret);
+		while (true)
+		{
+			boolean ok = HtmlUtils.replaceTag(htmlVal, "printL(", ");", tagContent ->
+			{
+				String content = tagContent.get();
+				String[] split = content.split("\"");
+
+				String[] args = { split[1], split[3] };
+
+				String text = args[lang].trim();
+				tagContent.set(text);
+				return true;
+			});
+
+			if (!ok)
+				break;
+		}
+		ret = htmlVal.get();
+
+
+		return ret;
 	}
 
 	private static String removeInsideTag(String text, String removeStart, String removeEnd)
