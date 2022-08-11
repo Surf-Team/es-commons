@@ -27,15 +27,7 @@ public class AnnotatedXML
 	// не использовать на прямую. Лучше использовать XmlCollection<T> getCollection
 	public static<T> List<T> getList(Class<T> objectsType, Element rootElement) throws Exception
 	{
-		List<T> ret = new ArrayList<>();
-		for (Element e : rootElement.getChildren())
-		{
-			T object = objectsType.getConstructor().newInstance();
-			parse(object, objectsType, e);
-			ret.add(object);
-		}
-
-		return ret;
+		return getList(objectsType, rootElement.getChildren());
 	}
 
 	// создание типичных коллекций из xml файла
@@ -45,15 +37,24 @@ public class AnnotatedXML
 	}
 
 	// спарсить объект
-	public static<T> void parse(T object, Class<? extends T> objectClass, Element e) throws IllegalAccessException, NoSuchFieldException
+	public static<T> void parse(T object, Class<? extends T> objectClass, Element e) throws Exception
 	{
 		parse(object, objectClass, e, null);
 	}
 
 	// спарсить объект с учётом DependencyManager
-	public static<T> void parse(T object, Class<? extends T> objectClass, Element e, DependencyManager dependencyManager) throws IllegalAccessException, NoSuchFieldException
+	public static<T> void parse(T object, Class<? extends T> objectClass, Element e, DependencyManager dependencyManager) throws Exception
 	{
-		for (Field f : objectClass.getDeclaredFields())
+		List<Class> classes = new ArrayList<>();
+		classes.add(objectClass);
+		Class currentClass = objectClass;
+		while (currentClass.getSuperclass() != null)
+		{
+			currentClass = currentClass.getSuperclass();
+			classes.add(currentClass);
+		}
+
+		for (Field f : objectClass.getFields())
 		{
 			if (Modifier.isStatic(f.getModifiers()))
 				continue;
@@ -69,13 +70,26 @@ public class AnnotatedXML
 
 			String fieldName = f.getName();
 
+			if (f.getName().equals("_element"))
+			{
+				f.set(object, e);
+				continue;
+			}
+
 			//Log.warning("Parsing field: "+fieldName);
 
 			//for (Attribute a : e.getAttributes())
 				//Log.warning("exist attrs: "+a.getName());
 
 			Attribute attribute = e.getAttribute(fieldName);
-			if (attribute != null)
+			ListSettings listSettings = f.getAnnotation(ListSettings.class);
+
+			if (listSettings != null)
+			{
+				List<Element> listElements = e.getChildren(listSettings.elementsName());
+				f.set(object, getList(listSettings.objectsClass(), listElements));
+			}
+			else if (attribute != null)
 			{
 				try
 				{
@@ -172,6 +186,20 @@ public class AnnotatedXML
 			}
 		}
 	}
+
+	private static<T> List<T> getList(Class<T> objectsType, List<Element> elements) throws Exception
+	{
+		List<T> ret = new ArrayList<>();
+		for (Element e : elements)
+		{
+			T object = objectsType.getConstructor().newInstance();
+			parse(object, objectsType, e);
+			ret.add(object);
+		}
+
+		return ret;
+	}
+
 
 	private static Object parseValue(Class type, String value, DependencyManager dependencyManager) throws NoSuchFieldException, IllegalAccessException
 	{

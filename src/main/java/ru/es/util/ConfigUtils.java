@@ -3,6 +3,7 @@ package ru.es.util;
 import ru.es.log.Log;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Properties;
 
@@ -64,4 +65,28 @@ public class ConfigUtils
 
 		return config;
 	}
+
+	// Заменяет во всех String полях {configName} на значение config из properties
+	public static void updateStringConfig(Object object, Properties properties) throws IllegalAccessException
+	{
+		for (Field f : object.getClass().getFields())
+		{
+			if (f.getType() == String.class)
+				f.set(object, updateConfig((String) f.get(object), properties));
+		}
+	}
+
+	public static String updateConfig(String value, Properties config)
+	{
+		if (value == null)
+			return value;
+
+		for (Object key : config.keySet())
+		{
+			String configName = (String) key;
+			value = value.replace("{"+configName+"}", config.getProperty(configName));
+		}
+		return value;
+	}
+
 }

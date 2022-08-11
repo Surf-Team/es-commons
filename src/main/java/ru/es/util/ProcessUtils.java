@@ -7,6 +7,9 @@ import ru.es.log.Log;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class ProcessUtils
 {
@@ -84,5 +87,42 @@ public class ProcessUtils
 		br.close();
 
 		return element;
+	}
+
+	// делит командную строку на части. Не делит то, что в кавычках
+	public static Collection<String> splitCmd(String cmd)
+	{
+		List<String> ret = new ArrayList<>();
+
+		String[] cmdSplitted = cmd.split(" ");
+		for (int i = 0; i < cmdSplitted.length; i++)
+		{
+			String part = cmdSplitted[i];
+			if (!part.contains("\""))
+			{
+				if (!part.isEmpty())
+					ret.add(part);
+			}
+			else
+			{
+				String partWithSpaces = part+" ";
+
+				while (true)
+				{
+					i++;
+					part = cmdSplitted[i];
+
+					if (part.contains("\""))
+						break;
+					else
+						partWithSpaces += part+" ";
+				}
+				partWithSpaces += part;
+
+				ret.add(partWithSpaces);
+			}
+		}
+
+		return ret;
 	}
 }
