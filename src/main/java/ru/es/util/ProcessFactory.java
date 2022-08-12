@@ -74,6 +74,11 @@ public class ProcessFactory
 			processInfo.done = true;
 			//Log.warning("Process thread done.");
 		}
+		catch (IOException e)
+		{
+			processInfo.error = true;
+			processInfo.done = true;
+		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
