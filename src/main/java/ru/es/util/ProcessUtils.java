@@ -98,7 +98,16 @@ public class ProcessUtils
 		for (int i = 0; i < cmdSplitted.length; i++)
 		{
 			String part = cmdSplitted[i];
-			if (!part.contains("\""))
+
+			boolean addFully = !part.contains("\"");
+
+			if (!addFully)
+			{
+				if (part.substring(2).contains("\"")) // когда начало и конец это один фрагмент
+					addFully = true;
+			}
+
+			if (addFully)
 			{
 				if (!part.isEmpty())
 					ret.add(part);

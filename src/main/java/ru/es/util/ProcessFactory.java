@@ -40,7 +40,7 @@ public class ProcessFactory
 				{
 					runProcess(directory, processInfo, cmd);
 					processInfo.done = true;
-					Log.warning("Process thread done.");
+					//Log.warning("Process thread done.");
 					onCompleted.set(processInfo);
 				}
 				catch (Exception e)
@@ -72,7 +72,7 @@ public class ProcessFactory
 		{
 			runProcess(directory, processInfo, cmd);
 			processInfo.done = true;
-			Log.warning("Process thread done.");
+			//Log.warning("Process thread done.");
 		}
 		catch (Exception e)
 		{
@@ -120,7 +120,10 @@ public class ProcessFactory
 			processInfo.error = true;
 
 		if (process.exitValue() != 0)
+		{
 			processInfo.error = true;
+			Log.warning("Error exit code: "+process.exitValue());
+		}
 
 		process.destroy();
 		is.close();

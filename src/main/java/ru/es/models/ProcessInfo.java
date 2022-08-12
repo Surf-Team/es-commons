@@ -1,7 +1,5 @@
 package ru.es.models;
 
-import ru.es.log.Log;
-
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ProcessInfo
@@ -11,18 +9,18 @@ public class ProcessInfo
 	private String errOut = "";
 	public boolean done = false;
 	public boolean error = false;
-	public int id; //todo вот это куда то вынести
-	public int project;
-	public String stage;
+	public int id;
+	public int stepIndex;
+	public String functionName;
 
 	public ConcurrentLinkedQueue<String> stdOutQueue = new ConcurrentLinkedQueue<>();
 	public ConcurrentLinkedQueue<String> stdOutErrQueue = new ConcurrentLinkedQueue<>();
 
-	public ProcessInfo(String name, int project, String stage)
+	public ProcessInfo(String name, int stepIndex, String functionName)
 	{
 		this.name = name;
-		this.project = project;
-		this.stage = stage;
+		this.stepIndex = stepIndex;
+		this.functionName = functionName;
 	}
 
 	public synchronized void appendStdout(String data)

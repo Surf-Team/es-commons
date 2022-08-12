@@ -11,8 +11,9 @@ module ru.es.commons {
 	requires org.apache.httpcomponents.httpclient;
     requires org.apache.httpcomponents.httpcore;
     requires org.apache.httpcomponents.httpmime;
+	requires org.yaml.snakeyaml;
 
-    exports ru.es.annotation;
+	exports ru.es.annotation;
     exports ru.es.json;
     exports ru.es.lang;
     exports ru.es.lang.table;
