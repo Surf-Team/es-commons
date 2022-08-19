@@ -309,6 +309,9 @@ public class StringUtils
 
     public static String limit(String text, int letters)
     {
+        if (text == null)
+            return text;
+        
         if (text.length() > letters)
             text = text.substring(0, letters);
 

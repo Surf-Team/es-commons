@@ -7,6 +7,7 @@ import ru.es.log.Log;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -17,6 +18,27 @@ import javax.tools.*;
 
 public class ReflectionUtils
 {
+    // with superclasses
+    public static List<Field> getAllFields(Class objectClass)
+    {
+        List<Class> classes = new ArrayList<>();
+        classes.add(objectClass);
+        Class currentClass = objectClass;
+        while (currentClass.getSuperclass() != null)
+        {
+            currentClass = currentClass.getSuperclass();
+            classes.add(currentClass);
+        }
+
+        List<Field> ret = new ArrayList<>();
+        for (Class c : classes)
+        {
+            ret.addAll(List.of(c.getDeclaredFields()));
+        }
+        return ret;
+    }
+
+
     public static<T> List<Class<T>> findClassesInPackage(String packageName, ClassLoader classLoader, Class<T> classType)
             throws Exception
     {

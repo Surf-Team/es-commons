@@ -140,4 +140,43 @@ public class ProcessFactory
 	{
 		return processes;
 	}
+
+	public void startProcessLogger(boolean debug)
+	{
+		Thread t = new Thread(new Runnable() {
+			@Override
+			public void run()
+			{
+				while (true)
+				{
+					for (ProcessInfo processInfo : getProcesses())
+					{
+						if (debug)
+						{
+							while (!processInfo.stdOutQueue.isEmpty())
+							{
+								System.out.print(processInfo.stdOutQueue.poll());
+							}
+						}
+
+						while (!processInfo.stdOutErrQueue.isEmpty())
+							System.out.print(processInfo.stdOutErrQueue.poll());
+					}
+					try
+					{
+						Thread.sleep(500);
+					}
+					catch (InterruptedException e)
+					{
+						e.printStackTrace();
+						break;
+					}
+				}
+			}
+		});
+		t.setDaemon(true);
+		t.setName("logger");
+		t.start();
+	}
+
 }
