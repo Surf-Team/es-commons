@@ -86,7 +86,16 @@ public class AnnotatedXML
 
 			if (listSettings != null)
 			{
-				List<Element> listElements = e.getChildren(listSettings.elementsName());
+				Element getChildrenFrom = e;
+				if (!listSettings.subElement().isEmpty())
+				{
+					getChildrenFrom = e.getChild(listSettings.subElement());
+
+					if (getChildrenFrom == null)
+						throw new Exception("Sub element not found: "+listSettings.subElement());
+				}
+
+				List<Element> listElements = getChildrenFrom.getChildren(listSettings.elementsName());
 				f.set(object, getList(listSettings.objectsClass(), listElements));
 			}
 			else if (attribute != null)

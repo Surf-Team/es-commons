@@ -11,4 +11,5 @@ public @interface ListSettings
 {
 	String elementsName(); // будет считать списом элементы в корне с этим именем
 	Class objectsClass();
+	String subElement() default ""; // если != empty, то будет брать элементы из суб-элемента
 }
