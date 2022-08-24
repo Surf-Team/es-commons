@@ -3,10 +3,9 @@ package ru.es.annotation;
 import org.jdom2.Attribute;
 import org.jdom2.Element;
 import ru.es.log.Log;
+import ru.es.models.ESStringConverter;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +19,7 @@ import java.util.List;
 // можно указать название группы через @Group(name = groupName), чтобы xml значение сохранялось внутри элемента с названием groupName
 // @ArrayInfo позволит более детально сохранять и загружать массивы
 // @NoSave позволит не сохранять поле
+// @ToString сообщит о том что поле может быть преобразовано в строку и обратно
 // использование DependencyManager позволит парсить ссылки на объекты
 public class AnnotatedXML
 {
@@ -37,24 +37,16 @@ public class AnnotatedXML
 	}
 
 	// спарсить объект
-	public static<T> void parse(T object, Class<? extends T> objectClass, Element e) throws Exception
+	public static<T> void parse(T object, Class<? extends T> objectClass, Element e, boolean allowSuperclass) throws Exception
 	{
-		parse(object, objectClass, e, null);
+		parse(object, objectClass, e, null, allowSuperclass);
 	}
 
 	// спарсить объект с учётом DependencyManager
-	public static<T> void parse(T object, Class<? extends T> objectClass, Element e, DependencyManager dependencyManager) throws Exception
+	public static<T> void parse(T object, Class<? extends T> objectClass, Element e, DependencyManager dependencyManager, boolean allowSuperclass)
+			throws Exception
 	{
-		List<Class> classes = new ArrayList<>();
-		classes.add(objectClass);
-		Class currentClass = objectClass;
-		while (currentClass.getSuperclass() != null)
-		{
-			currentClass = currentClass.getSuperclass();
-			classes.add(currentClass);
-		}
-
-		for (Field f : objectClass.getFields())
+		for (Field f : allowSuperclass ? objectClass.getFields() : objectClass.getDeclaredFields())
 		{
 			if (Modifier.isStatic(f.getModifiers()))
 				continue;
@@ -102,7 +94,7 @@ public class AnnotatedXML
 			{
 				try
 				{
-					f.set(object, parseValue(f.getType(), attribute.getValue(), dependencyManager));
+					f.set(object, parseValue(f.getType(), attribute.getValue(), dependencyManager, f));
 				}
 				catch (NumberFormatException nfe)
 				{
@@ -131,12 +123,17 @@ public class AnnotatedXML
 				{
 					try
 					{
-						f.set(object, parseValue(f.getType(), subAttribute.getValue(), dependencyManager));
+						f.set(object, parseValue(f.getType(), subAttribute.getValue(), dependencyManager, f));
 					}
 					catch (NumberFormatException nfe)
 					{
 						Log.warning("Error in field (2): "+fieldName);
 						throw nfe;
+					}
+					catch (NullPointerException npe)
+					{
+						Log.warning("Error in field (3): "+fieldName);
+						throw npe;
 					}
 				}
 				else
@@ -171,7 +168,7 @@ public class AnnotatedXML
 								try
 								{
 									Array.set(array, i, parseValue(objectType,
-											element.getAttributeValue(arrayInfo.elementNames()[i]), dependencyManager));
+											element.getAttributeValue(arrayInfo.elementNames()[i]), dependencyManager, f));
 								}
 								catch (NumberFormatException nfe)
 								{
@@ -202,7 +199,7 @@ public class AnnotatedXML
 		for (Element e : elements)
 		{
 			T object = objectsType.getConstructor().newInstance();
-			parse(object, objectsType, e);
+			parse(object, objectsType, e, true);
 			ret.add(object);
 		}
 
@@ -210,7 +207,7 @@ public class AnnotatedXML
 	}
 
 
-	private static Object parseValue(Class type, String value, DependencyManager dependencyManager) throws NoSuchFieldException, IllegalAccessException
+	private static Object parseValue(Class type, String value, DependencyManager dependencyManager, Field f) throws NoSuchFieldException, IllegalAccessException
 	{
 		if (type == boolean.class)
 		{
@@ -249,11 +246,56 @@ public class AnnotatedXML
 		}
 		else
 		{
-			XmlCollection collection = dependencyManager.getCollection(type);
-			if (collection == null)
-				throw new RuntimeException("Unknown type: " + type.getName() + " = " + value+", Xml collection not found.");
+			ToString toString = f.getAnnotation(ToString.class);
+			if (toString != null)
+			{
+				if (toString.stringConverter() == ESStringConverter.class) // is default converter
+				{
+					try
+					{
+						Constructor constructor = type.getConstructor(String.class);
+						return constructor.newInstance(value);
+					}
+					catch (NoSuchMethodException e)
+					{
+						throw new RuntimeException("Cant create object from string: " + type.getName() + " = " + value + ". No (String) constructor!");
+					}
+					catch (InvocationTargetException e)
+					{
+						e.printStackTrace();
+						throw new RuntimeException("Cant create object from string: " + type.getName() + " = " + value + ". " + e.getMessage());
+					}
+					catch (InstantiationException e)
+					{
+						throw new RuntimeException("Cant create object from string: " + type.getName() + " = " + value + ". " + e.getMessage());
+					}
+				}
+				else
+				{
+					Field singletonConverter = toString.stringConverter().getField("singleton");
+					if (singletonConverter == null)
+					{
+						throw new RuntimeException("ESStringConverter, указанный в "+f.getName()+", должен быть проинициализирован в виде статического публичного поля с названием singleton в том же классе.");
+					}
+					else
+					{
+						ESStringConverter converter = (ESStringConverter) singletonConverter.get(null);
+						return converter.fromString(value);
+					}
+				}
+			}
 
-			return collection.get(value);
+			if (dependencyManager != null)
+			{
+				XmlCollection collection = dependencyManager.getCollection(type);
+
+				if (collection == null)
+					throw new RuntimeException("Unknown type: " + type.getName() + " = " + value + ", Xml collection not found.");
+
+				return collection.get(value);
+			}
+
+			throw new RuntimeException("Cannot parse value: "+value+", "+type.getSimpleName());
 		}
 	}
 
