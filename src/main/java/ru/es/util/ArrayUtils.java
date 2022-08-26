@@ -215,4 +215,17 @@ public class ArrayUtils
         }
         return ret;
     }
+
+    public static float[] stringToFloatArray(String input, String delim)
+    {
+        String[] spl = input.split(delim);
+        float[] ret = new float[spl.length];
+        int i = 0;
+        for (String s : spl)
+        {
+            ret[i] = Float.parseFloat(s);
+            i++;
+        }
+        return ret;
+    }
 }
