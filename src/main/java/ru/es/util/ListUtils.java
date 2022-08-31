@@ -685,7 +685,7 @@ public class ListUtils
         }
     }
 
-    public static<T> String toString(List<T> b, String delim)
+    public static<T> String toString(Collection<T> b, String delim)
     {
         StringBuilder ret = new StringBuilder();
 
