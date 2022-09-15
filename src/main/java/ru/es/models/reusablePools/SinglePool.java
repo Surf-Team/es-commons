@@ -1,6 +1,6 @@
 package ru.es.models.reusablePools;
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 import ru.es.lang.ESValue;
 import ru.es.log.Log;
 import ru.es.math.Rnd;
@@ -57,20 +57,20 @@ public class SinglePool<T>
 	private int addStat = 0;
 	private int getStat = 0;
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	protected T createNew()
 	{
 		return createClean.get();
 	}
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	public void clean(T t)
 	{
 		createClean.set(t);
 	}
 
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	public T getClean()
 	{
 		if (!holderOn)
@@ -97,7 +97,7 @@ public class SinglePool<T>
 
 	public int inUse = 0;
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	public void addFree(T free)
 	{
 		if (!holderOn)

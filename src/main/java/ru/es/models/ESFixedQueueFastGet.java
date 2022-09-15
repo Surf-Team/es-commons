@@ -1,7 +1,7 @@
 package ru.es.models;
 
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 import ru.es.log.Log;
 
 import java.util.ArrayList;
@@ -56,7 +56,7 @@ public class ESFixedQueueFastGet<K>
     }
 
     // добавляет в начало очереди, смещая последующие (медленно)
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void add(K key)
     {
         // сдвиг элементов вправо
@@ -75,7 +75,7 @@ public class ESFixedQueueFastGet<K>
     }
 
     // удаляет все элементы, которые попадутся с таким ключём
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void remove(K key)
     {
         int found = 0;
@@ -94,7 +94,7 @@ public class ESFixedQueueFastGet<K>
     }
 
     // удаляет все элементы, которые попадутся с таким ключём
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void removeEquals(K key)
     {
         int found = 0;
@@ -112,7 +112,7 @@ public class ESFixedQueueFastGet<K>
         currentSize -= found;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void clear()
     {
         for (int i = 0; i < currentSize; i++)
@@ -122,26 +122,26 @@ public class ESFixedQueueFastGet<K>
         currentSize = 0;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public boolean isEmpty()
     {
         return currentSize == 0;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public int size()
     {
         return currentSize;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public K get(int index)
     {
         return keyArray[index];
     }
 
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public boolean contains(K key)
     {
         for (int i = 0; i < currentSize; i++)
@@ -155,7 +155,7 @@ public class ESFixedQueueFastGet<K>
         return false;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public Collection<K> makeCollection()
     {
         Collection<K> collection = new ArrayList<>(currentSize);
@@ -166,7 +166,7 @@ public class ESFixedQueueFastGet<K>
     }
 
     // set all, but dont create new array
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void setAll(Collection<K> collection)
     {
         int i = 0;

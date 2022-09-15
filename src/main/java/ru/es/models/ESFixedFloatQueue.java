@@ -1,6 +1,6 @@
 package ru.es.models;
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +18,7 @@ public class ESFixedFloatQueue
     }
 
     // добавляет в начало очереди, смещая последующие (медленно)
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void add(float key)
     {
         // сдвиг элементов вправо
@@ -37,7 +37,7 @@ public class ESFixedFloatQueue
     }
 
     // удаляет все элементы, которые попадутся с таким ключём
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void remove(float key)
     {
         int found = 0;
@@ -56,13 +56,13 @@ public class ESFixedFloatQueue
     }
 
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public boolean isEmpty()
     {
         return currentSize == 0;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public int size()
     {
         return currentSize;

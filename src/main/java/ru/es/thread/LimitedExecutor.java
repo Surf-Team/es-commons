@@ -1,6 +1,6 @@
 package ru.es.thread;
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +21,7 @@ public class LimitedExecutor
     {
         timeEventHandler.addListener(200, new Runnable() {
             @Override
-            @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+            
             public void run()
             {
                 toRemove200.clear();
@@ -40,7 +40,7 @@ public class LimitedExecutor
 
         timeEventHandler.addListener(3000, new Runnable()
         {
-            @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+            
             public void run()
             {
                 toRemove3000.clear();
@@ -61,7 +61,7 @@ public class LimitedExecutor
         timeEventHandler.addListener(40, new Runnable()
         {
             @Override
-            @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+            
             public void run()
             {
                 if (!objectLimitedTasks40.isEmpty())

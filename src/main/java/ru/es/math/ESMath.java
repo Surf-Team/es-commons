@@ -1,6 +1,6 @@
 package ru.es.math;
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 import ru.es.util.SortUtils;
 
 import java.math.BigDecimal;
@@ -31,7 +31,7 @@ public class ESMath
         }
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static int constrain(int value, int min, int max)
     {
         if (value < min)
@@ -43,7 +43,7 @@ public class ESMath
         return value;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static long constrain(long value, long min, long max)
     {
         if (value < min)
@@ -55,7 +55,7 @@ public class ESMath
         return value;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double constrain(double value, double min, double max)
     {
         if (value < min)
@@ -67,7 +67,7 @@ public class ESMath
         return value;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float constrain(float value, float min, float max)
     {
         if (value < min)
@@ -79,7 +79,7 @@ public class ESMath
         return value;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static int min(int value1, int value2)
     {
         if (value1 > value2)
@@ -89,7 +89,7 @@ public class ESMath
     }
 
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double min(double value1, double value2)
     {
         if (value1 > value2)
@@ -98,7 +98,7 @@ public class ESMath
             return value1;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float min(float value1, float value2)
     {
         if (value1 > value2)
@@ -107,7 +107,7 @@ public class ESMath
             return value1;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static long min(long value1, long value2)
     {
         if (value1 > value2)
@@ -116,7 +116,7 @@ public class ESMath
             return value1;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static int max(int value1, int value2)
     {
         if (value1 > value2)
@@ -125,7 +125,7 @@ public class ESMath
             return value2;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double max(double value1, double value2)
     {
         if (value1 > value2)
@@ -133,7 +133,7 @@ public class ESMath
         else
             return value2;
     }
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float max(float value1, float value2)
     {
         if (value1 > value2)
@@ -141,7 +141,7 @@ public class ESMath
         else
             return value2;
     }
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static long max(long value1, long value2)
     {
         if (value1 > value2)
@@ -150,7 +150,7 @@ public class ESMath
             return value2;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static int square(int num)
     {
         return num*num;
@@ -186,7 +186,7 @@ public class ESMath
         return (""+num).length();
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static int getPointsAfterZero(double number)
     {
         String txt = (""+number);
@@ -194,14 +194,14 @@ public class ESMath
     }
 
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double round(double num, int zeroCount)
     {
         return new BigDecimal(num).setScale(zeroCount, RoundingMode.UP).doubleValue();
     }
 
     // округление например до 0.05. Т.е. значение может быть только к примеру 315135.30 или 4363.55. Т.е. минимальный шаг - 0.5
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double specialRound(double num, double step)
     {
         //if (step >= 1.0)
@@ -221,7 +221,7 @@ public class ESMath
     }
 
     // просто создаём нули для какой либо цели
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static String createZeros(int count)
     {
         String ret = "";
@@ -233,7 +233,7 @@ public class ESMath
     }
 
     // возвращаем строку из числа double с фиксированным количеством знаков после запятой
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static String getNumberWithFixedSizeAfterDot(double num, int fixedZeroCount)
     {
         String retString = ""+num;
@@ -256,7 +256,7 @@ public class ESMath
             return false;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static List<Integer> getHarmony(List<Integer> items, int octaveSize)
     {
         List<Integer> ret = new ArrayList<>();
@@ -271,7 +271,7 @@ public class ESMath
         return ret;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static List<Integer> getParrallels(List<Integer> harmony, int octave, int maxOctaves)
     {
         List<Integer> allPressedNotes = new LinkedList<>();
@@ -290,7 +290,7 @@ public class ESMath
         return allPressedNotes;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static List<Integer> getParrallels(Set<Integer> collection, int split, int maxParrallels)
     {
         List<Integer> allPressedNotes = new LinkedList<>();
@@ -312,43 +312,43 @@ public class ESMath
     // max - максимальное значение на выходе (например 45.0)
     // maxInput - максимальное значение на входе (127 например). Соответственно минимальное всегда 0.
     // pow - степень. Если больше нуля - то график прогнутый вниз (маленькие значения более подробны, большие значения наоборот). Например 4.
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float linearToPowed(float minOutput, float maxOutput, int maxInput, int input, float pow)
     {
         return (float) (minOutput + (((maxOutput - minOutput) / Math.pow(maxInput, pow)) * (Math.pow(input, pow))));
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float linearToPowed(float minOutput, float maxOutput, float maxInput, float input, float pow)
     {
         return (float) (minOutput + (((maxOutput - minOutput) / Math.pow(maxInput, pow)) * (Math.pow(input, pow))));
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double linearToPowed(double minOutput, double maxOutput, double maxInput, double input, double pow)
     {
         return minOutput + ((maxOutput - minOutput) * (Math.pow(input, pow))) / Math.pow(maxInput, pow);
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double linearToPowedNormalized(double input, double maxOutput, double pow)
     {
         return Math.pow(input, pow) * maxOutput;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float linearToPowedNormalized(float input, float maxOutput, float pow)
     {
         return (float) Math.pow(input, pow) * maxOutput;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float linearToPowedNormalized(float input, float pow)
     {
         return (float) Math.pow(input, pow);
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float linearToPowedNormalizedWithPolarity(float input, float maxOutput, float pow)
     {
         if (input > 0)
@@ -363,7 +363,7 @@ public class ESMath
         }
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float linearToPowedNormalizedWithPolarity(float input, float pow)
     {
         if (input > 0)
@@ -378,30 +378,30 @@ public class ESMath
         }
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double linearToPowed(double minOutput, double maxOutput, double minInput, double maxInput, double input, double pow)
     {
         return minOutput + ((maxOutput - minOutput) * (Math.pow(input-minInput, pow))) / Math.pow(maxInput-minInput, pow);
     }
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double linearToPowedNormalized(double minInput, double maxInput, double input, double pow)
     {
         return ((Math.pow(input-minInput, pow))) / Math.pow(maxInput-minInput, pow);
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float linearToPowed(float minOutput, float maxOutput, float minInput, float maxInput, float input, float pow)
     {
         return minOutput + ((maxOutput - minOutput) * ((float) Math.pow(input-minInput, pow))) / (float) Math.pow(maxInput-minInput, pow);
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double transferValue(double minOutput, double maxOutput, double minInput, double maxInput, double input, double pow)
     {
         return constrain((minOutput + ((maxOutput - minOutput) * (Math.pow(input-minInput, pow))) / Math.pow(maxInput-minInput, pow)), minOutput, maxOutput);
     }
                                           // аргументы в том же порядке. Изменён только инпут
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double powedToLinear(double min, double max, double maxInput, double powedValue, double pow)
     {
         powedValue -= min;
@@ -412,7 +412,7 @@ public class ESMath
     }
                                           // аргументы в том же порядке. Изменён только инпут
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float powedToLinear(float min, float max, float maxInput, float powedValue, float pow)
     {
         powedValue -= min;
@@ -422,13 +422,13 @@ public class ESMath
         return (float) Math.pow(powedValue, 1/pow);//ESMath.log(powedValue, pow);
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double log(double a, double b)
     {
         return Math.log(b) / Math.log(a);
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double limitedChange(double value, double changeTo, double limitChange)
     {
         if (value - changeTo > limitChange)
@@ -442,7 +442,7 @@ public class ESMath
         return changeTo;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float limitedChange(float value, float changeTo, float limitChange)
     {
         if (value - changeTo > limitChange)
@@ -456,7 +456,7 @@ public class ESMath
         return changeTo;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static int[] getNeighbourds(List<Integer> numbers, int base)
     {
         int upperNeighbour = Integer.MAX_VALUE;
@@ -473,7 +473,7 @@ public class ESMath
         return new int[] {lowerNeighbour, upperNeighbour};
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static int[] getNeighbourds(Set<Integer> numbers, int base)
     {
         int upperNeighbour = Integer.MAX_VALUE;
@@ -495,7 +495,7 @@ public class ESMath
     // value: 32 -> { 0.5, 0 };
     // value: 96 -> { 0, 0.5 };
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double[] splitValuesByCenter(double value, double maxInput)
     {
         double center = maxInput / 2.0;
@@ -510,7 +510,7 @@ public class ESMath
     // val0 (min)
     // val1 (max)
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float intermediate(float val0, float val1, float val, float pow)
     {
         if (pow == 1)
@@ -521,7 +521,7 @@ public class ESMath
 
     // velo mapping: (velo, 35, 100) = 0 при 35, 1 при 100.
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static float mappingConstrained(float inputValue, float zeroVal, float fullVal)
     {
         if (inputValue < zeroVal)
@@ -535,7 +535,7 @@ public class ESMath
     }
 
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static double divRemains(double c, double perc) // % 2 Но только цезые числа
     {
         c += perc;
@@ -545,7 +545,7 @@ public class ESMath
         return perc;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static long quantize(int initValue, int quantize, int upMod)
     {
         if (quantize == 0)
@@ -555,7 +555,7 @@ public class ESMath
         return pointTick - pointTick % quantize;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static long quantize(int initValue, int quantize)
     {
         if (quantize == 0)
@@ -566,7 +566,7 @@ public class ESMath
         return pointTick - pointTick % quantize;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     @Slow
     // долгий метод! Т.к. используется % с Double!
     public static double quantize(double initValue, double quantize)
@@ -579,7 +579,7 @@ public class ESMath
         return pointTick - pointTick % quantize;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     @Slow
     // долгий метод! Т.к. используется % с Float!
     public static float quantize(float initValue, float quantize)
@@ -592,7 +592,7 @@ public class ESMath
         return pointTick - pointTick % quantize;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public static long quantizeToMin(int initValue, int quantize)
     {
         if (quantize == 0)

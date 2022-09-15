@@ -1,6 +1,6 @@
 package ru.es.models;
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 
 import java.util.Map;
 
@@ -12,7 +12,7 @@ public abstract class ESFixedArrayMap<K,V>
     int currentSize = 0;
 
     // в качестве KEY не использовать int, итд. Либо переопределять метод get чтобы было eqals
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public ESFixedArrayMap(int limit)
     {
         this.limit = limit;
@@ -25,7 +25,7 @@ public abstract class ESFixedArrayMap<K,V>
     protected abstract V[] createValueArray(int size);
 
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void put(K key, V value)
     {
         boolean contains = false;
@@ -75,7 +75,7 @@ public abstract class ESFixedArrayMap<K,V>
         }
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void putUnchecked(K key, V value)
     {
         keyArray[currentSize] = key;
@@ -83,7 +83,7 @@ public abstract class ESFixedArrayMap<K,V>
         currentSize++;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void clear()
     {
         for (int i = 0; i < currentSize; i++)
@@ -94,13 +94,13 @@ public abstract class ESFixedArrayMap<K,V>
         currentSize = 0;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public boolean isEmpty()
     {
         return currentSize == 0;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public V get(K key)
     {
         for (int i = 0; i < currentSize; i++)
@@ -127,13 +127,13 @@ public abstract class ESFixedArrayMap<K,V>
         return false;
     }       */
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public int size()
     {
         return currentSize;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void putAll(Map<K, V> calculatedRoutings)
     {
         for (Map.Entry<K,V> entry : calculatedRoutings.entrySet())
@@ -142,7 +142,7 @@ public abstract class ESFixedArrayMap<K,V>
         }
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public boolean containsKey(K containsThis)
     {
         for (int i = 0; i < currentSize; i++)
@@ -153,7 +153,7 @@ public abstract class ESFixedArrayMap<K,V>
         return false;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public boolean containsValue(V containsThis)
     {
         for (int i = 0; i < currentSize; i++)
@@ -164,7 +164,7 @@ public abstract class ESFixedArrayMap<K,V>
         return false;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public V getValueInIndex(int i)
     {
         if (i > currentSize)

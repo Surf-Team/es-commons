@@ -1,6 +1,6 @@
 package ru.es.models;
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 import ru.es.log.Log;
 
 public class ESFixedFastQueue<K>
@@ -101,47 +101,47 @@ public class ESFixedFastQueue<K>
 
     public int size = 0;
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public ESFixedFastQueue(K[] emptyArray)
     {
         this.array = emptyArray;
         limit = emptyArray.length;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void add(K k)
     {
         array[(size + offset) % limit] = k;
         size++;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public K get(int index)
     {
         return array[(index + offset) % limit];
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void clear()
     {
         size = 0;
         offset = 0;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void removeFirst()
     {
         offset++;
         size--;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public int size()
     {
         return size;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public int getLimit()
     {
         return limit;

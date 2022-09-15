@@ -1,6 +1,6 @@
 package ru.es.models;
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 import ru.es.log.Log;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,13 +38,13 @@ public class ESConcurrentPile<K>
 		array = createArray(initSize);
 	}
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	private K[] createArray(int size)
 	{
 		return (K[]) new Object[size];
 	}
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	public void offer(K free)
 	{
 		synchronized (sync)
@@ -62,7 +62,7 @@ public class ESConcurrentPile<K>
 		}
 	}
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	public K getOrNull()
 	{
 		synchronized (sync)
@@ -74,7 +74,7 @@ public class ESConcurrentPile<K>
 		}
 	}
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	public void clear()
 	{
 		synchronized (sync)

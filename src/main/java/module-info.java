@@ -1,5 +1,4 @@
 module ru.es.commons {
-    requires transitive annotations;
     requires transitive json.simple;
     requires transitive org.apache.commons.lang3;
     requires transitive jdom2;

@@ -1,6 +1,6 @@
 package ru.es.models;
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 
 public class ESFixedArrayList<K>
 {
@@ -14,14 +14,14 @@ public class ESFixedArrayList<K>
         this.limit = keyArray.length;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void add(K key)
     {
         keyArray[currentSize] = key;
         currentSize++;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void clear()
     {
         for (int i = 0; i < currentSize; i++)
@@ -31,26 +31,26 @@ public class ESFixedArrayList<K>
         currentSize = 0;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public boolean isEmpty()
     {
         return currentSize == 0;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public int size()
     {
         return currentSize;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public K get(int index)
     {
         return keyArray[index];
     }
 
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public boolean contains(K key)
     {
         for (int i = 0; i < currentSize; i++)
@@ -64,7 +64,7 @@ public class ESFixedArrayList<K>
         return false;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void reset(K[] keyArray)
     {
         if (this.limit != keyArray.length)

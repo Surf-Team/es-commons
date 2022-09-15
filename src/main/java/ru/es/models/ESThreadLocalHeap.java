@@ -1,6 +1,6 @@
 package ru.es.models;
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 import ru.es.lang.ESGetter;
 import ru.es.log.Log;
 
@@ -44,13 +44,13 @@ public class ESThreadLocalHeap<K>
 		this.createNew = createNew;
 	}
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	protected K[] createArray(int size)
 	{
 		return (K[]) new Object[size];
 	}
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	public K get()
 	{
 		getStat++;
@@ -63,7 +63,7 @@ public class ESThreadLocalHeap<K>
 		return array[currentIndex--];
 	}
 
-	@ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+	
 	public void add(K object)
 	{
 		addStat++;

@@ -1,6 +1,6 @@
 package ru.es.models;
 
-import com.allatori.annotations.ControlFlowObfuscation;
+
 
 import java.nio.ByteBuffer;
 
@@ -13,13 +13,13 @@ public class DirectFloatBufferWrapper
         allocate(length);
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void allocate(int length)
     {
         buffer = ByteBuffer.allocateDirect(length*4);
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void position(int i)
     {
         buffer.position(i*4);
@@ -31,25 +31,25 @@ public class DirectFloatBufferWrapper
         return buffer.getFloat();
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public int limit()
     {
         return buffer.limit() / 4;
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void putFloat(float f)
     {
         buffer.putFloat(f);
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public float getFloat()
     {
         return buffer.getFloat();
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public void set(float[] array)
     {
         buffer.getFloat(5);
@@ -61,7 +61,7 @@ public class DirectFloatBufferWrapper
         }
     }
 
-    @ControlFlowObfuscation(ControlFlowObfuscation.DISABLE)
+    
     public float get(int index)
     {
         return buffer.getFloat(index*4);

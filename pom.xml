@@ -76,13 +76,6 @@
 			</exclusions>
 		</dependency>
 
-		<!-- mvn install:install-file -Dfile=.\lib\allatori-annotations.jar -DgroupId=com.allatori -DartifactId=annotations -Dversion=6.9 -Dpackaging=jar -DgeneratePom=true -->
-		<dependency>
-			<groupId>com.allatori</groupId>
-			<artifactId>annotations</artifactId>
-			<version>6.9</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
 		<dependency>
 			<groupId>org.reflections</groupId>
