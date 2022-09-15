@@ -31,4 +31,5 @@ module ru.es.commons {
 	exports ru.es.models.cache;
     exports ru.es.models.exceptions;
 	exports ru.es.util.writers;
+    exports ru.es.yaml;
 }

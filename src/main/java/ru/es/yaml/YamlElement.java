@@ -148,4 +148,14 @@ public class YamlElement
 
 		return list;
 	}
+
+	public YamlElement getChild(String forEach)
+	{
+		return children.get(forEach);
+	}
+
+	public List<YamlElement> getList()
+	{
+		return list;
+	}
 }
