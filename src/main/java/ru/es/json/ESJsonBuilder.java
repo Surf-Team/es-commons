@@ -1,5 +1,6 @@
 package ru.es.json;
 
+@Deprecated
 public class ESJsonBuilder
 {
     StringBuilder ret = new StringBuilder();
