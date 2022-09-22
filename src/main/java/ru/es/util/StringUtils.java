@@ -337,4 +337,11 @@ public class StringUtils
         }
         return stageName;
     }
+
+    // for unix / windows / mac line endings
+    public static String[] splitByLines(String text)
+    {
+        return text.split("\\r?\\n|\\r");
+    }
+
 }

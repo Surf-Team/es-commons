@@ -544,7 +544,7 @@ public class FileUtils
         byte[] input = fileInputStream.readAllBytes();
         fileInputStream.close();
         String inputStr = new String(input, StandardCharsets.UTF_8);
-        return inputStr.split("\r\n");
+        return StringUtils.splitByLines(inputStr);
     }
 
     public static String[] readLines(URL file) throws IOException
@@ -557,7 +557,7 @@ public class FileUtils
         is.close();
         String inputStr = new String(input, StandardCharsets.UTF_8);
         Log.warning("read string: "+inputStr);
-        return inputStr.split("\r\n");
+        return StringUtils.splitByLines(inputStr);
     }
 
     public static void writeToURL(URL url, byte[] bytes) throws IOException
