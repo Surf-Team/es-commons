@@ -553,10 +553,8 @@ public class FileUtils
         //byte[] input = new byte[fileInputStream.available()];
         //fileInputStream.read(input);
         byte[] input = is.readAllBytes();
-        Log.warning("todo remove it. readLines byte size: "+input.length);
         is.close();
         String inputStr = new String(input, StandardCharsets.UTF_8);
-        Log.warning("read string: "+inputStr);
         return StringUtils.splitByLines(inputStr);
     }
 

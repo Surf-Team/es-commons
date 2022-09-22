@@ -61,7 +61,6 @@ public class TSVTable extends Table
     private void readCsv(URL csvFile, String csvId) throws IOException
     {
         String[] lines = FileUtils.readLines(csvFile);
-        Log.warning("TSV lines size: "+lines.length);
         createTableFromStringArray(lines, csvId);
     }
 
