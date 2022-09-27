@@ -327,6 +327,15 @@ public class TimeUtils
         return format1.format(d);
     }
 
+    public static String getTimeStringFull3(long time)
+    {
+        Date d = new Date(time);
+        SimpleDateFormat format1;
+        format1 = new SimpleDateFormat("yyyy-MM-dd, HH:mm");
+
+        return format1.format(d);
+    }
+
     public static String getTimeStringFullForFile(long time)
     {
         Date d = new Date(time);
