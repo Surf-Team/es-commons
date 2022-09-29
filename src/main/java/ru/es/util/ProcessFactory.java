@@ -29,7 +29,7 @@ public class ProcessFactory
 	public ProcessInfo createProcess(File directory, String name, int project, String stage, ESSetter<ProcessInfo> onCompleted, String... cmd)
 	{
 		ProcessInfo processInfo = new ProcessInfo(name, project, stage);
-		processInfo.id = maxProcessId++;
+		processInfo.setId(maxProcessId++);
 		//todo set id
 		//toso save to db
 		Thread thread = new Thread(new RunnableImpl() {
@@ -54,7 +54,7 @@ public class ProcessFactory
 		});
 		thread.start();
 
-		processesById.put(processInfo.id, processInfo);
+		processesById.put(processInfo.getId(), processInfo);
 		processes.add(processInfo);
 
 		return processInfo;
@@ -63,9 +63,9 @@ public class ProcessFactory
 	// one thread
 	public void createProcess(File directory, ProcessInfo processInfo, String... cmd)
 	{
-		processInfo.id = maxProcessId++;
+		processInfo.setId(maxProcessId++);
 
-		processesById.put(processInfo.id, processInfo);
+		processesById.put(processInfo.getId(), processInfo);
 		processes.add(processInfo);
 
 		try
@@ -76,6 +76,7 @@ public class ProcessFactory
 		}
 		catch (IOException e)
 		{
+			e.printStackTrace();
 			processInfo.error = true;
 			processInfo.done = true;
 		}
@@ -87,6 +88,14 @@ public class ProcessFactory
 		}
 	}
 
+	public void addDummyProcess(ProcessInfo processInfo)
+	{
+		processInfo.setId(maxProcessId++);
+
+		processesById.put(processInfo.getId(), processInfo);
+		processes.add(processInfo);
+	}
+
 	public static void runProcess(File directory, ProcessInfo processInfo, String... cmd) throws Exception
 	{
 		ProcessBuilder pb = new ProcessBuilder(cmd);
@@ -96,9 +105,7 @@ public class ProcessFactory
 
 		Process process = pb.start();
 
-		Charset charset = Charset.defaultCharset();
-		if (Environment.isWindows())
-			charset = Charset.forName("IBM866");
+		Charset charset = processInfo.getCharset();
 
 		InputStream is = process.getInputStream();
 		InputStreamReader isr = new InputStreamReader(is, charset);

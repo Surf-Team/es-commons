@@ -2,6 +2,8 @@ package ru.es.util;
 
 import ru.es.lang.Nameable;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
 
 /**
@@ -344,4 +346,14 @@ public class StringUtils
         return text.split("\\r?\\n|\\r");
     }
 
+
+    public static String getStackTrace(Throwable throwable)
+    {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw, true);
+
+        throwable.printStackTrace(pw);
+
+        return sw.getBuffer().toString();
+    }
 }

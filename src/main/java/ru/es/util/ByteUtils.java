@@ -137,6 +137,69 @@ public class ByteUtils
     }
 
 
+    public static int indexOf(byte[] data, byte[] what, int fromIndex, int limit)
+    {
+        int symbolLen = what.length;
+
+        int endSearch = limit - symbolLen;
+        if (endSearch < 0)
+            return -1;
+
+        if (symbolLen == 1)
+        {
+            for (int i = fromIndex; i <= endSearch; i++)
+            {
+                if (data[i] == what[0])
+                    return i;
+            }
+
+            return -1;
+        }
+        else if (symbolLen == 2)
+        {
+            for (int i = fromIndex; i <= endSearch; i++)
+            {
+                if (data[i] == what[0] && data[i]+1 == what[1])
+                    return i;
+            }
+
+            return -1;
+        }
+        else if (symbolLen == 4)
+        {
+            for (int i = fromIndex; i <= endSearch; i++)
+            {
+                if (data[i] == what[0] &&
+                        data[i]+1 == what[1] &&
+                        data[i]+2 == what[2] &&
+                        data[i]+3 == what[3])
+                    return i;
+            }
+
+            return -1;
+        }
+        else
+        {
+            boolean contains = false;
+            for (int i = fromIndex; i <= endSearch; i++)
+            {
+                contains = false;
+                for (int k = 0; k < symbolLen; k++)
+                {
+                    if (data[i+k] != what[i+k])
+                        break;
+                    else
+                        contains = true;
+                }
+                if (contains)
+                    return i;
+            }
+
+            return -1;
+        }
+    }
+
+
     public static int toInt(byte[] array, int from, int len, boolean up)
     {
         byte[] ret = new byte[len];

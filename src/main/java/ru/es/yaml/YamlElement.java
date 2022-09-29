@@ -58,6 +58,11 @@ public class YamlElement
 					attributes.put(s, value.toString());
 					sortedAttributes.put(s, value.toString());
 				}
+				else if (value instanceof Boolean)
+				{
+					attributes.put(s, value.toString());
+					sortedAttributes.put(s, value.toString());
+				}
 				else if (value instanceof LinkedHashMap)
 				{
 					YamlElement element = new YamlElement(this);
@@ -141,9 +146,12 @@ public class YamlElement
 		YamlElement ret = children.get(forEach);
 		List<String> list = new ArrayList<>();
 
-		for (YamlElement child : ret.list)
+		if (ret != null)
 		{
-			list.add(child.value);
+			for (YamlElement child : ret.list)
+			{
+				list.add(child.value);
+			}
 		}
 
 		return list;

@@ -31,4 +31,6 @@ module ru.es.commons {
     exports ru.es.models.exceptions;
 	exports ru.es.util.writers;
     exports ru.es.yaml;
+	exports ru.es.net.requests;
+	exports ru.es.net.responses;
 }

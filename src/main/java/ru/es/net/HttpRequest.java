@@ -1,8 +1,21 @@
 package ru.es.net;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import ru.es.log.Log;
+import ru.es.net.responses.RemoteBuildResponse;
+import ru.es.util.JSONUtils;
+
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 /**
  * Created with IntelliJ IDEA.
@@ -184,4 +197,62 @@ public class HttpRequest
             }
         }
     }
+
+
+    public static byte[] httpPostBase64Data(String url, String parameters, byte[] data) throws Exception
+    {
+        URL obj = new URL(url);
+        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+
+        //add reuqest header
+        con.setRequestMethod("POST");
+        con.setRequestProperty("User-Agent", "Mozilla/5.0");
+        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+        Log.warning("Sending 'POST' request to URL : " + url);
+
+        // Send post request
+        con.setDoOutput(true);
+        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+        wr.write(parameters.getBytes(StandardCharsets.UTF_8));
+        wr.write("\r\n".getBytes(StandardCharsets.UTF_8));
+        wr.write(Base64.getEncoder().encode(data));
+        wr.flush();
+        wr.close();
+
+        int responseCode = con.getResponseCode();
+        Log.warning("Response Code : " + responseCode);
+
+        if (responseCode != 200)
+            throw new ServerException("Server error! Response code: "+responseCode);
+
+
+        InputStream inputStream = con.getInputStream();
+
+        byte[] response = inputStream.readAllBytes();
+        //Log.warning("response bytes: "+response.length);
+
+        return response;
+    }
+
+    public static <Request, Response> Response jsonPost(String href, Request request, Class<Response> responseClass) throws IOException
+    {
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpPost httpPostRequest = new HttpPost(href);
+        httpPostRequest.addHeader("Content-Type", "application/json");
+
+        StringEntity stringEntity = new StringEntity(JSONUtils.toJsonString(request));
+        httpPostRequest.setEntity(stringEntity);
+
+        HttpResponse response = httpClient.execute(httpPostRequest);
+
+        HttpEntity entity = response.getEntity();
+        String jsonString = EntityUtils.toString(entity);
+        //Log.warning(jsonString);
+        Response responseObject = JSONUtils.createObjectFromJson(jsonString, responseClass);
+        EntityUtils.consume(entity);
+
+        return responseObject;
+    }
+
 }

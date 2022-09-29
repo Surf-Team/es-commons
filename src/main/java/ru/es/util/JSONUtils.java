@@ -1,9 +1,8 @@
 package ru.es.util;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import ru.es.log.Log;
+import ru.es.net.responses.RemoteBuildResponse;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +14,8 @@ import java.util.List;
 
 public class JSONUtils
 {
+    private static Gson gson = new Gson();
+
     public static void main(String[] args)
     {
         int arr = 0;
@@ -82,5 +83,15 @@ public class JSONUtils
         ret.append("}");
 
         return ret.toString();
+    }
+
+    public static String toJsonString(Object object)
+    {
+        return gson.toJson(object);
+    }
+
+    public static<T> T createObjectFromJson(String jsonString, Class<T> object) throws JsonSyntaxException
+    {
+        return gson.fromJson(jsonString, object);
     }
 }
