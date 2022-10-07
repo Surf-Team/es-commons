@@ -5,33 +5,25 @@ import ru.es.lang.ESSetter;
 import ru.es.log.Log;
 import ru.es.models.ProcessInfo;
 import ru.es.thread.RunnableImpl;
-import ru.es.thread.SingletonThreadPool;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ProcessFactory
 {
-	private int maxProcessId = 0;
+	private int maxProcessId = 1;
 	private Map<Integer, ProcessInfo> processesById = new ConcurrentHashMap<>();
 	private List<ProcessInfo> processes = new FastTable<>();
 
-	public ProcessFactory()
-	{
-
-	}
-
 	// multithread
-	public ProcessInfo createProcess(File directory, String name, int project, String stage, ESSetter<ProcessInfo> onCompleted, String... cmd)
+	public void createProcess(File directory, ProcessInfo processInfo, ESSetter<ProcessInfo> onCompleted, String... cmd)
 	{
-		ProcessInfo processInfo = new ProcessInfo(name, project, stage);
+		processInfo.fullCommand = StringUtils.arrayToString(cmd, " ");
 		processInfo.setId(maxProcessId++);
-		//todo set id
-		//toso save to db
+
 		Thread thread = new Thread(new RunnableImpl() {
 			@Override
 			public void runImpl() throws Exception
@@ -39,6 +31,7 @@ public class ProcessFactory
 				try
 				{
 					runProcess(directory, processInfo, cmd);
+
 					processInfo.done = true;
 					//Log.warning("Process thread done.");
 					onCompleted.set(processInfo);
@@ -56,13 +49,12 @@ public class ProcessFactory
 
 		processesById.put(processInfo.getId(), processInfo);
 		processes.add(processInfo);
-
-		return processInfo;
 	}
 
 	// one thread
 	public void createProcess(File directory, ProcessInfo processInfo, String... cmd)
 	{
+		processInfo.fullCommand = StringUtils.arrayToString(cmd, " ");
 		processInfo.setId(maxProcessId++);
 
 		processesById.put(processInfo.getId(), processInfo);
@@ -116,20 +108,37 @@ public class ProcessFactory
 		BufferedReader ebr = new BufferedReader(eisr);
 		String line;
 
-		while ((line = br.readLine()) != null)
+		while (process.isAlive())
 		{
-			processInfo.appendStdout(line);
-		}
+			while (br.ready() && (line = br.readLine()) != null)
+			{
+				processInfo.appendStdout(line);
+			}
 
-		while ((line = ebr.readLine()) != null)
-		{
-			processInfo.appendErrout(line);
+			while (ebr.ready() && (line = ebr.readLine()) != null)
+			{
+				processInfo.appendErrout(line);
+			}
+			Thread.sleep(10);
 		}
 
 
 
 		if (!processInfo.getErrOut().isEmpty())
-			processInfo.error = true;
+		{
+			boolean error = true;
+			for (String successText : processInfo.errOutContainsSuccess)
+			{
+				if (processInfo.getErrOut().contains(successText))
+				{
+					error = false;
+					break;
+				}
+			}
+
+			processInfo.error = error;
+		}
+
 
 		if (process.exitValue() != 0)
 		{
@@ -186,4 +195,13 @@ public class ProcessFactory
 		t.start();
 	}
 
+	public ProcessInfo getProcess(int processId)
+	{
+		for (ProcessInfo processInfo : processes)
+		{
+			if (processInfo.getId() == processId)
+				return processInfo;
+		}
+		return null;
+	}
 }

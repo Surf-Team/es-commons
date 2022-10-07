@@ -1,16 +1,20 @@
 package ru.es.models;
 
 import ru.es.lang.ESEventHandler;
+import ru.es.lang.limiters.CountTimeLimiter;
 import ru.es.log.Log;
 import ru.es.util.Environment;
 
 import java.io.File;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ProcessInfo
 {
 	public final String name;
+	public List<String> errOutContainsSuccess = new ArrayList<>();
 	private String stdOut = "";
 	private String errOut = "";
 	public boolean done = false;
@@ -20,9 +24,14 @@ public class ProcessInfo
 	public String functionName;
 	public Charset charset;
 	public String group;
-	public File startDir;
 
 	public boolean debug;
+
+	public String fullCommand;
+
+	public String stage;
+	public int projectId;
+	public String projectName;
 
 	public ConcurrentLinkedQueue<String> stdOutQueue = new ConcurrentLinkedQueue<>();
 	public ConcurrentLinkedQueue<String> stdOutErrQueue = new ConcurrentLinkedQueue<>();

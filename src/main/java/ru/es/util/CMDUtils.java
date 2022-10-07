@@ -95,7 +95,7 @@ public class CMDUtils
 	public static void copyFolder(ProcessFactory processFactory, String functionDesc, File src, File dest) throws Exception
 	{
 		ProcessInfo processInfo = new ProcessInfo(functionDesc, 2, "CMDUtils.removeFile");
-		processInfo.debug = true;
+		processInfo.debug = false;
 		//processInfo.charset = Charset.forName("windows-1251");
 		processFactory.createProcess(new File("./"), processInfo, "CMD", "/C",
 				"xcopy", src.getAbsolutePath()+"\\", dest.getAbsolutePath()+"\\", "/e", "/y");
@@ -106,4 +106,6 @@ public class CMDUtils
 			throw new Exception("Директория не была скопирована: "+src.getAbsolutePath()+"\r\n" + processInfo.getErrOut());
 		}
 	}
+
+
 }
