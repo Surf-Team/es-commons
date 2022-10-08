@@ -1,5 +1,12 @@
 package ru.es.reflection;
 
+
+import ru.es.log.Log;
+
+import java.io.File;
+import java.net.URL;
+import java.util.Objects;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Saniller
@@ -10,10 +17,12 @@ package ru.es.reflection;
 public class JarClassLoader extends MultiClassLoader
 {
     private JarResources jarResources;
+    private File jarName;
 
     public JarClassLoader(String jarName)
     {
         jarResources = new JarResources(jarName);
+        this.jarName = new File(jarName);
     }
 
     @Override
@@ -26,5 +35,21 @@ public class JarClassLoader extends MultiClassLoader
     public String[] getClassNames()
     {
         return jarResources.getResources().toArray(new String[] {});
+    }
+
+    @Override
+    protected URL findResource(String name)
+    {
+        String url = "jar:file:" + jarName.getAbsolutePath() + "!/" + name;
+        try
+        {
+            return new URL(url);
+        }
+        catch (Exception e)
+        {
+            Log.warning("resource not found: "+url);
+            e.printStackTrace();
+            return null;
+        }
     }
 }

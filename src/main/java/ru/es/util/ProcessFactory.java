@@ -127,13 +127,34 @@ public class ProcessFactory
 		if (!processInfo.getErrOut().isEmpty())
 		{
 			boolean error = true;
-			for (String successText : processInfo.errOutContainsSuccess)
+			for (String successText : processInfo.alwaysSuccessTextInErrorOut)
 			{
 				if (processInfo.getErrOut().contains(successText))
 				{
 					error = false;
 					break;
 				}
+			}
+
+			if (error)
+			{
+				boolean hasErrorLines = true;
+				for (String errorLineStr : processInfo.getErrOut().split("\r"))
+				{
+					for (String notErrorContains : processInfo.isNotErrorLines)
+					{
+						if (errorLineStr.contains(notErrorContains))
+						{
+							hasErrorLines = false;
+							break;
+						}
+					}
+					if (hasErrorLines)
+					{
+						break;
+					}
+				}
+				error = hasErrorLines;
 			}
 
 			processInfo.error = error;

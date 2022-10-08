@@ -1,11 +1,9 @@
 package ru.es.models;
 
 import ru.es.lang.ESEventHandler;
-import ru.es.lang.limiters.CountTimeLimiter;
 import ru.es.log.Log;
 import ru.es.util.Environment;
 
-import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +12,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class ProcessInfo
 {
 	public final String name;
-	public List<String> errOutContainsSuccess = new ArrayList<>();
+	public List<String> isNotErrorLines = new ArrayList<>();
+	public List<String> alwaysSuccessTextInErrorOut = new ArrayList<>();
 	private String stdOut = "";
 	private String errOut = "";
 	public boolean done = false;
@@ -24,6 +23,7 @@ public class ProcessInfo
 	public String functionName;
 	public Charset charset;
 	public String group;
+	public boolean logAddProcessName = true;
 
 	public boolean debug;
 
@@ -60,7 +60,12 @@ public class ProcessInfo
 		stdOutAdded.event(data);
 
 		if (debug)
-			Log.warning("STD: "+name+"->: "+data);
+		{
+			if (logAddProcessName)
+				Log.warning("STD: " + name + ": " + data);
+			else
+				System.out.println(data);
+		}
 	}
 
 	public synchronized void appendErrout(String data)
@@ -73,7 +78,12 @@ public class ProcessInfo
 		stdErrAdded.event(data);
 
 		if (debug)
-			Log.warning("ERR: "+name+": "+data);
+		{
+			if (logAddProcessName)
+				Log.warning("ERR: " + name + ": " + data);
+			else
+				System.out.println(data);
+		}
 	}
 
 	public String getStdout()

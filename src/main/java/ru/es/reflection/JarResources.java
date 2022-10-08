@@ -1,5 +1,7 @@
 package ru.es.reflection;
 
+import ru.es.log.Log;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -28,7 +30,7 @@ public final class JarResources
     private Hashtable<String, byte[]> htJarContents = new Hashtable<String, byte[]>();
 
     // a jar file
-    private String jarFileName;
+    public final String jarFileName;
 
     /**
      * creates a JarResources. It extracts all resources from a Jar
@@ -103,6 +105,7 @@ public final class JarResources
                 }
                 // add to internal resource hashtable
                 htJarContents.put(ze.getName(), b);
+                Log.warning("add resource: "+ze.getName());
                 if(debugOn)
                     System.out.println(ze.getName() + "  rb=" + rb + ",size=" + size + ",csize=" + ze.getCompressedSize());
             }
