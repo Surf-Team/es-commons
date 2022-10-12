@@ -4,6 +4,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 public class YamlElement
@@ -25,7 +26,9 @@ public class YamlElement
 
 	public YamlElement(File file) throws IOException
 	{
-		Object linkedHashMap = yaml.load(file.toURI().toURL().openStream());
+		InputStream stream = file.toURI().toURL().openStream();
+		Object linkedHashMap = yaml.load(stream);
+		stream.close();
 
 		parse(linkedHashMap);
 	}

@@ -105,7 +105,7 @@ public final class JarResources
                 }
                 // add to internal resource hashtable
                 htJarContents.put(ze.getName(), b);
-                Log.warning("add resource: "+ze.getName());
+                //Log.warning("add resource: "+ze.getName());
                 if(debugOn)
                     System.out.println(ze.getName() + "  rb=" + rb + ",size=" + size + ",csize=" + ze.getCompressedSize());
             }
