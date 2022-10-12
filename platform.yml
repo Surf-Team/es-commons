@@ -1,14 +1,5 @@
-actions:
+name:
+- ESCommons
 
-- id: Setup_OS
-  name: Подготовка ОС
-  function: INSTALL_JAVA_SERVER_BYIP
-
-- id: Upload
-  name: Закачивание приложения
-  function: UPLOAD_FOLDER_BYIP
-
-- id: StartRestart
-  name: Старт/рестарт приложения
-  function: START_RESTART_JAVA_APP
-
+commands:
+- mvn install
