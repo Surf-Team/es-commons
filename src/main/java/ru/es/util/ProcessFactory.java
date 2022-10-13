@@ -92,6 +92,8 @@ public class ProcessFactory
 	{
 		ProcessBuilder pb = new ProcessBuilder(cmd);
 
+		processInfo.startTime = System.currentTimeMillis();
+
 		if (directory != null)
 			pb.directory(directory);
 
@@ -122,6 +124,16 @@ public class ProcessFactory
 			Thread.sleep(10);
 		}
 
+		Thread.sleep(300);
+		while (br.ready() && (line = br.readLine()) != null)
+		{
+			processInfo.appendStdout(line);
+		}
+
+		while (ebr.ready() && (line = ebr.readLine()) != null)
+		{
+			processInfo.appendErrout(line);
+		}
 
 
 		if (!processInfo.getErrOut().isEmpty())
@@ -167,6 +179,7 @@ public class ProcessFactory
 			Log.warning("Error exit code: "+process.exitValue());
 		}
 
+		processInfo.endTime = System.currentTimeMillis();
 		process.destroy();
 		is.close();
 		isr.close();

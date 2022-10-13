@@ -24,6 +24,8 @@ public class ProcessInfo
 	public Charset charset;
 	public String group;
 	public boolean logAddProcessName = true;
+	public long startTime = 0;
+	public long endTime = 0;
 
 	public boolean debug;
 

@@ -150,4 +150,26 @@ public class MapUtils
         }
         return map;
     }
+
+    public static String toString(Map<String, String> parameters, String entryDelim, String entryKeyDelim, boolean quotes)
+    {
+        StringBuilder ret = new StringBuilder();
+        boolean first = true;
+        for (var e : parameters.entrySet())
+        {
+            if (first)
+                first = false;
+            else
+            ret.append(entryDelim);
+
+            ret.append(e.getKey());
+            ret.append(entryKeyDelim);
+            if (quotes)
+                ret.append("\"");
+            ret.append(e.getValue());
+            if (quotes)
+                ret.append("\"");
+        }
+        return ret.toString();
+    }
 }
