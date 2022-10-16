@@ -139,7 +139,7 @@ public class CMDUtils
 		else
 		{
 			processFactory.createProcess(new File("./"), processInfo,
-					"cp", src.getAbsolutePath() + "/", dest.getAbsolutePath() + "/");
+					"cp", "-r", src.getAbsolutePath() + "/", dest.getAbsolutePath() + "/");
 		}
 		if (processInfo.error)
 		{
