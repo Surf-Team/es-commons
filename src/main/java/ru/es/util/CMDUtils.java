@@ -15,8 +15,16 @@ public class CMDUtils
 			return;
 		
 		ProcessInfo processInfo = new ProcessInfo(functionDesc, 1, "CMDUtils.removeDirectory");
-		processInfo.charset = Charset.forName("windows-1251");
-		processFactory.createProcess(new File("./"), processInfo, "CMD", "/C", "rmdir", "/s", "/q", file.getPath());
+		if (Environment.isWindows())
+		{
+			processInfo.charset = Charset.forName("windows-1251");
+			processFactory.createProcess(new File("./"), processInfo, "CMD", "/C", "rmdir", "/s", "/q", file.getPath());
+		}
+		else
+		{
+			processInfo.charset = StandardCharsets.UTF_8;
+			processFactory.createProcess(new File("./"), processInfo, "rm", "-rf", file.getPath());
+		}
 		if (processInfo.error)
 		{
 			Log.warning(processInfo.getStdout());
@@ -29,7 +37,13 @@ public class CMDUtils
 									File launchDirectory, File archiveFile, File directoryToArchivate) throws Exception
 	{
 		ProcessInfo processInfo = new ProcessInfo(functionDesc, 2, "CMDUtils.addToArchive");
-		processFactory.createProcess(launchDirectory, processInfo, "CMD", "/C", "7z.exe", "a", "-tzip", archiveFile.getPath(), directoryToArchivate.getAbsolutePath());
+
+		if (Environment.isWindows())
+			processFactory.createProcess(launchDirectory, processInfo, "CMD", "/C", "7z.exe", "a", "-tzip", archiveFile.getPath(), directoryToArchivate.getAbsolutePath());
+		else
+			processFactory.createProcess(launchDirectory, processInfo, "zip", archiveFile.getPath(), directoryToArchivate.getAbsolutePath());
+
+
 		if (processInfo.error)
 		{
 			Log.warning(processInfo.getStdout());
@@ -47,7 +61,12 @@ public class CMDUtils
 									File launchDirectory, String archiveFile, String directoryToArchivate) throws Exception
 	{
 		ProcessInfo processInfo = new ProcessInfo(functionDesc, 2, "CMDUtils.addToArchive");
-		processFactory.createProcess(launchDirectory, processInfo, "CMD", "/C", "7z.exe", "a", "-tzip", archiveFile, directoryToArchivate);
+
+		if (Environment.isWindows())
+			processFactory.createProcess(launchDirectory, processInfo, "CMD", "/C", "7z.exe", "a", "-tzip", archiveFile, directoryToArchivate);
+		else
+			processFactory.createProcess(launchDirectory, processInfo, "zip", archiveFile, directoryToArchivate);
+
 		if (processInfo.error)
 		{
 			Log.warning(processInfo.getStdout());
@@ -70,7 +89,12 @@ public class CMDUtils
 									File launchDirectory, File archiveFile) throws Exception
 	{
 		ProcessInfo processInfo = new ProcessInfo(functionDesc, 2, "CMDUtils.extractFromArchive");
-		processFactory.createProcess(launchDirectory, processInfo, "CMD", "/C", "7z.exe", "x", archiveFile.getAbsolutePath());
+
+		if (Environment.isWindows())
+			processFactory.createProcess(launchDirectory, processInfo, "CMD", "/C", "7z.exe", "x", archiveFile.getAbsolutePath());
+		else
+			processFactory.createProcess(launchDirectory, processInfo, "unzip", archiveFile.getAbsolutePath());
+			
 		if (processInfo.error)
 		{
 			Log.warning(processInfo.getStdout());
@@ -82,8 +106,17 @@ public class CMDUtils
 	public static void removeFile(ProcessFactory processFactory, String functionDesc, File archiveFile) throws Exception
 	{
 		ProcessInfo processInfo = new ProcessInfo(functionDesc, 2, "CMDUtils.removeFile");
-		processInfo.charset = Charset.forName("windows-1251");
-		processFactory.createProcess(new File("./"), processInfo, "CMD", "/C", "del", "/f", archiveFile.getAbsolutePath());
+
+		if (Environment.isWindows())
+		{
+			processInfo.charset = Charset.forName("windows-1251");
+			processFactory.createProcess(new File("./"), processInfo, "CMD", "/C", "del", "/f", archiveFile.getAbsolutePath());
+		}
+		else
+		{
+			processInfo.charset = StandardCharsets.UTF_8;
+			processFactory.createProcess(new File("./"), processInfo, "rm", archiveFile.getAbsolutePath());
+		}
 		if (processInfo.error)
 		{
 			Log.warning(processInfo.getStdout());
@@ -97,8 +130,17 @@ public class CMDUtils
 		ProcessInfo processInfo = new ProcessInfo(functionDesc, 2, "CMDUtils.copyFolder");
 		processInfo.debug = false;
 		//processInfo.charset = Charset.forName("windows-1251");
-		processFactory.createProcess(new File("./"), processInfo, "CMD", "/C",
-				"xcopy", src.getAbsolutePath()+"\\", dest.getAbsolutePath()+"\\", "/e", "/y");
+
+		if (Environment.isWindows())
+		{
+			processFactory.createProcess(new File("./"), processInfo, "CMD", "/C",
+					"xcopy", src.getAbsolutePath() + "\\", dest.getAbsolutePath() + "\\", "/e", "/y");
+		}
+		else
+		{
+			processFactory.createProcess(new File("./"), processInfo,
+					"cp", src.getAbsolutePath() + "/", dest.getAbsolutePath() + "/");
+		}
 		if (processInfo.error)
 		{
 			Log.warning(processInfo.getStdout());
