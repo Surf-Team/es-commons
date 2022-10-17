@@ -143,6 +143,7 @@ public class XMLUtils
 						}
 						catch (Exception exception)
 						{
+							exception.printStackTrace();
 							throw new RuntimeException("Enum value not found: " + fieldName + "->" + a.getValue());
 						}
 
@@ -152,6 +153,7 @@ public class XMLUtils
 				}
 				catch (Exception ex)
 				{
+					ex.printStackTrace();
 					throw new RuntimeException("Error parse xml attribute field: " + fieldName + "->" + a.getValue());
 				}
 			}
