@@ -1,5 +1,7 @@
 package ru.es.util;
 
+import ru.es.log.Log;
+
 import java.util.Locale;
 
 public class Environment
@@ -21,6 +23,7 @@ public class Environment
     static
     {
         String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+        Log.warning("OS: "+OS);
         if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
             detectedOS = OSType.MacOS;
         } else if (OS.indexOf("win") >= 0)
