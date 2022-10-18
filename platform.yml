@@ -2,4 +2,4 @@ name:
 - ESCommons
 
 commands:
-- mvn install
+- mvn clean install
