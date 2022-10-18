@@ -3,6 +3,7 @@ package ru.es.annotation;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ public class AnnotatedMap
 	// можно использовать аннотацию Key чтобы сформировать мапу из списка
 	public static <T> Map<Integer, T> createMap(List<T> items)
 	{
-		Map<Integer, T> ret = new HashMap<>();
+		Map<Integer, T> ret = new LinkedHashMap<>();
 		if (items.size() > 0)
 		{
 			Field keyField = null;
