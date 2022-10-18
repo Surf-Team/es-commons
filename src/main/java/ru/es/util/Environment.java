@@ -24,9 +24,12 @@ public class Environment
     {
         String OS = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
         Log.warning("OS: "+OS);
-        if ((OS.indexOf("mac") >= 0) || (OS.indexOf("darwin") >= 0)) {
+
+        if ((OS.contains("mac")) || (OS.contains("darwin")))
+        {
             detectedOS = OSType.MacOS;
-        } else if (OS.indexOf("win") >= 0)
+        }
+        else if (OS.contains("win"))
         {
             String archName =  System.getProperty("sun.arch.data.model");
             if (archName.contains("32"))
@@ -35,12 +38,17 @@ public class Environment
                 detectedOS = OSType.Windows64;
             else
                 detectedOS = OSType.WindowsUnk;
-
-        } else if (OS.indexOf("nux") >= 0) {
+        }
+        else if (OS.contains("nux"))
+        {
             detectedOS = OSType.Unix;
-        } else {
+        }
+        else
+        {
             detectedOS = OSType.Unknown;
         }
+
+        Log.warning("detected OS: "+detectedOS.name());
     }
 
     public static OSType getOS()
