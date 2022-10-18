@@ -22,6 +22,10 @@ public class ProcessFactory
 	public void createProcess(File directory, ProcessInfo processInfo, ESSetter<ProcessInfo> onCompleted, String... cmd)
 	{
 		processInfo.fullCommand = StringUtils.arrayToString(cmd, " ");
+
+		if (processInfo.debug)
+			Log.warning("processInfo.fullCommand: "+processInfo.fullCommand);
+		
 		processInfo.setId(maxProcessId++);
 
 		Thread thread = new Thread(new RunnableImpl() {
