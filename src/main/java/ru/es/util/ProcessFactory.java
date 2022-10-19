@@ -61,6 +61,10 @@ public class ProcessFactory
 		processInfo.fullCommand = StringUtils.arrayToString(cmd, " ");
 		processInfo.setId(maxProcessId++);
 
+
+		if (processInfo.debug)
+			Log.warning("processInfo.fullCommand: "+processInfo.fullCommand);
+
 		processesById.put(processInfo.getId(), processInfo);
 		processes.add(processInfo);
 
