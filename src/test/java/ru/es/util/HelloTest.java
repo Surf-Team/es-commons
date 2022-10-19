@@ -8,6 +8,6 @@ public class HelloTest
 	@Test
 	public void testHello()
 	{
-		Log.warning("Hello from es-commons!");
+		Log.warning("Hello from es-commons! v2");
 	}
 }
