@@ -23,11 +23,9 @@ public class ProcessFactory
 	{
 		processInfo.fullCommand = StringUtils.arrayToString(cmd, " ");
 
-		Log.warning("new version! processInfo.debug: "+processInfo.debug);
-		
 		if (processInfo.debug)
 			Log.warning("processInfo.fullCommand: "+processInfo.fullCommand);
-		
+
 		processInfo.setId(maxProcessId++);
 
 		Thread thread = new Thread(new RunnableImpl() {
