@@ -4,6 +4,6 @@ public class TestLog
 {
 	public static void testLog(String msg)
 	{
-		Log.warning(msg);
+		Log.warning(msg+", version 2");
 	}
 }
