@@ -5,7 +5,7 @@ import ru.es.log.Log;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Objects;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,6 +19,8 @@ public class JarClassLoader extends MultiClassLoader
     private JarResources jarResources;
     private File jarName;
 
+    private List<Class<?>> dependClasses;
+
     public JarClassLoader(String jarName)
     {
         jarResources = new JarResources(jarName);
@@ -30,6 +32,17 @@ public class JarClassLoader extends MultiClassLoader
     {
         className = formatClassName(className);
         return jarResources.getResource(className);
+    }
+
+
+    public synchronized Class<?> loadClass(String className, boolean resolveIt) throws ClassNotFoundException
+    {
+        for (Class c : dependClasses)
+        {
+            if (c.getName().equals(className))
+                return c;
+        }
+        return super.loadClass(className, resolveIt);
     }
 
     public String[] getClassNames()
@@ -51,5 +64,10 @@ public class JarClassLoader extends MultiClassLoader
             e.printStackTrace();
             return null;
         }
+    }
+
+    public void setDependClasses(List<Class<?>> dependClasses)
+    {
+        this.dependClasses = dependClasses;
     }
 }

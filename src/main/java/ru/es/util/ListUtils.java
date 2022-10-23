@@ -459,11 +459,12 @@ public class ListUtils
     }
 
 
-    public static<T> List<T> createList(List<T> items)
+    public static<T> List<T> createList(Iterable<T> items)
     {
         List<T> list = new ArrayList<>();
-        if (items != null)
-            list.addAll(items);
+
+        for (T t : items)
+            list.add(t);
 
         return list;
     }
