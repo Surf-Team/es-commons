@@ -45,6 +45,7 @@ public class ProcessFactory
 					e.printStackTrace();
 					processInfo.error = true;
 					processInfo.done = true;
+					processInfo.endTime = System.currentTimeMillis();
 					onCompleted.set(processInfo);
 				}
 			}
@@ -79,12 +80,14 @@ public class ProcessFactory
 			e.printStackTrace();
 			processInfo.error = true;
 			processInfo.done = true;
+			processInfo.endTime = System.currentTimeMillis();
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 			processInfo.error = true;
 			processInfo.done = true;
+			processInfo.endTime = System.currentTimeMillis();
 		}
 	}
 

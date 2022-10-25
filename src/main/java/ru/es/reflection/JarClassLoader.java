@@ -37,10 +37,13 @@ public class JarClassLoader extends MultiClassLoader
 
     public synchronized Class<?> loadClass(String className, boolean resolveIt) throws ClassNotFoundException
     {
-        for (Class c : dependClasses)
+        if (dependClasses != null)
         {
-            if (c.getName().equals(className))
-                return c;
+            for (Class c : dependClasses)
+            {
+                if (c.getName().equals(className))
+                    return c;
+            }
         }
         return super.loadClass(className, resolveIt);
     }
