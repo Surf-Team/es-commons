@@ -11,6 +11,7 @@ module ru.es.commons {
     requires org.apache.httpcomponents.httpcore;
     requires org.apache.httpcomponents.httpmime;
 	requires org.yaml.snakeyaml;
+	requires com.fasterxml.jackson.dataformat.xml;
 
 	exports ru.es.annotation;
     exports ru.es.json;

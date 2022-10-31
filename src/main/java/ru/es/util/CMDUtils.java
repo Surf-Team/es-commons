@@ -37,6 +37,7 @@ public class CMDUtils
 									File launchDirectory, File archiveFile, File directoryToArchivate) throws Exception
 	{
 		ProcessInfo processInfo = new ProcessInfo(functionDesc, 2, "CMDUtils.addToArchive");
+		processInfo.addToPathEnv.add(new File("./7-Zip/").getAbsoluteFile().getAbsolutePath());
 
 		if (Environment.isWindows())
 			processFactory.createProcess(launchDirectory, processInfo, "CMD", "/C", "7z.exe", "a", "-tzip", archiveFile.getPath(), directoryToArchivate.getAbsolutePath());
@@ -61,6 +62,7 @@ public class CMDUtils
 									File launchDirectory, String archiveFile, String directoryToArchivate) throws Exception
 	{
 		ProcessInfo processInfo = new ProcessInfo(functionDesc, 2, "CMDUtils.addToArchive");
+		processInfo.addToPathEnv.add(new File("./7-Zip/").getAbsoluteFile().getAbsolutePath());
 
 		if (Environment.isWindows())
 			processFactory.createProcess(launchDirectory, processInfo, "CMD", "/C", "7z.exe", "a", "-tzip", archiveFile, directoryToArchivate);
@@ -89,6 +91,7 @@ public class CMDUtils
 									File launchDirectory, File archiveFile) throws Exception
 	{
 		ProcessInfo processInfo = new ProcessInfo(functionDesc, 2, "CMDUtils.extractFromArchive");
+		processInfo.addToPathEnv.add(new File("./7-Zip/").getAbsoluteFile().getAbsolutePath());
 
 		if (Environment.isWindows())
 			processFactory.createProcess(launchDirectory, processInfo, "CMD", "/C", "7z.exe", "x", archiveFile.getAbsolutePath());

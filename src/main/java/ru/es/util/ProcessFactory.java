@@ -108,7 +108,33 @@ public class ProcessFactory
 		if (directory != null)
 			pb.directory(directory);
 
+
+		if (!processInfo.addToPathEnv.isEmpty())
+		{
+			String pathVar = System.getenv().get("Path");
+			Log.warning("init path: " + pathVar);
+
+			boolean isWindows = Environment.isWindows();
+			for (String path : processInfo.addToPathEnv)
+			{
+				if (isWindows)
+					pathVar += ";" + path;
+				else
+					pathVar += ":" + path;
+			}
+			Log.warning("Updated Path: " + pathVar);
+			try
+			{
+				pb.environment().put("PATH", pathVar);
+			}
+			catch (Exception e)
+			{
+				Log.warning("path dir is not updated: " + e.getMessage());
+			}
+		}
+
 		Process process = pb.start();
+
 
 		Charset charset = processInfo.getCharset();
 
@@ -145,7 +171,6 @@ public class ProcessFactory
 		{
 			processInfo.appendErrout(line);
 		}
-
 
 		if (!processInfo.getErrOut().isEmpty())
 		{

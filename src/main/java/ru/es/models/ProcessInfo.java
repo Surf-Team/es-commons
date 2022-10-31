@@ -27,6 +27,8 @@ public class ProcessInfo
 	public long startTime = 0;
 	public long endTime = 0;
 
+	public List<String> addToPathEnv = new ArrayList<>();
+
 	public boolean debug;
 
 	public String fullCommand;
