@@ -134,6 +134,11 @@ public class Row
         entries.add(new Entry(key, value));
     }
 
+    public void add(String key, Object value)
+    {
+        entries.add(new Entry(key, value.toString()));
+    }
+
     public void set(String key, String value)
     {
         getEntry(key).value = value;
