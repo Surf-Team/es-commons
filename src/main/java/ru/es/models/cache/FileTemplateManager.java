@@ -8,24 +8,31 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FileTemplateManager implements ITemplateManager
 {
 	public final FileCacheManager fileCache;
 	public final FileCacheSettings settings;
-	private final File htmlRoot;
+	private final List<File> htmlRoot = new ArrayList<>();
 	private boolean allowHtmlFileTag = false;
 
 	public FileTemplateManager(FileCacheSettings settings,
 							   File htmlRoot)
 	{
 		this.settings = settings;
-		this.htmlRoot = htmlRoot;
+		this.htmlRoot.add(htmlRoot);
 
 		fileCache = new FileCacheManager(settings.name,
 				settings.fileCacheMaxFileSize,
 				settings.fileCacheMaxFilesCount,
 				settings.fileCacheLimitRam);
+	}
+
+	public void addRoot(File file)
+	{
+		htmlRoot.add(file);
 	}
 
 	public String readStaticFile(String f) throws Exception
@@ -102,26 +109,30 @@ public class FileTemplateManager implements ITemplateManager
 				return null;
 		}
 
-        /*if (f.getName().endsWith(".html"))
-        {
-            //todo static file???
-            bytes = settings.templateEngine.process(exchangeWrapper, bytes);
-        } */
 
 		return bytes;
 	}
 
 	public File getFile(String file) throws ForbiddenException, IOException
 	{
-		File f = new File(htmlRoot, file);
-		//Log.warning("requested file: "+f);
-
-		if (!f.getCanonicalFile().toString().startsWith(htmlRoot.getCanonicalFile().toString()))
+		File f = null;
+		for (File root : htmlRoot)
 		{
-			Log.warning("forbidden canonical: "+f.getCanonicalFile());
-			throw new ForbiddenException(f);
+			f = new File(root, file);
+
+			if (!f.exists())
+				continue;
+
+			if (!f.getCanonicalFile().toString().startsWith(root.getCanonicalFile().toString()))
+			{
+				Log.warning("forbidden canonical: " + f.getCanonicalFile());
+				throw new ForbiddenException(f);
+			}
+
+			return f;
 		}
 
+		// возвращает последний файл из цикла, даже если файл не существует
 		return f;
 	}
 
@@ -137,7 +148,7 @@ public class FileTemplateManager implements ITemplateManager
 	}
 
 
-	public static<T> String processIncludeFile(String text, FileTemplateManager fileTemplateManager,
+	private static<T> String processIncludeFile(String text, FileTemplateManager fileTemplateManager,
 											   OnIncludeHtmlEvent<T> onIncludeHtmlEvent, T object)
 	{
 		String startTag = "htmlfile(";
