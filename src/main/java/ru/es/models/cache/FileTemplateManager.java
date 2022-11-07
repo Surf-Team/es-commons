@@ -32,6 +32,8 @@ public class FileTemplateManager implements ITemplateManager
 
 	public void addRoot(File file)
 	{
+		if (!file.exists())
+			throw new RuntimeException("File "+file.getAbsolutePath()+" doesnt exist!");
 		htmlRoot.add(file);
 	}
 
