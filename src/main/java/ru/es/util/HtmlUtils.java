@@ -153,10 +153,22 @@ public class HtmlUtils
 		ret.append("</a>");
 		return ret.toString();
 	}
+
 	public static String a(String name, String baseHref, Entry... args)
 	{
 		StringBuilder ret = new StringBuilder();
 		ret.append("<a href='");
+		ret.append(hrefArgs(baseHref, args));
+		ret.append("'>");
+		ret.append(name);
+		ret.append("</a>");
+		return ret.toString();
+	}
+
+	public static String a(String name, String cssClass, String baseHref, Entry... args)
+	{
+		StringBuilder ret = new StringBuilder();
+		ret.append("<a class=\""+cssClass+"\" href='");
 		ret.append(hrefArgs(baseHref, args));
 		ret.append("'>");
 		ret.append(name);

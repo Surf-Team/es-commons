@@ -13,7 +13,7 @@ public class MappedXML
 {
 	private File file;
 	private Map<String, Element> idMap = new HashMap<>();
-	private Element root;
+	public Element root;
 
 	public MappedXML(File file, String idAttribute) throws IOException, JDOMException
 	{
