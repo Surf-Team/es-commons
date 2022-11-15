@@ -8,7 +8,7 @@ import ru.es.math.Rnd;
 
 import java.lang.reflect.Array;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 
 /**
  * Created with IntelliJ IDEA.
@@ -819,6 +819,45 @@ public class ListUtils
         }
         strings.removeAll(toRemove);
     }
+
+    public static<K> K getPreviousObject(List<K> objects, int objectIndex, Function<K, Double> indexGetter)
+    {
+        K prevObj = null;
+        double prevIndex = Integer.MIN_VALUE;
+
+        for (K k : objects)
+        {
+            double curInedex = indexGetter.apply(k);
+
+            if (curInedex > prevIndex && curInedex <= objectIndex)
+            {
+                prevObj = k;
+                prevIndex = curInedex;
+            }
+        }
+
+        return prevObj;
+    }
+
+    public static<K> K getNextObject(List<K> objects, int objectIndex, Function<K, Double> indexGetter)
+    {
+        K prevObj = null;
+        double nextIndex = Integer.MAX_VALUE;
+
+        for (K k : objects)
+        {
+            double curInedex = indexGetter.apply(k);
+
+            if (curInedex < nextIndex && curInedex >= objectIndex)
+            {
+                prevObj = k;
+                nextIndex = curInedex;
+            }
+        }
+
+        return prevObj;
+    }
+
 
     public static class ListChanges<T>
     {

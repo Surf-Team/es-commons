@@ -1,11 +1,14 @@
 package ru.es.math;
 
 
+import ru.es.log.Log;
+import ru.es.util.ListUtils;
 import ru.es.util.SortUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Created with IntelliJ IDEA.
@@ -197,7 +200,8 @@ public class ESMath
     
     public static double round(double num, int zeroCount)
     {
-        return new BigDecimal(num).setScale(zeroCount, RoundingMode.UP).doubleValue();
+        double mult = Math.pow(10, zeroCount);
+        return Math.round(num * mult) / mult;
     }
 
     // округление например до 0.05. Т.е. значение может быть только к примеру 315135.30 или 4363.55. Т.е. минимальный шаг - 0.5
@@ -672,5 +676,28 @@ public class ESMath
         }
 
         return ret;
+    }
+
+    public static<T> double interpolateFromList(List<T> table, int level,
+                                                Function<T, Double> indexGetter,
+                                                Function<T, Double> finalValueGetter)
+    {
+        T prev = ListUtils.getPreviousObject(table, level, indexGetter);
+        T next = ListUtils.getNextObject(table, level, indexGetter);
+
+        double nextLevel = indexGetter.apply(next);
+
+        // remove offsets
+        double levelFloat = level - indexGetter.apply(prev);
+        nextLevel -= indexGetter.apply(prev);
+
+        // normalize
+        if (nextLevel != 0)
+            levelFloat /= nextLevel;
+        else
+            levelFloat = 0;
+
+        return (int) ESMath.linearToPowed(finalValueGetter.apply(prev), finalValueGetter.apply(next),
+                1.0, levelFloat, 1.0);
     }
 }

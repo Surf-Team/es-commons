@@ -41,6 +41,26 @@ public class ArrayUtils
         }
     }
 
+    public static boolean containsEqualIgnoreCase(String[] array, String value)
+    {
+        if(array == null)
+        {
+            return false;
+        }
+        else
+        {
+            for (String s : array)
+            {
+                if (value.equalsIgnoreCase(s))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
     public static boolean contains(int[] array, int value) {
         if(array == null) {
             return false;

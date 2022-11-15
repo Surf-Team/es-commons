@@ -2,7 +2,9 @@ package ru.es.annotation;
 
 import org.jdom2.Element;
 import ru.es.models.XmlRepository;
+import ru.es.util.FileUtils;
 
+import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,7 @@ public class XmlCollection<T> extends XmlRepository
 	private Map<String, Map<Object, T>> maps = new HashMap<>();
 
 	private final Class<T> tClass;
+	private Element rootXml;
 
 	// можно делать авто-создание мапы по ключу с помощью аннотации Key
 	public XmlCollection(Class<T> tClass, URL file) throws Exception
@@ -32,6 +35,7 @@ public class XmlCollection<T> extends XmlRepository
 	@Override
 	protected void reloadImpl(Element rootXml) throws Exception
 	{
+		this.rootXml = rootXml;
 		// create list
 		List<T> objects = AnnotatedXML.getList(tClass, rootXml);
 
@@ -45,7 +49,8 @@ public class XmlCollection<T> extends XmlRepository
 	@Override
 	public void save() throws Exception
 	{
-		throw new RuntimeException("Not implemented");
+		rootXml.detach();
+		FileUtils.saveXmlDocWideFormat(rootXml, new File(file.getFile()));
 	}
 
 	public List<T> getObjects()
