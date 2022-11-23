@@ -175,4 +175,52 @@ public class HtmlUtils
 		ret.append("</a>");
 		return ret.toString();
 	}
+
+	public static String getPaginationLinks(int numberOfDataLines, int numberOfLines)
+	{
+		StringBuilder sb = new StringBuilder();
+		int count;
+
+		if (numberOfLines > 0 && numberOfDataLines % numberOfLines == 0)
+		{
+			count = numberOfDataLines / numberOfLines;
+		}
+		else
+		{
+			count = numberOfDataLines / numberOfLines + 1;
+		}
+
+		if (count == 1)
+			return "";
+		for (int i = 1; i <= count; i++)
+		{
+			sb.append("<span onclick='showPagination(").append(i).append(")' class='custom-link'>< ")
+					.append(i).append(" > </span>");
+		}
+
+		return sb.toString();
+	}
+
+	public static String getPaginationLinks(int numberOfDataLines, int numberOfLines, String arg)
+	{
+		StringBuilder sb = new StringBuilder();
+		int count;
+
+		if (numberOfLines > 0 && numberOfDataLines % numberOfLines == 0)
+		{
+			count = numberOfDataLines / numberOfLines;
+		}
+		else
+		{
+			count = numberOfDataLines / numberOfLines + 1;
+		}
+
+		for (int i = 1; i <= count; i++)
+		{
+			sb.append("<span onclick='showPagination(").append(i).append(", \"").append(arg)
+					.append("\")' class='custom-link'>< ").append(i).append(" > </span>");
+		}
+
+		return sb.toString();
+	}
 }
