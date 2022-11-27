@@ -176,7 +176,7 @@ public class HtmlUtils
 		return ret.toString();
 	}
 
-	public static String getPaginationLinks(int numberOfDataLines, int numberOfLines, String arg)
+	public static String getPaginationLinks(String apiUrlPagination, int numberOfDataLines, int numberOfLines, String arg)
 	{
 		StringBuilder sb = new StringBuilder();
 		int count;
@@ -197,13 +197,13 @@ public class HtmlUtils
 		{
 			if (arg == null || arg.equals(""))
 			{
-				sb.append("<span onclick='showPagination(").append(i).append(")' class='custom-link'>< ")
-						.append(i).append(" > </span>");
+				sb.append("<span onclick='showPagination(").append("\".").append(apiUrlPagination).append("\", ").append(i)
+						.append(")' class='custom-link'>< ").append(i).append(" > </span>");
 			}
 			else
 			{
-				sb.append("<span onclick='showPagination(").append(i).append(", \"").append(arg)
-						.append("\")' class='custom-link'>< ").append(i).append(" > </span>");
+				sb.append("<span onclick='showPagination(").append("\".").append(apiUrlPagination).append("\", ").append(i)
+						.append(", \"").append(arg).append("\")' class='custom-link'>< ").append(i).append(" > </span>");
 			}
 		}
 
