@@ -1,6 +1,5 @@
 package ru.es.util;
 
-import org.apache.commons.lang3.tuple.Pair;
 import ru.es.lang.StringReplaceCall;
 import ru.es.lang.Value;
 import ru.es.lang.table.Entry;
@@ -179,16 +178,7 @@ public class HtmlUtils
 	public static String getPaginationLinks(String apiUrlPagination, int numberOfDataLines, int numberOfLines, String arg)
 	{
 		StringBuilder sb = new StringBuilder();
-		int count;
-
-		if (numberOfLines > 0 && numberOfDataLines % numberOfLines == 0)
-		{
-			count = numberOfDataLines / numberOfLines;
-		}
-		else
-		{
-			count = numberOfDataLines / numberOfLines + 1;
-		}
+		int count = getCountPaginationLinks(numberOfDataLines, numberOfLines);
 
 		if (count == 1)
 			return "";
@@ -208,5 +198,85 @@ public class HtmlUtils
 		}
 
 		return sb.toString();
+	}
+
+	public static String getPaginationLinks(String apiUrlPagination, int numberOfDataLines, int numberOfLines,
+											String arg, String moduleName)
+	{
+		StringBuilder sb = new StringBuilder();
+		int count = getCountPaginationLinks(numberOfDataLines, numberOfLines);
+
+		if (count == 1)
+			return "";
+
+		for (int i = 1; i <= count; i++)
+		{
+			if (arg == null || arg.equals(""))
+			{
+				if (moduleName.equals("GveIOSite"))
+				{
+					sb.append("<span onclick='showPagination(").append("\".").append(apiUrlPagination).append("\", ").append(i)
+							.append(")' class='custom-link'>< ").append(i).append(" > </span>");
+				}
+				else
+				{
+					if (i == 1)
+					{
+						sb.append("<li id=\"").append(i)
+								.append("\" class=\"page-item active\"><span class=\"page-link lib-cursor-pointer\" onclick='showPagination(")
+								.append("\".").append(apiUrlPagination).append("\", ").append(i)
+								.append(")'>").append(i).append("</span></li>");
+					}
+					else
+					{
+						sb.append("<li id=\"").append(i).
+								append("\" class=\"page-item\"><span class=\"page-link lib-cursor-pointer\" onclick='showPagination(")
+								.append("\".").append(apiUrlPagination).append("\", ").append(i)
+								.append(")'>").append(i).append("</span></li>");
+					}
+				}
+			}
+			else
+			{
+				if (moduleName.equals("GveIOSite"))
+				{
+				sb.append("<span onclick='showPagination(").append("\".").append(apiUrlPagination).append("\", ").append(i)
+						.append(", \"").append(arg).append("\")' class='custom-link'>< ").append(i).append(" > </span>");
+				}
+				else
+				{
+					if (i == 1)
+					{
+						sb.append("<li id=\"").append(i)
+								.append("\" class=\"page-item active\"><span class=\"page-link lib-cursor-pointer\" onclick='showPagination(")
+								.append("\".").append(apiUrlPagination).append("\", ").append(i).append(", \"")
+								.append(arg).append("\")'>").append(i).append("</span></li>");
+					}
+					else
+					{
+						sb.append("<li id=\"").append(i)
+								.append("\" class=\"page-item\"><span class=\"page-link lib-cursor-pointer\" onclick='showPagination(")
+								.append("\".").append(apiUrlPagination).append("\", ").append(i).append(", \"")
+								.append(arg).append("\")'>").append(i).append("</span></li>");
+					}
+				}
+			}
+		}
+
+		return sb.toString();
+	}
+
+	private static int getCountPaginationLinks(int numberOfDataLines, int numberOfLines)
+	{
+		int count;
+		if (numberOfLines > 0 && numberOfDataLines % numberOfLines == 0)
+		{
+			count = numberOfDataLines / numberOfLines;
+		}
+		else
+		{
+			count = numberOfDataLines / numberOfLines + 1;
+		}
+		return count;
 	}
 }
