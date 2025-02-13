@@ -1,0 +1,13 @@
+package ru.es.net;
+
+public enum HttpConnectionState
+{
+	PARSING_HEADER,
+	PARSE_REQUEST,
+	PROCESS_REQUEST,
+	RECEIVE_DATA,
+	PREPARE_STREAM,
+	PROCESS_STREAM,
+	AFTER_STREAM,
+	NONE;
+}
