@@ -300,7 +300,8 @@ public class SurfJsonWriter
 
 	private boolean isLink(Class<?> collectedClass)
 	{
-		return dependencyManager.getCollectionClasses().contains(collectedClass);
+		return dependencyManager.getCollectionClasses().contains(collectedClass)
+				|| dependencyManager.getAllOverrides().contains(collectedClass);
 	}
 
 	private JsonElement getBoolArray(Boolean[] value)

@@ -5,6 +5,7 @@ import ru.es.lang.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.stream.Collectors;
 
 // что позволяет DependencyManager:
 // 1. Новые объекты коллекций записываются в коллекцию с коллекциями :) В итоге любую коллекцию можно достать по указанию класса
@@ -191,5 +192,14 @@ public class DependencyManager
 		return minId + 1;
 	}
 
+	public List<Class> getAllOverrides()
+	{
+		List<Class> result = new ArrayList<>();
+		for (var c : overrides.values())
+		{
+			result.addAll(c);
+		}
+		return result;
+	}
 }
 
