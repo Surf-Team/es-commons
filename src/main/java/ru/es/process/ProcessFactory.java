@@ -39,6 +39,10 @@ public class ProcessFactory
 				}).collect(Collectors.toList());
 
 				processes.removeAll(oldProcesses);
+				for (var e : oldProcesses)
+				{
+					processesById.remove(e.getId());
+				}
 			}
 		}, 60000, 60000);
 	}
