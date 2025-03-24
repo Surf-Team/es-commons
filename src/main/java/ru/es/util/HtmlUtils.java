@@ -255,6 +255,142 @@ public class HtmlUtils
 		return sb.toString();
 	}
 
+	public static String getPaginationLinksV2(String apiUrlPagination, int numberOfDataLines, int numberOfLines,
+											  int maxPaginationNumbers, int paginationNumber, String arg, boolean castForGveIOSite)
+	{
+		int countPaginationLinks = getCountPaginationLinks(numberOfDataLines, numberOfLines);
+
+		if (countPaginationLinks == 1)
+			return "";
+
+		StringBuilder sb = new StringBuilder();
+		int startNumber = Math.max(1, paginationNumber - maxPaginationNumbers / 2);
+		int endNumber = Math.min(countPaginationLinks, startNumber + maxPaginationNumbers - 1);
+
+		// Ограничиваем начало для обеспечения наличия maxPaginationNumbers ссылок пагинации
+		if (endNumber - startNumber < maxPaginationNumbers - 1)
+			startNumber = Math.max(1, endNumber - maxPaginationNumbers + 1);
+
+		// Добавляем первую ссылку пагинации и троеточие после ссылки, если это необходимо
+		if (startNumber > 1)
+		{
+			sb.append(createPaginationSpan(apiUrlPagination, paginationNumber, arg, castForGveIOSite, 1));
+			sb.append(" ... ");
+		}
+
+		// создаем ссылки пагинации количество которых равно значению параметра maxPaginationNumbers
+		for (int i = startNumber; i <= endNumber; i++)
+		{
+			 sb.append(createPaginationSpan(apiUrlPagination, paginationNumber, arg, castForGveIOSite, i));
+		}
+
+		// Добавляем последнюю ссылку пагинации и троеточие перед ссылкой, если это необходимо
+		if (endNumber < countPaginationLinks)
+		{
+			sb.append(" ... ");
+			sb.append(createPaginationSpan(apiUrlPagination, paginationNumber, arg, castForGveIOSite, countPaginationLinks));
+		}
+
+		return sb.toString();
+	}
+
+	private static String createPaginationSpan(String apiUrlPagination, int paginationNumber, String arg,
+											   boolean castForGveIOSite, int i)
+	{
+		StringBuilder sb = new StringBuilder();
+
+		if (arg == null || arg.isEmpty())
+		{
+			if (castForGveIOSite)
+			{
+				sb.append("<span id=\"");
+				sb.append(i);
+				sb.append("\" onclick='showPaginationV2(\".");
+				sb.append(apiUrlPagination);
+				sb.append("\", ");
+				sb.append(i);
+				if (i == paginationNumber)
+				{
+					sb.append(")' class='custom-link page-item active'>< ");
+				}
+				else
+				{
+					sb.append(")' class='custom-link page-item'>< ");
+				}
+				sb.append(i);
+				sb.append(" > </span>");
+			}
+			else
+			{
+				sb.append("<li id=\"");
+				sb.append(i);
+				if (i == paginationNumber)
+				{
+					sb.append("\" class=\"page-item active\"><span class=\"page-link lib-cursor-pointer\" onclick='showPaginationV2(");
+				}
+				else
+				{
+					sb.append("\" class=\"page-item\"><span class=\"page-link lib-cursor-pointer\" onclick='showPaginationV2(");
+				}
+				sb.append("\".");
+				sb.append(apiUrlPagination);
+				sb.append("\", ");
+				sb.append(i);
+				sb.append(")'>");
+				sb.append(i);
+				sb.append("</span></li>");
+			}
+		}
+		else
+		{
+			if (castForGveIOSite)
+			{
+				sb.append("<span id=\"");
+				sb.append(i);
+				sb.append("\" onclick='showPaginationV2(\".");
+				sb.append(apiUrlPagination);
+				sb.append("\", ");
+				sb.append(i);
+				sb.append(", \"");
+				sb.append(arg);
+				sb.append("\"");
+				if (i == paginationNumber)
+				{
+					sb.append(")' class='custom-link page-item active'>< ");
+				}
+				else
+				{
+					sb.append(")' class='custom-link page-item'>< ");
+				}
+				sb.append(i);
+				sb.append(" > </span>");
+			}
+			else
+			{
+				sb.append("<li id=\"");
+				sb.append(i);
+				if (i == paginationNumber)
+				{
+					sb.append("\" class=\"page-item active\"><span class=\"page-link lib-cursor-pointer\" onclick='showPaginationV2(");
+				}
+				else
+				{
+					sb.append("\" class=\"page-item\"><span class=\"page-link lib-cursor-pointer\" onclick='showPaginationV2(");
+				}
+				sb.append("\".");
+				sb.append(apiUrlPagination);
+				sb.append("\", ");
+				sb.append(i);
+				sb.append(", \"");
+				sb.append(arg);
+				sb.append("\")'>");
+				sb.append(i);
+				sb.append("</span></li>");
+			}
+		}
+		return sb.toString();
+	}
+
 	public static String getPaginationLinks(String apiUrlPagination, int numberOfDataLines, int numberOfLines, String arg)
 	{
 		StringBuilder sb = new StringBuilder();
