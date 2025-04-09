@@ -36,6 +36,7 @@ public class XmlConfig
 	private Map<String, Double> doubles;
 	private Map<String, Float> floats;
 	private Map<String, List<Integer>> listOfInts;
+	private Map<String, Map<Integer, Integer>> mapOfIntsInts;
 
 	private XmlParseConditions xmlParseConditions;
 
@@ -93,6 +94,7 @@ public class XmlConfig
 		Map<String, Double> doubles = new HashMap<>();
 		Map<String, Float> floats = new HashMap<>();
 		Map<String, List<Integer>> listOfInts = new HashMap<>();
+		Map<String, Map<Integer, Integer>> mapOfIntsInts = new HashMap<>();
 
 		for (Map.Entry<String, String> e : stringValueMap.entrySet())
 		{
@@ -137,6 +139,21 @@ public class XmlConfig
 				listOfInts.put(e.getKey(), newList);
 			}
 			catch (Exception ex) {}
+
+			try
+			{
+				Map<Integer, Integer> map = new HashMap<>();
+				String[] pair = val.split(";");
+
+				for (String s : pair)
+				{
+					String[] split = s.split(",");
+					map.put(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+				}
+
+				mapOfIntsInts.put(e.getKey(), map);
+			}
+			catch (Exception ex) {}
 		}
 
 		this.stringValueMap = stringValueMap;
@@ -146,6 +163,7 @@ public class XmlConfig
 		this.doubles = doubles;
 		this.floats = floats;
 		this.listOfInts = listOfInts;
+		this.mapOfIntsInts = mapOfIntsInts;
 	}
 
 	public String getValue(String name)
@@ -230,5 +248,10 @@ public class XmlConfig
 	public List<Integer> getListOfInt(String name)
 	{
 		return listOfInts.get(name);
+	}
+
+	public Map<Integer, Integer> getMapOfIntsInts(String name)
+	{
+		return mapOfIntsInts.get(name);
 	}
 }
