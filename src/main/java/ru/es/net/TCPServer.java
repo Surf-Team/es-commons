@@ -69,6 +69,7 @@ public abstract class TCPServer
         try
         {
             serverSocket = new ServerSocket(port,BACKLOG);
+            serverSocket.setReceiveBufferSize(USER_READ_BUFFER_SIZE);
         }
         catch (IOException e)
         {
@@ -318,11 +319,13 @@ public abstract class TCPServer
                 {
                     lastActive = System.currentTimeMillis();
                     available = socket.getInputStream().available();
+                    //Log.warning("available in socket: "+available+", read buffer len: "+readBuffer.length);
 
                     available = ESMath.min(available, readBuffer.length);
                     
-                    socket.getInputStream().read(readBuffer, pos, available);
-                    receivedBytes(this, readBuffer, available);
+                    int read = socket.getInputStream().read(readBuffer, pos, available);
+                    //Log.warning("read: "+read);
+                    receivedBytes(this, readBuffer, read);
                     pos = 0;
                 }
 
