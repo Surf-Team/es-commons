@@ -2,6 +2,7 @@ package ru.es.xml;
 
 import org.jdom2.Element;
 import ru.es.log.Log;
+import ru.es.util.DataHolder;
 import ru.es.util.FileUtils;
 
 import java.net.URL;
@@ -36,7 +37,7 @@ public class XmlConfig
 	private Map<String, Double> doubles;
 	private Map<String, Float> floats;
 	private Map<String, List<Integer>> listOfInts;
-	private Map<String, Map<Integer, Integer>> mapOfIntsInts;
+	private Map<String, DataHolder<?>> listOfDataHolders;
 
 	private XmlParseConditions xmlParseConditions;
 
@@ -94,7 +95,7 @@ public class XmlConfig
 		Map<String, Double> doubles = new HashMap<>();
 		Map<String, Float> floats = new HashMap<>();
 		Map<String, List<Integer>> listOfInts = new HashMap<>();
-		Map<String, Map<Integer, Integer>> mapOfIntsInts = new HashMap<>();
+		Map<String, DataHolder<?>> listOfDataHolders = new HashMap<>();
 
 		for (Map.Entry<String, String> e : stringValueMap.entrySet())
 		{
@@ -142,18 +143,10 @@ public class XmlConfig
 
 			try
 			{
-				Map<Integer, Integer> map = new HashMap<>();
-				String[] pair = val.split(";");
-
-				for (String s : pair)
-				{
-					String[] split = s.split(",");
-					map.put(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
-				}
-
-				mapOfIntsInts.put(e.getKey(), map);
+				DataHolder<Integer> data = new DataHolder<>(val, Integer::parseInt);
+				listOfDataHolders.put(e.getKey(), data);
 			}
-			catch (Exception ex) {}
+			catch (NumberFormatException ex) {}
 		}
 
 		this.stringValueMap = stringValueMap;
@@ -163,7 +156,7 @@ public class XmlConfig
 		this.doubles = doubles;
 		this.floats = floats;
 		this.listOfInts = listOfInts;
-		this.mapOfIntsInts = mapOfIntsInts;
+		this.listOfDataHolders = listOfDataHolders;
 	}
 
 	public String getValue(String name)
@@ -250,8 +243,8 @@ public class XmlConfig
 		return listOfInts.get(name);
 	}
 
-	public Map<Integer, Integer> getMapOfIntsInts(String name)
+	public DataHolder<?> getDataHolder(String name)
 	{
-		return mapOfIntsInts.get(name);
+		return listOfDataHolders.get(name);
 	}
 }

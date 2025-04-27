@@ -36,4 +36,9 @@ public class XmlParseConditions
 		}
 		return requireOk;
 	}
+
+	public boolean contains(String type)
+	{
+		return conditionCheckers.containsKey(type);
+	}
 }
