@@ -165,6 +165,44 @@ public class TimeUtils
                 return seconds + " секунд";
         }
     }
+    public static String convertMillsToFormatedString1(long mills, boolean ru)
+    {
+        long seconds = (mills / 1000) % 60;
+        long minutes = (mills / 1000 / 60) % 60;
+        int hours = (int) ((mills / 1000 / 60 / 60) % 24);
+        int days = (int) (mills / 1000 / 60 / 60 / 24);
+
+        if (days > 0)
+        {
+            if (!ru)
+                return days + " days";
+            else
+                return days + " " + daysConverterRu(days);
+        }
+        else if (hours > 0)
+        {
+            if (!ru)
+                return hours + " hours";
+            else
+                return hours + " "+hoursConverterRu(hours);
+        }
+        else if (minutes > 0)
+        {
+
+            if (!ru)
+                return minutes + " minutes";
+            else
+                return minutes + " минут";
+        }
+        else
+        {
+            if (!ru)
+                return seconds + " seconds";
+            else
+                return seconds + " секунд";
+        }
+    }
+
     public static String convertMillsToMiniFormat(long mills)
     {
         long seconds = (mills / 1000) % 60;
