@@ -289,4 +289,25 @@ public class StringUtils
 		}
 		return result;
 	}
+
+
+    // one = час
+    // upTo20 = часа
+    // more = часов
+    public static String countTextEnd(int count, String one, String upTo20_234, String more)
+    {
+        count %= 100;
+
+        if (count == 1 || count > 20 && count % 10 == 1)
+            return one;
+        else if (count == 2 || count > 20 && count % 10 == 2)
+            return upTo20_234;
+        else if (count == 3 || count > 20 && count % 10 == 3)
+            return upTo20_234;
+        else if (count == 4 || count > 20 && count % 10 == 4)
+            return upTo20_234;
+
+        return more;
+    }
+
 }

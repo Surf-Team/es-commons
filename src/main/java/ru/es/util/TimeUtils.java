@@ -6,10 +6,7 @@ import ru.es.thread.RunnableImpl;
 import ru.es.thread.SingletonThreadPool;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -489,7 +486,18 @@ public class TimeUtils
     {
         Date d = new Date(time);
         SimpleDateFormat format1;
-        format1 = new SimpleDateFormat("dd-MM-yyyy, HH:mm:ss");
+
+        int targetYear = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault()).getYear();
+
+        // Получаем текущую дату
+        LocalDate currentDate = LocalDate.now();
+        // Извлекаем текущий год
+        int currentYear = currentDate.getYear();
+
+        if (currentYear != targetYear)
+            format1 = new SimpleDateFormat("dd-MM-yyyy, HH:mm:ss");
+        else
+            format1 = new SimpleDateFormat("dd MMM, HH:mm:ss");
 
         return format1.format(d);
     }
