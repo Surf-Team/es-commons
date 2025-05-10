@@ -417,7 +417,11 @@ public class SurfJsonReader
 								typeArguments = paramType.getActualTypeArguments(); // Получение аргументов типа <..., ...>
 							}
 
-							f.set(object, parseObject(jsonValue.getAsJsonObject(), fieldType, typeArguments, object));
+							if (jsonValue.toString().equalsIgnoreCase("[]"))
+								;
+							else
+								f.set(object, parseObject(jsonValue.getAsJsonObject(), fieldType, typeArguments, object));
+
 						}
 					}
 				}
