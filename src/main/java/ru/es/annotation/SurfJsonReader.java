@@ -214,7 +214,11 @@ public class SurfJsonReader
 									//List list = new ArrayList();
 									Class<?> listClass = ArrayList.class;
 
-									if (fieldType != List.class)
+									if (fieldType == Set.class)
+									{
+										throw new Exception("Нужно явно указать конкретный тип Set " + tClass.getSimpleName() + ". " + f.getName() + "!");
+									}
+									else if (fieldType != List.class)
 									{
 										listClass = fieldType;
 										//Log.warning("Use special map class: "+mapClass);
