@@ -224,7 +224,7 @@ public class SurfJsonReader
 										//Log.warning("Use special map class: "+mapClass);
 									}
 
-									List list = (List) listClass.getConstructor().newInstance();
+									Collection list = (Collection) listClass.getConstructor().newInstance();
 
 									var jsonArray = jsonValue.getAsJsonArray();
 									int arraySize = jsonArray.size();
