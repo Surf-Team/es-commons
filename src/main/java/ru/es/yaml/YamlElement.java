@@ -19,7 +19,7 @@ public class YamlElement
 	private ESProperties attributes = new ESProperties();
 	private LinkedHashMap<String, String> sortedAttributes = new LinkedHashMap<>();
 	// потомков (ключ, йамл элемент)
-	private Map<String, YamlElement> children = new LinkedHashMap<>();
+	public Map<String, YamlElement> children = new LinkedHashMap<>();
 	// списки из йамл элементов
 	private List<YamlElement> list = new ArrayList<>();
 	// просто значение
