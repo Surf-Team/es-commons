@@ -19,6 +19,7 @@ public class SurfJsonReader
 	private final DependencyManager dependencyManager;
 	public final Map<Class, ListDeserializer> listDeserializers = new HashMap<>();
 	public final Map<Class, ArrayDeserializer> arrayDeserializers = new HashMap<>();
+	public ClassLoader customClassLoader = null;
 
 	public SurfJsonReader(DependencyManager dependencyManager)
 	{
@@ -95,7 +96,9 @@ public class SurfJsonReader
 			object = baseClass.getConstructor().newInstance();
 		else
 		{
-			var tClass = Class.forName(savedClassName.getAsString());
+			var tClass = customClassLoader == null ? Class.forName(savedClassName.getAsString())
+					:	customClassLoader.loadClass(savedClassName.getAsString());
+
 			if (tClass == null)
 			{
 				throw new Exception("Could not find class " + savedClassName.getAsString());
