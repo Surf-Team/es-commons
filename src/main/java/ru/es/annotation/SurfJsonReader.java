@@ -3,9 +3,11 @@ package ru.es.annotation;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.gson.*;
+import ru.es.lang.ESEventHandler;
 import ru.es.log.Log;
 import ru.es.reflection.ReflectionUtils;
 
+import java.beans.EventHandler;
 import java.io.StringReader;
 import java.lang.reflect.*;
 import java.net.URL;
@@ -20,6 +22,7 @@ public class SurfJsonReader
 	public final Map<Class, ListDeserializer> listDeserializers = new HashMap<>();
 	public final Map<Class, ArrayDeserializer> arrayDeserializers = new HashMap<>();
 	public ClassLoader customClassLoader = null;
+	public ESEventHandler<Object> objectParsed = new ESEventHandler<>();
 
 	public SurfJsonReader(DependencyManager dependencyManager)
 	{
@@ -435,7 +438,9 @@ public class SurfJsonReader
 				}
 			}
 		}
+		objectParsed.event(object);
 	}
+
 
 	private Object parseArray(JsonArray jsonArray, Class objectType, Type[] parametrizedTypes, Field f, Object parent) throws Exception
 	{
