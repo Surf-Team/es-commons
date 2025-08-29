@@ -3,6 +3,7 @@ package ru.es.math;
 
 import ru.es.lang.ESValue;
 import ru.es.log.Log;
+import ru.es.util.Capacity;
 import ru.es.util.ListUtils;
 import ru.es.util.SortUtils;
 
@@ -723,4 +724,168 @@ public class ESMath
 
         return Rnd.getRndFromList(ret, returnListSize);
     }
+
+	// распределяет игроков равномерно по аренам
+	public static<T extends Capacity> List<T> selectFitCapacity(List<T> arenas, int participants, int capacityMult)
+	{
+		if (arenas.isEmpty())
+			return null;
+
+		Collections.shuffle(arenas);
+		// Сортируем арены по вместительности по убыванию
+		arenas.sort((a1, a2) -> Integer.compare(a2.capacity(), a1.capacity()));
+
+		int n = arenas.size();
+		int[] capacities = arenas.stream().mapToInt(a -> a.capacity()*capacityMult).toArray();
+
+		// Зафиксируем параметры кандидата (минимум арен и минимум "переполнения")
+		List<Integer> bestCombination = null;
+		int bestOverfill = Integer.MAX_VALUE;
+		int bestArenaCount = Integer.MAX_VALUE;
+		int bestSum = Integer.MAX_VALUE;
+
+		// Перебираем все возможные сочетания арен
+		// Сочетания — это любые подмножества
+		for (int mask = 1; mask < (1 << n); mask++) {
+			int sum = 0;
+			List<Integer> combinationIndexes = new ArrayList<>();
+			for (int bit = 0; bit < n; bit++) {
+				if ((mask & (1 << bit)) != 0) {
+					sum += capacities[bit];
+					combinationIndexes.add(bit);
+				}
+			}
+			// Нас интересуют только комбинации, которые покрывают всех участников
+			if (sum >= participants) {
+				int overfill = sum - participants;
+				int size = combinationIndexes.size();
+
+				// Отбор по критериям: минимум арен, максимум вместимость, минимум переполнения
+				if (size < bestArenaCount
+						|| size == bestArenaCount && overfill < bestOverfill
+						|| size == bestArenaCount && overfill == bestOverfill && sum < bestSum) {
+					bestCombination = new ArrayList<>(combinationIndexes);
+					bestArenaCount = size;
+					bestOverfill = overfill;
+					bestSum = sum;
+				}
+			}
+		}
+
+		// Формируем результат
+		List<T> result = new ArrayList<>();
+		if (bestCombination != null) {
+			for (int idx : bestCombination) {
+				result.add(arenas.get(idx));
+			}
+		}
+
+		if (result.size() == 1)
+		{
+			var aa = result.get(0);
+			int arenaCapacity = aa.capacity();
+			if (participants <= arenaCapacity * capacityMult * 0.75)
+			{
+				Log.warning("too big arena "+aa.toString()+". Participants: "+participants+" <= 75% ("+(arenaCapacity * capacityMult * 0.75)+")");
+				var arenasWithoutBiggerArenas = ListUtils.createList(arenas);
+				Log.warning("Arenas left: " + arenasWithoutBiggerArenas.size());
+				if (arenasWithoutBiggerArenas.size() != 0)
+				{
+					arenasWithoutBiggerArenas.removeIf(ef -> ef.capacity() >= arenaCapacity);
+					Log.warning("Arenas left: " + arenasWithoutBiggerArenas.size());
+
+					var ret = selectFitCapacity(arenasWithoutBiggerArenas, participants, capacityMult);
+					if (ret != null && ret.size() > 1)
+						return ret;
+				}
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * Возвращает отображение "Арена -> список игроков",
+	 * где количество игроков на каждой арене пропорционально её вместимости.
+	 *
+	 * @param players список игроков
+	 * @param arenas список арен, каждая с методом capacity()
+	 * @param capacityMult множитель вместимости каждой арены
+	 * @param <C> тип арены, реализующей интерфейс Capacity
+	 * @param <P> тип игрока
+	 * @return карта арена -> список игроков, в порядке арен
+	 * @throws IllegalArgumentException если список арен пуст или общая вместимость равна нулю
+	 */
+	public static <C extends Capacity, P> Map<C, List<P>> distribute(List<P> players, List<C> arenas, int capacityMult) throws Exception
+	{
+		Map<C, List<P>> result = new LinkedHashMap<>();
+
+		if (arenas.isEmpty()) {
+			throw new Exception("Список арен не должен быть пустым");
+		}
+
+		if (players.isEmpty()) {
+			for (C arena : arenas) {
+				result.put(arena, new ArrayList<>());
+			}
+			return result;
+		}
+
+		int totalPlayers = players.size();
+		int totalCapacity = arenas.stream().mapToInt(a -> a.capacity() * capacityMult).sum();
+
+		if (totalCapacity == 0) {
+			throw new Exception("Общая вместимость арен равна нулю");
+		}
+
+		if (totalPlayers > totalCapacity) {
+			throw new Exception("Игроков больше, чем мест");
+		}
+
+		// Этап 1-3: вычисляем базовое распределение
+		List<Bucket<C>> buckets = new ArrayList<>();
+		for (C arena : arenas) {
+			double exact = (double) arena.capacity() * capacityMult * totalPlayers / totalCapacity;
+			int floor = (int) Math.floor(exact);
+			buckets.add(new Bucket<>(arena, floor, exact - floor));
+		}
+
+		int assigned = buckets.stream().mapToInt(b -> b.guaranteed).sum();
+		int toAssign = totalPlayers - assigned;
+
+		// Этап 4-5: распределяем остаток по наибольшим дробным частям
+		buckets.sort(Comparator.comparingDouble((Bucket<C> b) -> b.remainder).reversed());
+		for (Bucket<C> b : buckets) {
+			if (toAssign == 0) break;
+			if (b.guaranteed < b.arena.capacity() * capacityMult) {
+				b.guaranteed++;
+				toAssign--;
+			}
+		}
+
+		// Формируем результат
+		Iterator<P> it = players.iterator();
+		for (Bucket<C> b : buckets) {
+			List<P> perArena = new ArrayList<>();
+			for (int i = 0; i < b.guaranteed && it.hasNext(); i++) {
+				perArena.add(it.next());
+			}
+			result.put(b.arena, perArena);
+		}
+
+
+		return result;
+	}
+
+	private static class Bucket<T extends Capacity> {
+		final T arena;
+		int guaranteed;
+		final double remainder;
+
+		Bucket(T arena, int guaranteed, double remainder) {
+			this.arena = arena;
+			this.guaranteed = guaranteed;
+			this.remainder = remainder;
+		}
+	}
 }
