@@ -13,23 +13,17 @@ public class TestCapacityMethod
 	public void testSlice()
 	{
 		List<Arena> arenaList = new ArrayList<>();
-		//arenaList.add(new Arena(120/3, "Elven Village"));
-		//arenaList.add(new Arena(120/3, "Crypts of Disgrace"));
-		//arenaList.add(new Arena(150/3, "Heine"));
-		//arenaList.add(new Arena(210/3, "Giran"));
-		arenaList.add(new Arena(50, "School of Dark Arts"));
-		arenaList.add(new Arena(50, "Dion Island"));
-		arenaList.add(new Arena(50, "Catacombs"));
-		arenaList.add(new Arena(50, "Cemetary"));
-		arenaList.add(new Arena(20, "Goddard"));
-		arenaList.add(new Arena(16, "Toi 4th floor"));
+		arenaList.add(new Arena(40, "Elven Village"));
+		arenaList.add(new Arena(40, "Crypts of Disgrace"));
+		arenaList.add(new Arena(50, "Heine"));
+		arenaList.add(new Arena(70, "Giran"));
 
 		int sum = arenaList.stream().mapToInt(e->e.maxPlayers).sum();
 
 		//Log.warning("К примеру, есть арены по 40, 60, 80, 100 игроков");
 		//Log.warning("Значит, максимальное количество игроков при регистрации будет: "+sum);
 		List<Object> players = new ArrayList<>();
-		for (int i = 0; i <= 300; i+=1)
+		for (int i = 0; i <= sum; i+=1)
 		{
 			List<Arena> arenasSelected = ESMath.selectFitCapacity(arenaList, i,  3);
 			//Log.warning("arenasSelected: "+arenasSelected.size());
