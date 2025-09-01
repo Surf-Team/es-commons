@@ -786,13 +786,13 @@ public class ESMath
 			int arenaCapacity = aa.capacity();
 			if (participants <= arenaCapacity * capacityMult * 0.75)
 			{
-				Log.warning("too big arena "+aa.toString()+". Participants: "+participants+" <= 75% ("+(arenaCapacity * capacityMult * 0.75)+")");
+				//Log.warning("too big arena "+aa.toString()+". Participants: "+participants+" <= 75% ("+(arenaCapacity * capacityMult * 0.75)+")");
 				var arenasWithoutBiggerArenas = ListUtils.createList(arenas);
-				Log.warning("Arenas left: " + arenasWithoutBiggerArenas.size());
+				//Log.warning("Arenas left: " + arenasWithoutBiggerArenas.size());
 				if (arenasWithoutBiggerArenas.size() != 0)
 				{
 					arenasWithoutBiggerArenas.removeIf(ef -> ef.capacity() >= arenaCapacity);
-					Log.warning("Arenas left: " + arenasWithoutBiggerArenas.size());
+					//Log.warning("Arenas left: " + arenasWithoutBiggerArenas.size());
 
 					var ret = selectFitCapacity(arenasWithoutBiggerArenas, participants, capacityMult);
 					if (ret != null && ret.size() > 1)
