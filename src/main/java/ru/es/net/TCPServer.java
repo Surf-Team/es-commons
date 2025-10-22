@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public abstract class TCPServer
 {
+    public static boolean HAS_MEMORY_EXCEED = false;
     String serverAddr;
     int port;
     ServerSocket serverSocket;
@@ -105,6 +106,7 @@ public abstract class TCPServer
                     else
                     {
                         Log.warning("Memory exceed! presumableFreeMemory: "+presumableFreeMemory+". Wait for GC... Users: " + users.size() + "");
+                        HAS_MEMORY_EXCEED = true;
 
                         try
                         {
