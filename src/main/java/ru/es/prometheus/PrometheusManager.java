@@ -3,11 +3,14 @@ package ru.es.prometheus;
 import io.prometheus.client.Counter;
 import io.prometheus.client.Gauge;
 import ru.es.lang.GlobalObjectLink;
+import ru.es.log.Log;
 import ru.es.services.ObjectManager;
 
 public class PrometheusManager
 {
 	private final ObjectManager objectManager;
+
+	private static final String METRIC_REGEX = "[a-zA-Z_:][a-zA-Z0-9_:]*";
 
 	public PrometheusManager(ObjectManager objectManager)
 	{
@@ -16,6 +19,12 @@ public class PrometheusManager
 
 	public void gaugeSet(String metricName, int value, String desc)
 	{
+		if (!isValidMetricName(metricName))
+		{
+			Log.warning("Invalid metric: "+metricName);
+			return;
+		}
+
 		GlobalObjectLink<Gauge> globalObjectLink = new GlobalObjectLink<>("prom_gauge_"+metricName, objectManager);
 
 		Gauge g = globalObjectLink.get();
@@ -46,6 +55,11 @@ public class PrometheusManager
 		}
 
 		g.inc(count);
+	}
+
+	public static boolean isValidMetricName(String name)
+	{
+		return name != null && name.matches(METRIC_REGEX);
 	}
 
 }

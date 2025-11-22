@@ -2,6 +2,7 @@ package ru.es.xml;
 
 import org.jdom2.Element;
 import ru.es.log.Log;
+import ru.es.util.DataHolder;
 import ru.es.util.FileUtils;
 
 import java.net.URL;
@@ -36,6 +37,7 @@ public class XmlConfig
 	private Map<String, Double> doubles;
 	private Map<String, Float> floats;
 	private Map<String, List<Integer>> listOfInts;
+	private Map<String, DataHolder<?>> listOfDataHolders;
 
 	private XmlParseConditions xmlParseConditions;
 
@@ -93,6 +95,7 @@ public class XmlConfig
 		Map<String, Double> doubles = new HashMap<>();
 		Map<String, Float> floats = new HashMap<>();
 		Map<String, List<Integer>> listOfInts = new HashMap<>();
+		Map<String, DataHolder<?>> listOfDataHolders = new HashMap<>();
 
 		for (Map.Entry<String, String> e : stringValueMap.entrySet())
 		{
@@ -137,6 +140,13 @@ public class XmlConfig
 				listOfInts.put(e.getKey(), newList);
 			}
 			catch (Exception ex) {}
+
+			try
+			{
+				DataHolder<Integer> data = new DataHolder<>(val, Integer::parseInt);
+				listOfDataHolders.put(e.getKey(), data);
+			}
+			catch (NumberFormatException ex) {}
 		}
 
 		this.stringValueMap = stringValueMap;
@@ -146,6 +156,7 @@ public class XmlConfig
 		this.doubles = doubles;
 		this.floats = floats;
 		this.listOfInts = listOfInts;
+		this.listOfDataHolders = listOfDataHolders;
 	}
 
 	public String getValue(String name)
@@ -230,5 +241,10 @@ public class XmlConfig
 	public List<Integer> getListOfInt(String name)
 	{
 		return listOfInts.get(name);
+	}
+
+	public DataHolder<?> getDataHolder(String name)
+	{
+		return listOfDataHolders.get(name);
 	}
 }

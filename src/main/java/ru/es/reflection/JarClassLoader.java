@@ -5,6 +5,7 @@ import ru.es.log.Log;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -22,7 +23,7 @@ public class JarClassLoader extends MultiClassLoader
     private JarResources jarResources;
     private File jarFile;
 
-    private List<Class<?>> dependClasses;
+    private Collection<Class<?>> dependClasses;
 
     public JarClassLoader(File jarFile)
     {
@@ -72,7 +73,7 @@ public class JarClassLoader extends MultiClassLoader
         }
     }
 
-    public void setDependClasses(List<Class<?>> dependClasses)
+    public void setDependClasses(Collection<Class<?>> dependClasses)
     {
         this.dependClasses = dependClasses;
     }

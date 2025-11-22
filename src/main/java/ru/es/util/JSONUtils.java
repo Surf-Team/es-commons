@@ -44,6 +44,23 @@ public class JSONUtils
         return element.getAsJsonObject();
     }
 
+    // convert string:
+    // ["a", "b"]
+    // to list
+    public static List<String> jsonToStringList(String f)
+    {
+        BufferedReader bufferedReader = new BufferedReader(new StringReader(f));
+
+        JsonElement element = JsonParser.parseReader(bufferedReader);
+
+        List<String> ret = new ArrayList<>();
+        for (var a : element.getAsJsonArray())
+        {
+            ret.add(a.getAsString());
+        }
+        return ret;
+    }
+
     public static JsonObject getJsonObject(String f)
     {
         JsonElement element = JsonParser.parseString(f);

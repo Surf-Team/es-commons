@@ -13,7 +13,7 @@ import java.util.List;
 public abstract class MultiClassLoader extends ClassLoader
 {
     //---------- Fields --------------------------------------
-    private Hashtable<String, Class<?>> classes = new Hashtable<String, Class<?>>();
+    private Hashtable<String, Class<?>> classes = new Hashtable<>();
     private char classNameReplacementChar;
 
     protected boolean monitorOn = false;
