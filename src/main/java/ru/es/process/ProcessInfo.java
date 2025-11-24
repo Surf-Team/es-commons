@@ -14,6 +14,7 @@ public class ProcessInfo
 	public final String name;
 	public List<String> isNotErrorLines = new ArrayList<>();
 	public List<String> alwaysSuccessTextInErrorOut = new ArrayList<>();
+	public String vm;
 	private String stdOut = "";
 	private String errOut = "";
 	public boolean done = false;
