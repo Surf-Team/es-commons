@@ -555,6 +555,26 @@ public class TimeUtils
         return time.getTime();
     }
 
+    public static Date getStartOfCurrentWeekZeroTime()
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+
+        // Сначала обнуляем время
+        cal.set(Calendar.MILLISECOND, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+
+        // Устанавливаем первый день недели (например, понедельник)
+        cal.setFirstDayOfWeek(Calendar.MONDAY);
+
+        // Перемещаемся к началу недели (понедельник)
+        cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
+
+        return cal.getTime();
+    }
+
     public static long getDayZeroTime(long millis)
     {
         Calendar time = Calendar.getInstance();
