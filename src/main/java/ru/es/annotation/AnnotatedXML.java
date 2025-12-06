@@ -226,7 +226,8 @@ public class AnnotatedXML
 					}
 					else
 					{
-						throw new RuntimeException("Поле '" + fieldName + "' не найдено в XML для класса "+objectClass.getSimpleName()+" или оно не является примитивным объектом или массивом примитивных объектов.");
+						if (settings.fieldNotFoundCheck)
+							throw new RuntimeException("Поле '" + fieldName + "' не найдено в XML для класса "+objectClass.getSimpleName()+" или оно не является примитивным объектом или массивом примитивных объектов.");
 					}
 				}
 			}
