@@ -8,5 +8,5 @@ public class AnnotatedParserSettings
 	public VariableProvider variableProvider = null;
 	public boolean allowParseSuperclass = false;
 	public boolean allowParseSubElement = true;
-	public boolean fieldNotFoundCheck = false;
+	public boolean fieldNotFoundCheck = true;
 }
