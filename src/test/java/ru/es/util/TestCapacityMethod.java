@@ -13,10 +13,16 @@ public class TestCapacityMethod
 	public void testSlice()
 	{
 		List<Arena> arenaList = new ArrayList<>();
-		arenaList.add(new Arena(40, "Elven Village"));
+		/*arenaList.add(new Arena(40, "Elven Village"));
 		arenaList.add(new Arena(40, "Crypts of Disgrace"));
 		arenaList.add(new Arena(50, "Heine"));
-		arenaList.add(new Arena(70, "Giran"));
+		arenaList.add(new Arena(70, "Giran"));*/
+		arenaList.add(new Arena(50, "School of Dark Arts"));
+		arenaList.add(new Arena(50, "Dion Island"));
+		arenaList.add(new Arena(50, "Catacombs"));
+		arenaList.add(new Arena(50, "Cemetary"));
+		arenaList.add(new Arena(20, "Goddard"));
+		arenaList.add(new Arena(16, "Toi 4th floor"));
 
 		int sum = arenaList.stream().mapToInt(e->e.maxPlayers).sum();
 
@@ -38,8 +44,8 @@ public class TestCapacityMethod
 					splitMapString.add(e.getKey()+"->"+e.getValue().size());
 				}
 
-				Log.warning("If registered "+i+": then we select arenas: "+ListUtils.toString(arenasSelected, ", ")+". Free space: "+(sum2-i)+". " +
-						"Players split to arenas: "+ListUtils.toString(splitMapString, ", "));
+				Log.warning("Если зарегистрировано "+i+": тогда выбираем арены: "+ListUtils.toString(arenasSelected, ", ")+". Свободные слоты: "+(sum2-i)+". " +
+						"Игроки распределятся по аренам: "+ListUtils.toString(splitMapString, ", "));
 
 				players.add("Player"+i);
 			}
@@ -69,7 +75,8 @@ public class TestCapacityMethod
 		@Override
 		public String toString()
 		{
-			return maxPlayers+"-size-"+name;
+			//return maxPlayers+"-size-"+name;
+			return name;
 		}
 	}
 }

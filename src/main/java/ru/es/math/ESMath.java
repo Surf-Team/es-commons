@@ -784,7 +784,7 @@ public class ESMath
 		{
 			var aa = result.get(0);
 			int arenaCapacity = aa.capacity();
-			if (participants <= arenaCapacity * capacityMult * 0.75)
+			if (participants <= arenaCapacity * capacityMult * 0.65)
 			{
 				//Log.warning("too big arena "+aa.toString()+". Participants: "+participants+" <= 75% ("+(arenaCapacity * capacityMult * 0.75)+")");
 				var arenasWithoutBiggerArenas = ListUtils.createList(arenas);
