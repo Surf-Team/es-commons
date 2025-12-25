@@ -1,35 +1,49 @@
-Базовая библиотека с часто-используемыми функциями и общими классами, использующимися в других модулях.
+# ESCommons
 
-# Краткий список полезных классов:
-Limiter (count limiter, time limiter, count time limiter) - утил-классы для ограничения вызова функций\
-TSVTable - класс для работы с таблицами, в которых данные разделены через tab\
-ESMath - математические операции\
-Rnd - действия со случайностями\
-SurfFramework - фреймворк, использующийся при работе в перезагружаемых на ходу приложениях\
-SimpleThreadPool - простой менеджер потоков\
-SingletonThreadPool - общий менеджер потоков\
-ConfigUtils, ESProperties - работа с конфигами\
-FileUtils - работа с файлами\
-HtmlUtils - работа с html\
-JSONUtils - работа с простыми json\
-ListUtils - работа со списками\
-MapUtils - работа с мапами\
-ProcessFactory - работа с процессами операционной системы\
-SortUtils - частые случаи сортировки\
-StringUtils - работа со строками\
-TimeUtils - работа со временем\
-XmlConfig - функциональный xml конфиг с поддержкой условий\
-YamlElement - работа с Yaml файлами\
-Log - простой вывод в лог\
-FileTemplateManager - функционал работы с шаблонами (например html шаблоны).\
-Prometheus.. - работа с прометеусом\
+Базовая библиотека с часто-используемыми функциями и утилитами для работы с файлами, JSON, XML, YAML, потоками, конфигами, математикой, строками, временем, логированием и Prometheus метриками.
 
-# Функции для работы через аннотации с json/xml
-Парсинг Json в java объекты:\
-DependencyManager + JsonSerializeManager + @UniqueKey
+## Тип проекта
+Maven библиотека
 
-Json парсеры:\
-SurfJsonReader, SurfJsonWriter
+## Зависимости
+Не зависит от других проектов
 
-XML парсеры:
-AnnotatedXMLRepository, MappedXML
+## Основные компоненты
+
+### Работа с файлами и конфигурацией
+- **FileUtils** - работа с файлами
+- **ConfigUtils, ESProperties** - работа с конфигами
+- **XmlConfig** - функциональный XML конфиг с поддержкой условий
+- **YamlElement** - работа с YAML файлами
+- **FileTemplateManager** - работа с шаблонами (например, HTML шаблоны)
+
+### Парсинг данных
+- **JSONUtils** - работа с простыми JSON
+- **SurfJsonReader, SurfJsonWriter** - JSON парсеры
+- **AnnotatedXMLRepository, MappedXML** - XML парсеры
+- **DependencyManager + JsonSerializeManager + @UniqueKey** - парсинг JSON в Java объекты
+- **TSVTable** - класс для работы с таблицами, в которых данные разделены через tab
+
+### Потоки и производительность
+- **SimpleThreadPool** - простой менеджер потоков
+- **SingletonThreadPool** - общий менеджер потоков
+- **Limiter** (count limiter, time limiter, count time limiter) - утил-классы для ограничения вызова функций
+- **SurfFramework** - фреймворк для работы в перезагружаемых на ходу приложениях
+
+### Утилиты
+- **ESMath** - математические операции
+- **Rnd** - действия со случайностями
+- **StringUtils** - работа со строками
+- **TimeUtils** - работа со временем
+- **ListUtils** - работа со списками
+- **MapUtils** - работа с мапами
+- **SortUtils** - частые случаи сортировки
+- **HtmlUtils** - работа с HTML
+- **ProcessFactory** - работа с процессами операционной системы
+
+### Мониторинг и логирование
+- **Log** - простой вывод в лог
+- **Prometheus** - работа с Prometheus метриками
+
+## Детальная документация
+Более подробная информация доступна в папке `Docs` внутри проекта.
