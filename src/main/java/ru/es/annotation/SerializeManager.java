@@ -48,8 +48,32 @@ public class SerializeManager
 	// добавляет JSON коллекцию из файла в DependencyManager
 	public<T> ObjectMap<T> addCollection(Class<T> tClass, String file) throws Exception
 	{
-		var link = jsonDataMapper.getLink(file);
-		return addCollection(tClass, link, true);
+		return addCollection(tClass, file, false);
+	}
+
+	// позволяет добавлять не существующие коллекции (например для новых классов), которые потом сохранятся
+	public<T> ObjectMap<T> addCollection(Class<T> tClass, String file, boolean allowNonExistent) throws Exception
+	{
+		if (!allowNonExistent)
+		{
+			var link = jsonDataMapper.getLink(file);
+			return addCollection(tClass, link, true);
+		}
+		else
+		{
+			try
+			{
+				var link = jsonDataMapper.getLink(file);
+				return addCollection(tClass, link, true);
+			}
+			catch (Exception e)
+			{
+				Log.warning("Adding new collection: "+tClass.getSimpleName()+" -> "+file);
+				var collection = addNewCollection(tClass, new ArrayList<>(), file);
+				save(tClass);
+				return collection;
+			}
+		}
 	}
 
 
@@ -66,7 +90,7 @@ public class SerializeManager
 
 
 	// добавляет коллекцию из файла в DependencyManager
-	public<T> void addNewCollection(Class<T> tClass, List<T> list, String file) throws IOException
+	public<T> MultiKeyMap<T> addNewCollection(Class<T> tClass, List<T> list, String file) throws IOException
 	{
 		var link = jsonDataMapper.getLink(file);
 
@@ -74,6 +98,7 @@ public class SerializeManager
 
 		MultiKeyMap<T> repo = jsonDataMapper.createCollection(tClass, list);
 		dependencyManager.addCollection(tClass, repo);
+		return repo;
 	}
 
 
