@@ -175,8 +175,16 @@ public class SurfJsonReader
 					}
 					else if (fieldType.isEnum())
 					{
-						Object o = Enum.valueOf((Class) fieldType, jsonValue.getAsString());
-						f.set(object, o);
+						try
+						{
+							Object o = Enum.valueOf((Class) fieldType, jsonValue.getAsString());
+							f.set(object, o);
+						}
+						catch (Exception e)
+						{
+							Object o = ((Class) fieldType).getEnumConstants()[Integer.parseInt(jsonValue.getAsString())];
+							f.set(object, o);
+						}
 					}
 					else if (fieldType == String.class)
 					{
