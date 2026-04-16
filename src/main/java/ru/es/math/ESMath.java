@@ -437,29 +437,13 @@ public class ESMath
     
     public static double limitedChange(double value, double changeTo, double limitChange)
     {
-        if (value - changeTo > limitChange)
-        {
-            changeTo = value - limitChange;
-        }
-        else if (changeTo - value > limitChange)
-        {
-            changeTo = value + limitChange;
-        }
-        return changeTo;
+        return constrain(changeTo, value-limitChange, value+limitChange);
     }
 
     
     public static float limitedChange(float value, float changeTo, float limitChange)
     {
-        if (value - changeTo > limitChange)
-        {
-            return value - limitChange;
-        }
-        else if (changeTo - value > limitChange)
-        {
-            return value + limitChange;
-        }
-        return changeTo;
+        return constrain(changeTo, value-limitChange, value+limitChange);
     }
 
     
