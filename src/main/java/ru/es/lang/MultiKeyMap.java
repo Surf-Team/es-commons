@@ -15,7 +15,7 @@ public class MultiKeyMap<T> implements ObjectMap<T>
 	public List<T> objectsRef;
 	public boolean saveable  = false;
 	private Map<String, Map<Object, T>> maps;
-	private List<T> unmodificableList;
+	protected List<T> unmodificableList;
 
 	// можно делать авто-создание мапы по ключу с помощью аннотации Key
 	public MultiKeyMap(List<T> collection, Class<T> tClass)

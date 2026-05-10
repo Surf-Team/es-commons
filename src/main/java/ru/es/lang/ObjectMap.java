@@ -4,6 +4,7 @@ package ru.es.lang;
 import ru.es.util.ListUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,4 +42,9 @@ public interface ObjectMap<T>
 		}
 		return -1;
 	}
+
+	default void setSort(Comparator<T> comparator)
+	{}
+
+	default void sort(){}
 }
