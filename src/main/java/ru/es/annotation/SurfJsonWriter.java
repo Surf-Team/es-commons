@@ -44,6 +44,18 @@ public class SurfJsonWriter
 		return replacer(stringWriter);
 	}
 
+	public JsonElement getJsonObject(Object object) throws Exception
+	{
+		StringWriter stringWriter = new StringWriter();
+		//JsonWriter jsonWriter = new JsonWriter(stringWriter);
+		JsonWriter jsonWriter = gson.newJsonWriter(stringWriter);
+		jsonWriter.setIndent("    ");
+
+		JsonElement ret = getObject(object);
+
+		return ret;
+	}
+
 	public String fillCollection(Collection<?> o) throws Exception
 	{
 		StringWriter stringWriter = new StringWriter();

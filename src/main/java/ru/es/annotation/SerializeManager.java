@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Function;
 
 public class SerializeManager
 {
@@ -103,6 +104,19 @@ public class SerializeManager
 
 
 
+	// добавляет JSON коллекцию из нескольких файлов в DependencyManager
+	public<T> ObjectMap<T> addMultiFileCollection(Class<T> tClass, String rootFile, Function<T, String> fileNameFunc) throws Exception
+	{
+		return addMultiFileCollection(tClass, rootFile, fileNameFunc, null);
+	}
+
+	// legacyFile — старый единый файл; если указан, загружается и коллекция сохраняется в новый формат автоматически
+	public<T> ObjectMap<T> addMultiFileCollection(Class<T> tClass, String rootFile, Function<T, String> fileNameFunc, String legacyFile) throws Exception
+	{
+		var link = jsonDataMapper.getMultiFileLink(rootFile, fileNameFunc, legacyFile);
+		return addCollection(tClass, link, true);
+	}
+
 	// package private
 	<T> void save(Class<T> tClass) throws Exception
 	{
@@ -116,6 +130,8 @@ public class SerializeManager
 
 		if (link instanceof JsonFileLink)
 			jsonDataMapper.save(collection, (JsonFileLink) link);
+		else if (link instanceof JsonMultiFileLink)
+			jsonDataMapper.saveMultiFile(collection, (JsonMultiFileLink<T>) link);
 		else
 			Log.warning("No data mapper support for class: "+tClass.getSimpleName());
 	}
@@ -128,6 +144,8 @@ public class SerializeManager
 
 		if (link instanceof JsonFileLink)
 			jsonDataMapper.reload(tClass, (JsonFileLink) link);
+		else if (link instanceof JsonMultiFileLink)
+			jsonDataMapper.reloadMultiFile(tClass, (JsonMultiFileLink<T>) link);
 		else
 			Log.warning("No data mapper support for class: "+tClass.getSimpleName());
 	}
@@ -164,7 +182,13 @@ public class SerializeManager
 		for (var k : ListUtils.createList(loadedLinks.keySet()))
 		{
 			var exist = getLink(k);
-			loadedLinks.put(k, jsonDataMapper.getLink(((JsonFileLink) exist).fileName));
+			if (exist instanceof JsonFileLink)
+				loadedLinks.put(k, jsonDataMapper.getLink(((JsonFileLink) exist).fileName));
+			else if (exist instanceof JsonMultiFileLink)
+			{
+				var multiLink = (JsonMultiFileLink) exist;
+				loadedLinks.put(k, jsonDataMapper.getMultiFileLink(multiLink.rootFileName, multiLink.fileNameFunction));
+			}
 		}
 	}
 }
