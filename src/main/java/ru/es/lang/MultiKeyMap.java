@@ -2,6 +2,7 @@ package ru.es.lang;
 
 
 import ru.es.annotation.UniqueKey;
+import ru.es.util.ListUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -184,5 +185,11 @@ public class MultiKeyMap<T> implements ObjectMap<T>
 	public void clear()
 	{
 		recreate(new ArrayList<>());
+	}
+
+	@Override
+	public void recalc()
+	{
+		recreate(objectsRef);
 	}
 }

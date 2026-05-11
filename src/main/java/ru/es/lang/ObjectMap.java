@@ -47,4 +47,6 @@ public interface ObjectMap<T>
 	{}
 
 	default void sort(){}
+
+	default void recalc(){}
 }
