@@ -44,6 +44,7 @@ public class JsonRepository<T> extends MultiKeyMap<T>
 		var newList = ListUtils.createList(unmodificableList);
 		newList.sort(comparator);
 
+		this.objectsRef = newList;
 		this.unmodificableList = Collections.unmodifiableList(newList);
 	}
 }

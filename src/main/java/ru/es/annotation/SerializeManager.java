@@ -3,6 +3,7 @@ package ru.es.annotation;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import ru.es.lang.ESEventHandler;
+import ru.es.lang.ESThrowingEventHandler;
 import ru.es.lang.MultiKeyMap;
 import ru.es.lang.ObjectMap;
 import ru.es.log.Log;
@@ -19,7 +20,7 @@ public class SerializeManager
 	private final DependencyManager dependencyManager;
 
 	public JsonDataMapper jsonDataMapper;
-	public final ESEventHandler onReload = new ESEventHandler();
+	public final ESThrowingEventHandler onReload = new ESThrowingEventHandler();
 
 	Map<Class, CollectionLink> loadedLinks = new HashMap<>();
 
@@ -32,6 +33,11 @@ public class SerializeManager
 	public void addLink(Class cClass, CollectionLink link)
 	{
 		loadedLinks.put(cClass, link);
+	}
+
+	public <T> void addSupplementalLoader(Class<T> tClass, java.util.concurrent.Callable<java.util.List<T>> loader)
+	{
+		jsonDataMapper.addSupplementalLoader(tClass, loader);
 	}
 
 	// инициализация сериализации в json

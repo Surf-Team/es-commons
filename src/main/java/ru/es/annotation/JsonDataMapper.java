@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 
 public class JsonDataMapper
@@ -25,6 +26,21 @@ public class JsonDataMapper
 	private final DependencyManager dependencyManager;
 	private final SerializeManager serializeManager;
 	private URL jsonRoot;
+	private final Map<Class, Callable> supplementalLoaders = new LinkedHashMap<>();
+
+	public <T> void addSupplementalLoader(Class<T> tClass, Callable<List<T>> loader)
+	{
+		supplementalLoaders.put(tClass, loader);
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> List<T> callSupplemental(Class<T> tClass) throws Exception
+	{
+		Callable loader = supplementalLoaders.get(tClass);
+		if (loader == null)
+			return null;
+		return (List<T>) loader.call();
+	}
 
 	public JsonDataMapper(DependencyManager dependencyManager, SerializeManager serializeManager)
 	{
@@ -54,6 +70,10 @@ public class JsonDataMapper
 	public<T> void reload(Class<T> tClass, JsonFileLink link) throws Exception
 	{
 		List<T> arrayList = reader.getCollection(tClass, link.url);
+
+		List<T> supplemental = callSupplemental(tClass);
+		if (supplemental != null)
+			arrayList.addAll(supplemental);
 
 		// удаляем повторяющиеся значения
 		Map<Object, T> reMap = new LinkedHashMap<>();
@@ -98,6 +118,8 @@ public class JsonDataMapper
 				existCollection.add(object);
 				dependencyManager.objectChanged(tClass, object);
 			}
+			if (!newCollection.getObjects().isEmpty())
+				existCollection.sort();
 			Log.warning("SerializeManager["+tClass.getSimpleName()+"]: Added new items after reload: "+newCollection.size()+", updatedItems: "+updatedItems);
 		}
 		else
@@ -181,6 +203,10 @@ public class JsonDataMapper
 			}
 		}
 
+		List<T> supplementalMF = callSupplemental(tClass);
+		if (supplementalMF != null)
+			allItems.addAll(supplementalMF);
+
 		Map<Object, T> reMap = new LinkedHashMap<>();
 		for (var object : allItems)
 		{
@@ -220,6 +246,8 @@ public class JsonDataMapper
 				existCollection.add(object);
 				dependencyManager.objectChanged(tClass, object);
 			}
+			if (!newCollection.getObjects().isEmpty())
+				existCollection.sort();
 			Log.warning("SerializeManager[" + tClass.getSimpleName() + "]: Added new items after reload: " + newCollection.size() + ", updatedItems: " + updatedItems);
 		}
 		else
