@@ -141,7 +141,7 @@ public class FileUtils
         newFile.mkdirs();
 
         FileOutputStream outputStream = new FileOutputStream(newFile);
-        outputStream.write(data.getBytes());
+        outputStream.write(data.getBytes(StandardCharsets.UTF_8));
         outputStream.close();
     }
 
