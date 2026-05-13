@@ -2,7 +2,6 @@ package ru.es.annotation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import ru.es.lang.ESEventHandler;
 import ru.es.lang.ESThrowingEventHandler;
 import ru.es.lang.MultiKeyMap;
 import ru.es.lang.ObjectMap;
@@ -12,7 +11,11 @@ import ru.es.util.ListUtils;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 
 public class SerializeManager
@@ -35,7 +38,7 @@ public class SerializeManager
 		loadedLinks.put(cClass, link);
 	}
 
-	public <T> void addSupplementalLoader(Class<T> tClass, java.util.concurrent.Callable<java.util.List<T>> loader)
+	public <T> void addSupplementalLoader(Class<T> tClass, Callable<List<T>> loader)
 	{
 		jsonDataMapper.addSupplementalLoader(tClass, loader);
 	}
@@ -130,14 +133,23 @@ public class SerializeManager
 		if (link == null)
 			return;
 
+
+		var collection = dependencyManager.getCollection(tClass);
+
+		if (!collection.isSaveable())
+		{
+			Log.warning("SerializeManager: NOT SAVEABLE collection of " + tClass.getSimpleName() + "... to " + link);
+			return;
+		}
+
+		var list = collection.getObjects();
+
 		Log.warning("SerializeManager: saving collection of "+tClass.getSimpleName()+"... to "+link);
 
-		var collection = dependencyManager.getCollection(tClass).getObjects();
-
 		if (link instanceof JsonFileLink)
-			jsonDataMapper.save(collection, (JsonFileLink) link);
+			jsonDataMapper.save(list, (JsonFileLink) link);
 		else if (link instanceof JsonMultiFileLink)
-			jsonDataMapper.saveMultiFile(collection, (JsonMultiFileLink<T>) link);
+			jsonDataMapper.saveMultiFile(list, (JsonMultiFileLink<T>) link);
 		else
 			Log.warning("No data mapper support for class: "+tClass.getSimpleName());
 	}
