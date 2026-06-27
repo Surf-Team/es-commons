@@ -16,7 +16,7 @@ public class BasePacketWriter
 	{
 	}
 
-	protected ByteBuffer getByteBuffer()
+	public ByteBuffer getByteBuffer()
 	{
 		return byteBuffer;
 	}
