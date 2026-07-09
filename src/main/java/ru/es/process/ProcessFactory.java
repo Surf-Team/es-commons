@@ -140,7 +140,11 @@ public class ProcessFactory
 
 		if (!processInfo.addToPathEnv.isEmpty())
 		{
-			String pathVar = System.getenv().get("Path");
+			String pathVar = System.getenv("PATH");
+			if (pathVar == null)
+				pathVar = System.getenv("Path");
+			if (pathVar == null)
+				pathVar = "";
 			Log.warning("init path: " + pathVar);
 
 			boolean isWindows = Environment.isWindows();
