@@ -43,7 +43,7 @@ public class CMDUtils
 		if (Environment.isWindows())
 			processFactory.createProcess(launchDirectory, processInfo, "CMD", "/C", "7z.exe", "a", "-tzip", archiveFile.getPath(), directoryToArchivate.getAbsolutePath());
 		else
-			processFactory.createProcess(launchDirectory, processInfo, "zip", "-r", archiveFile.getPath(), directoryToArchivate.getAbsolutePath());
+			processFactory.createProcess(launchDirectory, processInfo, "zip", archiveFile.getPath(), directoryToArchivate.getAbsolutePath());
 
 
 		if (processInfo.error)
