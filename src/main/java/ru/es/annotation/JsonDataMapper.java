@@ -283,7 +283,7 @@ public class JsonDataMapper
 		{
 			URL fileUrl = new URL(link.baseUrl.toString() + entry.getKey());
 			FileUtils.writeToURL(fileUrl, writer.fillCollection(entry.getValue()).getBytes(StandardCharsets.UTF_8));
-			Log.warning("Saved to " + fileUrl);
+			Log.warning("Saved with unix new lines to " + fileUrl);
 		}
 
 		List<String> nonEmptyFiles = new ArrayList<>();
