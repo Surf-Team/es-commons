@@ -75,7 +75,7 @@ public class SurfJsonWriter
 		// remove later
 		str = str.replace("\": ", "\" : ");
 		str = str.replace("[]", "[ ]"); // Замена символа новой строки
-		//str = str.replace("\n", "\r\n"); // Замена символа новой строки
+		str = str.replace("\n", "\r\n"); // Замена символа новой строки
 		return str;
 	}
 
