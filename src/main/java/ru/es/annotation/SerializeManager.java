@@ -23,6 +23,7 @@ public class SerializeManager
 	private final DependencyManager dependencyManager;
 
 	public JsonDataMapper jsonDataMapper;
+	public YamlDataMapper yamlDataMapper;
 	public final ESThrowingEventHandler onReload = new ESThrowingEventHandler();
 
 	Map<Class, CollectionLink> loadedLinks = new HashMap<>();
@@ -31,6 +32,7 @@ public class SerializeManager
 	{
 		this.dependencyManager = dependencyManager;
 		jsonDataMapper = new JsonDataMapper(dependencyManager, this);
+		yamlDataMapper = new YamlDataMapper(dependencyManager, this, jsonDataMapper.reader);
 	}
 
 	public void addLink(Class cClass, CollectionLink link)
@@ -47,6 +49,31 @@ public class SerializeManager
 	public void initJSON(URL jsonRoot)
 	{
 		jsonDataMapper.setRootUrl(jsonRoot);
+	}
+
+	// инициализация сериализации в yaml
+	public void initYAML(URL yamlRoot)
+	{
+		yamlDataMapper.setRootUrl(yamlRoot);
+	}
+
+
+	// ############################################
+	// ################## YAML ####################
+	// ############################################
+
+
+	// добавляет read-only YAML коллекцию из файла в DependencyManager
+	public<T> ObjectMap<T> addYamlCollection(Class<T> tClass, String file) throws Exception
+	{
+		var link = yamlDataMapper.getLink(file);
+		loadedLinks.put(tClass, link);
+		reload(tClass);
+
+		var collection = dependencyManager.getCollection(tClass);
+		((MultiKeyMap) collection).saveable = false;
+
+		return collection;
 	}
 
 
@@ -150,6 +177,8 @@ public class SerializeManager
 			jsonDataMapper.save(list, (JsonFileLink) link);
 		else if (link instanceof JsonMultiFileLink)
 			jsonDataMapper.saveMultiFile(list, (JsonMultiFileLink<T>) link);
+		else if (link instanceof YamlFileLink)
+			Log.warning("SerializeManager: YAML collections are read-only, skipping save for " + tClass.getSimpleName());
 		else
 			Log.warning("No data mapper support for class: "+tClass.getSimpleName());
 	}
@@ -164,6 +193,8 @@ public class SerializeManager
 			jsonDataMapper.reload(tClass, (JsonFileLink) link);
 		else if (link instanceof JsonMultiFileLink)
 			jsonDataMapper.reloadMultiFile(tClass, (JsonMultiFileLink<T>) link);
+		else if (link instanceof YamlFileLink)
+			yamlDataMapper.reload(tClass, (YamlFileLink) link);
 		else
 			Log.warning("No data mapper support for class: "+tClass.getSimpleName());
 	}
@@ -193,7 +224,7 @@ public class SerializeManager
 		return loadedLinks.get(c);
 	}
 
-	public void changeRoot(URL newRoot) throws MalformedURLException
+	public void changeRoot(URL newRoot) throws Exception
 	{
 		Log.warning("set new root: "+newRoot);
 		initJSON(newRoot);
@@ -207,6 +238,8 @@ public class SerializeManager
 				var multiLink = (JsonMultiFileLink) exist;
 				loadedLinks.put(k, jsonDataMapper.getMultiFileLink(multiLink.rootFileName, multiLink.fileNameFunction));
 			}
+			else if (exist instanceof YamlFileLink)
+				loadedLinks.put(k, yamlDataMapper.getLink(((YamlFileLink) exist).fileName));
 		}
 	}
 }
