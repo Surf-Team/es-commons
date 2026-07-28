@@ -45,7 +45,7 @@ public class SerializeManager
 		jsonDataMapper.addSupplementalLoader(tClass, loader);
 	}
 
-	// инициализация сериализации в json
+	// инициализация сериализации в json 
 	public void initJSON(URL jsonRoot)
 	{
 		jsonDataMapper.setRootUrl(jsonRoot);
