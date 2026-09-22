@@ -25,9 +25,9 @@ public class SingletonThreadPool
         return instance;
     }
 
-    private ScheduledThreadPoolExecutor schedudledExecutor;
-    private ThreadPoolExecutor executor;
-    private ThreadPoolExecutor executorLow;
+    public ScheduledThreadPoolExecutor schedudledExecutor;
+    public ThreadPoolExecutor executor;
+    public ThreadPoolExecutor executorLow;
 
     private SingletonThreadPool()
     {
