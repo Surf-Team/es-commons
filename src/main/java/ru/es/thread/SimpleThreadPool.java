@@ -4,16 +4,18 @@ import io.prometheus.client.Gauge;
 import ru.es.log.Log;
 import ru.es.math.ESMath;
 
+import java.util.List;
 import java.util.concurrent.*;
 
 public class SimpleThreadPool
 {
     public ScheduledThreadPoolExecutor scheduledExecutor;
-    private ThreadPoolExecutor executor;
+    public ThreadPoolExecutor executor;
 
     private Gauge gauge_executorQuue;
     private Gauge gauge_scheduledExecutorQueue;
 
+    public static final List<SimpleThreadPool> threadPools = new CopyOnWriteArrayList<>();
 
     public SimpleThreadPool(String poolName, int min, int max)
     {
@@ -34,6 +36,8 @@ public class SimpleThreadPool
         }
 
         startService(poolName);
+
+        threadPools.add(this);
     }
 
     public SimpleThreadPool(String poolName, int threads)
