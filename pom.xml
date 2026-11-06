@@ -197,7 +197,10 @@
 								<tstamp>
 									<format property="build.info.time" pattern="yyyy-MM-dd HH:mm"/>
 								</tstamp>
-								<!-- detached-чекаут в CI даёт «HEAD», поэтому ветка сначала берётся из BRANCH_NAME (Jenkins) -->
+								<!-- detached-чекаут в CI даёт «HEAD», поэтому ветка сначала берётся из Jenkins: CHANGE_BRANCH (PR-сборка), затем BRANCH_NAME -->
+								<condition property="build.info.branch" value="${env.CHANGE_BRANCH}">
+									<isset property="env.CHANGE_BRANCH"/>
+								</condition>
 								<condition property="build.info.branch" value="${env.BRANCH_NAME}">
 									<isset property="env.BRANCH_NAME"/>
 								</condition>
