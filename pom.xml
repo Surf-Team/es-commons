@@ -229,7 +229,7 @@
 									<propertyresource name="build.info.remote.raw"/>
 									<filterchain>
 										<tokenfilter>
-											<replaceregex pattern="://[^/@]+@" replace="://"/>
+											<replaceregex pattern="://[^/]*@" replace="://"/>
 										</tokenfilter>
 									</filterchain>
 								</loadresource>
