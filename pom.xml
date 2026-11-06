@@ -193,28 +193,43 @@
 						</goals>
 						<configuration>
 							<target name="build-info">
+								<property environment="env"/>
 								<tstamp>
 									<format property="build.info.time" pattern="yyyy-MM-dd HH:mm"/>
 								</tstamp>
+								<!-- detached-чекаут в CI даёт «HEAD», поэтому ветка сначала берётся из BRANCH_NAME (Jenkins) -->
+								<condition property="build.info.branch" value="${env.BRANCH_NAME}">
+									<isset property="env.BRANCH_NAME"/>
+								</condition>
 								<exec executable="git" dir="${basedir}" failonerror="false" failifexecutionfails="false">
 									<arg value="config"/>
 									<arg value="--get"/>
 									<arg value="remote.origin.url"/>
-									<redirector outputproperty="build.info.remote" outputencoding="UTF-8"/>
+									<redirector outputproperty="build.info.remote.raw" errorproperty="build.info.remote.err" outputencoding="UTF-8"/>
 								</exec>
 								<exec executable="git" dir="${basedir}" failonerror="false" failifexecutionfails="false">
 									<arg value="rev-parse"/>
 									<arg value="--abbrev-ref"/>
 									<arg value="HEAD"/>
-									<redirector outputproperty="build.info.branch" outputencoding="UTF-8"/>
+									<redirector outputproperty="build.info.branch" errorproperty="build.info.branch.err" outputencoding="UTF-8"/>
 								</exec>
 								<exec executable="git" dir="${basedir}" failonerror="false" failifexecutionfails="false">
 									<arg value="log"/>
 									<arg value="-50"/>
 									<arg value="--date=iso-local"/>
 									<arg value="--format=%h|%H|%ad|%s"/>
-									<redirector outputproperty="build.info.log" outputencoding="UTF-8"/>
+									<redirector outputproperty="build.info.log" errorproperty="build.info.log.err" outputencoding="UTF-8"/>
 								</exec>
+								<property name="build.info.remote.raw" value=""/>
+								<!-- логин/токен из URL чекаута (https://user:token@host/...) в jar не попадает -->
+								<loadresource property="build.info.remote" quiet="true">
+									<propertyresource name="build.info.remote.raw"/>
+									<filterchain>
+										<tokenfilter>
+											<replaceregex pattern="://[^/@]+@" replace="://"/>
+										</tokenfilter>
+									</filterchain>
+								</loadresource>
 								<property name="build.info.remote" value=""/>
 								<property name="build.info.branch" value=""/>
 								<property name="build.info.log" value=""/>
