@@ -179,6 +179,58 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<!-- git-инфо о сборке для //version и вебхука деплоя на тест: META-INF/build-info/<artifactId>.txt попадает в jar -->
+					<execution>
+						<id>build-info</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target name="build-info">
+								<tstamp>
+									<format property="build.info.time" pattern="yyyy-MM-dd HH:mm"/>
+								</tstamp>
+								<exec executable="git" dir="${basedir}" failonerror="false" failifexecutionfails="false">
+									<arg value="config"/>
+									<arg value="--get"/>
+									<arg value="remote.origin.url"/>
+									<redirector outputproperty="build.info.remote" outputencoding="UTF-8"/>
+								</exec>
+								<exec executable="git" dir="${basedir}" failonerror="false" failifexecutionfails="false">
+									<arg value="rev-parse"/>
+									<arg value="--abbrev-ref"/>
+									<arg value="HEAD"/>
+									<redirector outputproperty="build.info.branch" outputencoding="UTF-8"/>
+								</exec>
+								<exec executable="git" dir="${basedir}" failonerror="false" failifexecutionfails="false">
+									<arg value="log"/>
+									<arg value="-50"/>
+									<arg value="--date=iso-local"/>
+									<arg value="--format=%h|%H|%ad|%s"/>
+									<redirector outputproperty="build.info.log" outputencoding="UTF-8"/>
+								</exec>
+								<property name="build.info.remote" value=""/>
+								<property name="build.info.branch" value=""/>
+								<property name="build.info.log" value=""/>
+								<mkdir dir="${project.build.outputDirectory}/META-INF/build-info"/>
+								<echo file="${project.build.outputDirectory}/META-INF/build-info/${project.artifactId}.txt" encoding="UTF-8">artifact=${project.artifactId}
+remote=${build.info.remote}
+branch=${build.info.branch}
+buildTime=${build.info.time}
+basedir=${basedir}
+
+${build.info.log}</echo>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
