@@ -41,6 +41,9 @@ public class JsonRepository<T> extends MultiKeyMap<T>
 
 	public void sort()
 	{
+		if (comparator == null)
+			return;
+
 		var newList = ListUtils.createList(unmodificableList);
 		newList.sort(comparator);
 
