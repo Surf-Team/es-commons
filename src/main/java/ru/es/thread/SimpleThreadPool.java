@@ -23,7 +23,7 @@ public class SimpleThreadPool
         max = ESMath.max(1, max);
         scheduledExecutor = new ScheduledThreadPoolExecutor(min, new PriorityThreadFactory("schedudled"+poolName, Thread.NORM_PRIORITY, false));
         executor = new ThreadPoolExecutor(min, max, 5L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(), new PriorityThreadFactory(poolName, Thread.NORM_PRIORITY, false));
-        Log.warning(poolName+": cores: "+min+" to "+max);
+        //Log.warning(poolName+": cores: "+min+" to "+max);
 
         try
         {
