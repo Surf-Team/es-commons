@@ -10,6 +10,7 @@ import ru.es.thread.RunnableImpl;
 import ru.es.util.ByteUtils;
 
 import java.io.*;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
@@ -69,7 +70,9 @@ public abstract class TCPServer
 
         try
         {
-            serverSocket = new ServerSocket(port,BACKLOG);
+            String bindAddress = System.getProperty("server.bind.address");
+            InetAddress bindHost = bindAddress == null || bindAddress.isBlank() ? null : InetAddress.getByName(bindAddress);
+            serverSocket = new ServerSocket(port, BACKLOG, bindHost);
             serverSocket.setReceiveBufferSize(USER_READ_BUFFER_SIZE);
         }
         catch (IOException e)
