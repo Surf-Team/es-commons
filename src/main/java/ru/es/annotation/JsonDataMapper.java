@@ -12,7 +12,6 @@ import com.google.gson.JsonParser;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -183,7 +182,9 @@ public class JsonDataMapper
 		{
 			URL fileUrl = new URL(link.baseUrl.toString() + fileName);
 			List<T> items = reader.getCollection(tClass, fileUrl);
-			String source = Paths.get(fileName).normalize().toString();
+			String source = fileName.replace("/./", "/");
+			while (source.startsWith("./"))
+				source = source.substring(2);
 			for (var item : items)
 			{
 				Object key = AnnotatedUtils.getKey(item);
