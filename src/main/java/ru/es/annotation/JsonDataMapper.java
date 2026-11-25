@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -179,10 +180,18 @@ public class JsonDataMapper
 		link.loadedFileNames.addAll(fileNames);
 
 		List<T> allItems = new ArrayList<>();
+		Map<Object, String> keyFiles = new HashMap<>();
 		for (String fileName : fileNames)
 		{
 			URL fileUrl = new URL(link.baseUrl.toString() + fileName);
 			List<T> items = reader.getCollection(tClass, fileUrl);
+			for (var item : items)
+			{
+				Object key = AnnotatedUtils.getKey(item);
+				String otherFile = keyFiles.putIfAbsent(key, fileName);
+				if (otherFile != null && !otherFile.equals(fileName))
+					throw new IllegalStateException(tClass.getSimpleName() + ": duplicate key " + key + " in files " + otherFile + " and " + fileName);
+			}
 			allItems.addAll(items);
 		}
 
