@@ -12,6 +12,7 @@ import com.google.gson.JsonParser;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -182,11 +183,12 @@ public class JsonDataMapper
 		{
 			URL fileUrl = new URL(link.baseUrl.toString() + fileName);
 			List<T> items = reader.getCollection(tClass, fileUrl);
+			String source = Paths.get(fileName).normalize().toString();
 			for (var item : items)
 			{
 				Object key = AnnotatedUtils.getKey(item);
-				String otherFile = keyFiles.putIfAbsent(key, fileName);
-				if (otherFile != null && !otherFile.equals(fileName))
+				String otherFile = keyFiles.putIfAbsent(key, source);
+				if (otherFile != null && !otherFile.equals(source))
 					throw new IllegalStateException(tClass.getSimpleName() + ": duplicate key " + key + " in files " + otherFile + " and " + fileName);
 			}
 			allItems.addAll(items);
