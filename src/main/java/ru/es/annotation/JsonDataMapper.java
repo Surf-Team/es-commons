@@ -182,9 +182,7 @@ public class JsonDataMapper
 		{
 			URL fileUrl = new URL(link.baseUrl.toString() + fileName);
 			List<T> items = reader.getCollection(tClass, fileUrl);
-			String source = fileName.replace("/./", "/");
-			while (source.startsWith("./"))
-				source = source.substring(2);
+			String source = normalizePath(fileName);
 			for (var item : items)
 			{
 				Object key = AnnotatedUtils.getKey(item);
@@ -305,6 +303,22 @@ public class JsonDataMapper
 
 		FileUtils.writeToURL(link.rootUrl, writer.gson.toJson(nonEmptyFiles).getBytes(StandardCharsets.UTF_8));
 		Log.warning("Saved root file to " + link.rootUrl);
+	}
+
+	// "a//b/./c/../d.json" -> "a/b/d.json"
+	private static String normalizePath(String path)
+	{
+		List<String> segments = new ArrayList<>();
+		for (String segment : path.split("/"))
+		{
+			if (segment.isEmpty() || segment.equals("."))
+				continue;
+			if (segment.equals("..") && !segments.isEmpty() && !segments.get(segments.size() - 1).equals(".."))
+				segments.remove(segments.size() - 1);
+			else
+				segments.add(segment);
+		}
+		return String.join("/", segments);
 	}
 
 	private List<String> readFileList(URL url) throws Exception
