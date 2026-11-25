@@ -176,9 +176,6 @@ public class JsonDataMapper
 			fileNames = new ArrayList<>();
 		}
 
-		link.loadedFileNames.clear();
-		link.loadedFileNames.addAll(fileNames);
-
 		List<T> allItems = new ArrayList<>();
 		Map<Object, String> keyFiles = new HashMap<>();
 		for (String fileName : fileNames)
@@ -194,6 +191,9 @@ public class JsonDataMapper
 			}
 			allItems.addAll(items);
 		}
+
+		link.loadedFileNames.clear();
+		link.loadedFileNames.addAll(fileNames);
 
 		boolean legacyLoaded = false;
 		if (link.legacyFileName != null)
