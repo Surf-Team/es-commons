@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,16 +176,25 @@ public class JsonDataMapper
 			fileNames = new ArrayList<>();
 		}
 
-		link.loadedFileNames.clear();
-		link.loadedFileNames.addAll(fileNames);
-
 		List<T> allItems = new ArrayList<>();
+		Map<Object, String> keyFiles = new HashMap<>();
 		for (String fileName : fileNames)
 		{
 			URL fileUrl = new URL(link.baseUrl.toString() + fileName);
 			List<T> items = reader.getCollection(tClass, fileUrl);
+			String source = normalizePath(fileName);
+			for (var item : items)
+			{
+				Object key = AnnotatedUtils.getKey(item);
+				String otherFile = keyFiles.putIfAbsent(key, source);
+				if (otherFile != null && !otherFile.equals(source))
+					throw new IllegalStateException(tClass.getSimpleName() + ": duplicate key " + key + " in files " + otherFile + " and " + fileName);
+			}
 			allItems.addAll(items);
 		}
+
+		link.loadedFileNames.clear();
+		link.loadedFileNames.addAll(fileNames);
 
 		boolean legacyLoaded = false;
 		if (link.legacyFileName != null)
@@ -293,6 +303,22 @@ public class JsonDataMapper
 
 		FileUtils.writeToURL(link.rootUrl, writer.gson.toJson(nonEmptyFiles).getBytes(StandardCharsets.UTF_8));
 		Log.warning("Saved root file to " + link.rootUrl);
+	}
+
+	// "a//b/./c/../d.json" -> "a/b/d.json"
+	private static String normalizePath(String path)
+	{
+		List<String> segments = new ArrayList<>();
+		for (String segment : path.split("/"))
+		{
+			if (segment.isEmpty() || segment.equals("."))
+				continue;
+			if (segment.equals("..") && !segments.isEmpty() && !segments.get(segments.size() - 1).equals(".."))
+				segments.remove(segments.size() - 1);
+			else
+				segments.add(segment);
+		}
+		return String.join("/", segments);
 	}
 
 	private List<String> readFileList(URL url) throws Exception
